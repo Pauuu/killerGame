@@ -20,7 +20,7 @@ public class Viewer extends Canvas implements Runnable {
     private int heigth;
     private int width;
 
-    public Viewer(KillerGame kGame, int heigth, int width) {
+    public Viewer(KillerGame kGame, int width, int heigth) {
         this.killerGame = kGame;
 
         this.heigth = heigth;
@@ -53,28 +53,22 @@ public class Viewer extends Canvas implements Runnable {
                 BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g2d = (Graphics2D) biFrame.getGraphics();
 
-//        bBack = new BufferedImage(
-//                this.width,
-//                this.heigth,
-//                BufferedImage.TYPE_4BYTE_ABGR);
-        g2d.setColor(Color.red);
+        g2d.setColor(Color.blue);
         g2d.fillRect(0, 0, this.width, this.heigth);
-        
+
         this.paintComponents(g2d);
 
-//        bFrame.getGraphics().drawImage(bFrame, this.width, this.heigth, null);
-//        pinta la imagen bFrame en el canvas
         this.getGraphics().drawImage(biFrame, 0, 0, null);
-//        this.visibleObjects.get(0).pintar(this.getGraphics());
     }
 
     @Override
     public void run() {
-        //como es que se actualiza?
-        this.visibleObjects = this.killerGame.getAoutonomousObjects();
+        while (true) {
+            //como es que se actualiza?
+            this.visibleObjects = this.killerGame.getAoutonomousObjects();
 
-        this.updateFrame();
-
+            this.updateFrame();
+        }
     }
 
 }

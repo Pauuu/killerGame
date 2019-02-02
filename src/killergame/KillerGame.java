@@ -16,13 +16,14 @@ class KillerGame extends JFrame {
      */ //creo q instanceOf es la mejor solucion
     private ArrayList<Autonomous> autonomousObjects; //cambiar a alive?
 
+//    private KillerServerHandler killerServerHandler;
     private KillerServer killerServer;
     private int width;
     private int height;
     private Viewer viewer;
 
     public KillerGame() {
-        this.setFrameSize(300, 300);
+        this.setFrameSize(500, 400);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(this.width, this.height);
         this.setVisible(true);
@@ -31,60 +32,69 @@ class KillerGame extends JFrame {
         this.autonomousObjects = new ArrayList<>();
         this.killerServer = new KillerServer(this);
 
-        this.addViewer();
+        this.startServer(this.killerServer);
+        this.addClient();
+        this.startClient();
+        this.addViewer(this.width, this.height);
         this.addVisibleObjects();
 
         this.startGame();
 
     }
 
-    private void startGame() {
-        while (true) {
-
-            //input del usuario
-            //comprobar colisiones/normas/etc
-            //--crear un hilo por cada nuevo elemeento--
-            for (Autonomous ao : autonomousObjects) {
-                new Thread(ao).start();
-            }
-
-            //pintar todo
-            new Thread(this.viewer).start();
-
-            try {
-                Thread.sleep(16);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
+    public void addAutonomousObj(Autonomous aObj) {
+        this.autonomousObjects.add(aObj);
     }
 
-    private void addVisibleObjects() {
-        this.addBola(this.viewer, 60, 60);
+    private void addClient() {
+        this.killerClients.add(new KillerClient(this));
     }
 
-    private void addViewer() {
-
-        this.viewer = new Viewer(this, this.height, this.width);
+    private void addViewer(int width, int height) {
+        this.viewer = new Viewer(this, width, height);
         this.getContentPane().add(this.viewer);
     }
 
-    private void addBola(Viewer v, int posX, int posY) {
+    private void addVisibleObjects() {
         Autonomous bola = new Autonomous(this);
-        bola.setPosX(posX);
-        bola.setPosY(posY);
-        this.autonomousObjects.add(bola);
-
+        bola.setPosX(30);
+        bola.setPosY(30);
+        this.addAutonomousObj(bola);
+    }
+    
+    private void startClient(){
+        //deberia haber solo uno de momento
+        this.killerClients.get(0).makeContact();
     }
 
-    private void setFrameSize(int width, int height) {
-        this.width = width;
-        this.height = height;
+    private void startGame() {
+        KillerRules kr = new KillerRules();
+
+        //inicial los todos los elemetnos
+        for (Autonomous aObj : autonomousObjects) {
+            new Thread(aObj).start();
+        }
+
+        //input del usuario
+        //comprobar colisiones/normas/etc
+        //--crear un hilo por cada nuevo elemento--
+        //pintar todo
+        new Thread(this.viewer).start();
+
+        this.killerClients.get(0).sendBola(this.autonomousObjects.get(0));
+    }
+
+    private void startServer(KillerServer ks) {
+        new Thread(ks).start();
     }
 
     //Getters & setters
     public ArrayList getAoutonomousObjects() {
         return this.autonomousObjects;
+    }
+
+    private void setFrameSize(int width, int height) {
+        this.width = width;
+        this.height = height;
     }
 }

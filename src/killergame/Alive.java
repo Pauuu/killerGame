@@ -13,7 +13,11 @@ public class Alive extends VisibleObject implements Runnable {
 
     public Alive(KillerGame kGame) {
         super(kGame);
-        
+
+    }
+
+    public void moveX(int x) {
+        this.setPosX(this.getPosX() + x);
     }
 
     public int getVelX() {
