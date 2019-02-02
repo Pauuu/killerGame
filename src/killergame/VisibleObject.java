@@ -82,6 +82,7 @@ public class VisibleObject implements Renderizable {
     public void setWith(int witdh) {
         this.witdh = witdh;
     }
+    
 
     @Override
     public void pintar(Graphics g) {
