@@ -41,17 +41,21 @@ public class KillerServerHandler implements Runnable {
                     done = true;
 
                 } else {
-                    switch (line.trim()) {
+                    String[] lines = line.trim().split("--");
+                    switch (lines[0]) {
 
                         case "bye":
                             done = true;
                             break;
 
                         case "ball":
-                            this.startBola();
+                            Autonomous ball = new Autonomous(this.killerGame);
+                            ball.setPosX(Integer.parseInt(lines[1]));
+                            ball.setPosY(Integer.parseInt(lines[2]) + 100);
+                            this.startBola(ball);
 
                         default:
-                            System.out.println("Client msg: " + line);
+                            System.out.println("Client msg (default): " + line);
                             this.doRequest(line, out);
                     }
                 }
@@ -61,13 +65,9 @@ public class KillerServerHandler implements Runnable {
         }
     }
 
-    private void startBola() {
-        System.out.println("ball");
-        Autonomous bola = new Autonomous(this.killerGame);
-        bola.setPosX(9);
-        bola.setPosY(4);
-        this.killerGame.addAutonomousObj(bola);
-        new Thread(bola).start();
+    private void startBola(Autonomous aObj) {
+        this.killerGame.addAutonomousObj(aObj);
+        new Thread(aObj).start();
     }
 
     private void doRequest(String line, PrintWriter out) {

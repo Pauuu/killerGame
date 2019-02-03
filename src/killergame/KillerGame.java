@@ -61,8 +61,8 @@ class KillerGame extends JFrame {
         bola.setPosY(30);
         this.addAutonomousObj(bola);
     }
-    
-    private void startClient(){
+
+    private void startClient() {
         //deberia haber solo uno de momento
         this.killerClients.get(0).makeContact();
     }
@@ -81,7 +81,19 @@ class KillerGame extends JFrame {
         //pintar todo
         new Thread(this.viewer).start();
 
-        this.killerClients.get(0).sendBola(this.autonomousObjects.get(0));
+        try {
+            Thread.sleep(900);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+//        this.killerClients.get(0).sendBola(this.autonomousObjects.get(0));
+
+        while (true) {
+            for (Autonomous aObj : this.autonomousObjects) {
+                kr.comprobarColision(aObj);
+            }
+        }
     }
 
     private void startServer(KillerServer ks) {

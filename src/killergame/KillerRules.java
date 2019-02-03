@@ -16,8 +16,13 @@ public class KillerRules {
     }
 
     public void comprobarColision(VisibleObject vObj) {
-        if (vObj.getPosY() > 450) {
-            
+        
+        System.out.println("el objeto ha sido invocado");
+        if (vObj instanceof Autonomous) {
+            if (vObj.getPosX() > 400) {
+                vObj.setPosX(0);
+                vObj.setPosY(8);
+            }
         }
     }
 

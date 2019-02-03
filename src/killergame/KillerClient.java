@@ -42,15 +42,14 @@ public class KillerClient {
             System.out.println("esperando respuesta...");
             //espera y lee la respuesta del servidor
             String line = this.in.readLine();
-            
 
         } catch (Exception ex) {
             System.out.println(ex);
         }
     }
-    
-    public void sendBola(Autonomous aObj){
-        this.out.print(aObj);
+
+    public void sendBola(Autonomous aObj) {
+        this.out.println("ball--" + aObj.getPosX() + "--" + aObj.getPosY());
         System.out.println("test enviada bola?");
     }
 
