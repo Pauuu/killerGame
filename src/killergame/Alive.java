@@ -10,17 +10,17 @@ public class Alive extends VisibleObject implements Runnable {
 
     //quitar las velocidades x defecto
     private int velX = 2;
-    private int velY = 2;
+    private int velY = 4;
 
     public Alive(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
 
     }
 
-    public void moveX(int x) {
+    public void moveX() {
         this.setPosX(this.getPosX() + this.velX);
     }
-    public void moveY(int y) {
+    public void moveY() {
         this.setPosY(this.getPosY() + this.velY);
     }
 

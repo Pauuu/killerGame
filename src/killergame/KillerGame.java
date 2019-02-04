@@ -66,7 +66,7 @@ class KillerGame extends JFrame {
     }
 
     private void createVisibleObjects() {
-        Autonomous bola = new Autonomous(this, 17, 23);
+        Ball bola = new Ball(this, 17, 23);
         bola.setPosX(30);
         bola.setPosY(30);
         this.addAutonomousObj(bola);
@@ -104,11 +104,10 @@ class KillerGame extends JFrame {
                 kr.comprobarColision(aObj);
 
             }
-
-            if (this.autonomousObjects.get(0).getPosX() >= this.FRAME_WIDTH - this.autonomousObjects.get(0).getWith()) {
-                    this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
-
-            }
+//
+//            if (this.autonomousObjects.get(0).getPosX() >= this.FRAME_WIDTH - this.autonomousObjects.get(0).getWith()) {
+//                    this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
+//            }
             //mandar un array de info
 //                if (aObj.getPosX() >= 400 - aObj.getWith()) {
 //                    this.killerClients.get(0).sendBola(

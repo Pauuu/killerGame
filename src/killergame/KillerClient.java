@@ -14,7 +14,7 @@ public class KillerClient {
     private KillerGame killerGame;
     private static final int PORT = 12345;
     // server details
-    private static final String HOST = "192.168.1.67";
+    private static final String HOST = "localhost";
     private Socket sock;
     private BufferedReader in;
     private PrintWriter out;
