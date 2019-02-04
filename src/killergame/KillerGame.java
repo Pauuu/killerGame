@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 
 class KillerGame extends JFrame {
 
-    private final int FRAME_WIDTH = 1800;
+    private final int FRAME_WIDTH = 600;
     private final int FRAME_HEIGHT = 400;
 
     private ArrayList<KillerClient> killerClients;
@@ -28,8 +28,7 @@ class KillerGame extends JFrame {
 
         //setear parametros iniciales
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
-        this.setVisible(true);
+//        this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 
         //añadir elementos
         this.killerClients = new ArrayList<>(); //x si es cliente de mas maquinas
@@ -39,11 +38,14 @@ class KillerGame extends JFrame {
         //añadir comunicaciones
         this.startServer(this.killerServer);
         this.addClient();
-//        this.startClient();
+        this.startClient();
 
         //crear y añadir elementos graficos
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.createVisibleObjects();
+
+        this.pack();
+        this.setVisible(true);
 
         //empezar el juego (colisiones, etc)
         this.startGame();
@@ -64,7 +66,7 @@ class KillerGame extends JFrame {
     }
 
     private void createVisibleObjects() {
-        Autonomous bola = new Autonomous(this, 10, 49);
+        Autonomous bola = new Autonomous(this, 17, 23);
         bola.setPosX(30);
         bola.setPosY(30);
         this.addAutonomousObj(bola);
@@ -88,12 +90,36 @@ class KillerGame extends JFrame {
         //--crear un hilo por cada nuevo elemento--
         //pintar todo
         new Thread(this.viewer).start();
+        
+        try {
+                Thread.sleep(1500);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+//        this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
 
         while (true) {
             for (Autonomous aObj : autonomousObjects) {
                 kr.comprobarColision(aObj);
+
             }
 
+            if (this.autonomousObjects.get(0).getPosX() >= this.FRAME_WIDTH - this.autonomousObjects.get(0).getWith()) {
+                    this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
+
+            }
+            //mandar un array de info
+//                if (aObj.getPosX() >= 400 - aObj.getWith()) {
+//                    this.killerClients.get(0).sendBola(
+//                            aObj.getPosX()
+//                            , aObj.getPosY()
+//                            , aObj.getVelX()
+//                            , aObj.getVelY()
+//                            , aObj.getHeight()
+//                            , aObj.getWith());
+//                    this.autonomousObjects.remove(0);
+//                }
             try {
                 Thread.sleep(1);
             } catch (InterruptedException ex) {
@@ -102,7 +128,6 @@ class KillerGame extends JFrame {
 
         }
 
-//        this.killerClients.get(0).sendBola(this.autonomousObjects.get(0));
     }
 
     private void startServer(KillerServer ks) {

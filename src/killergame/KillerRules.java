@@ -21,10 +21,13 @@ public class KillerRules {
         if (vObj instanceof Autonomous) {
             //alguna manera de no tener que crar una nueva variable?
             Autonomous aObj = (Autonomous) vObj;
+            
+            //mira si colision en eje Y
             if (vObj.getPosY() >= 400 - aObj.getHeight() || vObj.getPosY() <= 0) {
                 aObj.setVelY(aObj.getVelY() * -1);
               
             }
+            
         }
     }
 

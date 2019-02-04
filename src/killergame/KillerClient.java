@@ -14,7 +14,7 @@ public class KillerClient {
     private KillerGame killerGame;
     private static final int PORT = 12345;
     // server details
-    private static final String HOST = "localhost";
+    private static final String HOST = "192.168.1.67";
     private Socket sock;
     private BufferedReader in;
     private PrintWriter out;
@@ -35,7 +35,12 @@ public class KillerClient {
     }
 
     public void sendBola(Autonomous aObj) {
-        this.out.println("ball--" + aObj.getPosX() + ">>" + aObj.getPosY());
+        this.out.println("ball>>" + aObj.getPosX() + ">>" + aObj.getPosY());
+        System.out.println("test enviada bola?");
+    }
+
+    public void sendBola(int a, int b, int c, int d, int e, int f) {
+        this.out.println("ball>>" + 0 + ">>" + b);
         System.out.println("test enviada bola?");
     }
 

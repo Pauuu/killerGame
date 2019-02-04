@@ -14,9 +14,9 @@ public class Autonomous extends Alive {
     public void run() {
         while (true) {
             this.moveX(1);
-            this.moveY(2);
+            this.moveY(1);
             try {
-                Thread.sleep(16);
+                Thread.sleep(10);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
