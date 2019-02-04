@@ -5,16 +5,16 @@ import java.util.logging.Logger;
 
 public class Autonomous extends Alive {
 
-    public Autonomous(KillerGame kGame) {
-        super(kGame);
+    public Autonomous(KillerGame kGame, int width, int height) {
+        super(kGame, width, height);
         this.setImagen("imgs/cocinero.png");
     }
 
     @Override
     public void run() {
         while (true) {
-//        this.setVelX(10);
             this.moveX(1);
+            this.moveY(2);
             try {
                 Thread.sleep(16);
             } catch (InterruptedException ex) {

@@ -20,8 +20,10 @@ public class VisibleObject implements Renderizable {
     private int posY;
     private int witdh;
 
-    public VisibleObject(KillerGame kGame) {
+    public VisibleObject(KillerGame kGame, int width, int height) {
         this.killerGame = kGame;
+        this.witdh = width;
+        this.height = height;
     }
 
     //getters & setters

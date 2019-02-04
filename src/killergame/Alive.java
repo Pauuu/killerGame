@@ -8,16 +8,20 @@ import java.awt.image.BufferedImage;
  */
 public class Alive extends VisibleObject implements Runnable {
 
-    private int velX;
-    private int velY;
+    //quitar las velocidades x defecto
+    private int velX = 2;
+    private int velY = 2;
 
-    public Alive(KillerGame kGame) {
-        super(kGame);
+    public Alive(KillerGame kGame, int width, int height) {
+        super(kGame, width, height);
 
     }
 
     public void moveX(int x) {
-        this.setPosX(this.getPosX() + x);
+        this.setPosX(this.getPosX() + this.velX);
+    }
+    public void moveY(int y) {
+        this.setPosY(this.getPosY() + this.velY);
     }
 
     public int getVelX() {
@@ -25,15 +29,15 @@ public class Alive extends VisibleObject implements Runnable {
     }
 
     public void setVelX(int velX) {
-        this.setPosX(this.getPosX() + velX);
-    }
-
-    public int getVelY() {
-        return velY;
+        this.velX = velX;
     }
 
     public void setVelY(int velY) {
         this.velY = velY;
+    }
+
+    public int getVelY() {
+        return velY;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class KillerServerHandler implements Runnable {
                     done = true;
 
                 } else {
-                    String[] lines = line.trim().split("--");
+                    String[] lines = line.trim().split(">>");
                     switch (lines[0]) {
 
                         case "bye":
@@ -49,14 +49,17 @@ public class KillerServerHandler implements Runnable {
                             break;
 
                         case "ball":
-                            Autonomous ball = new Autonomous(this.killerGame);
+                            //o recibe el obj bola o cada parametro x separado
+                            Autonomous ball = new Autonomous(this.killerGame, 5, 10);
                             ball.setPosX(Integer.parseInt(lines[1]));
                             ball.setPosY(Integer.parseInt(lines[2]) + 100);
                             this.startBola(ball);
+                            break;
 
                         default:
                             System.out.println("Client msg (default): " + line);
                             this.doRequest(line, out);
+                            break;
                     }
                 }
             }

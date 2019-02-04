@@ -14,8 +14,8 @@ public class StaticObj extends VisibleObject
 	 * <!--  end-user-doc  -->
 	 * @generated
 	 */
-	public StaticObj(KillerGame kGame){
-		super(kGame);
+	public StaticObj(KillerGame kGame, int width, int height){
+		super(kGame, width, height);
 	}
 
 }

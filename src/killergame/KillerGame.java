@@ -8,36 +8,44 @@ import javax.swing.JFrame;
 
 class KillerGame extends JFrame {
 
+    private final int FRAME_WIDTH = 1800;
+    private final int FRAME_HEIGHT = 400;
+
     private ArrayList<KillerClient> killerClients;
 
-    /*hace falta tener todas las listas de cada uno, solo basta diferenciar 
-    *   entre los static y alive o solo una lista de visibleObjects y hacer un 
+    /*  hace falta tener todas las listas de cada uno; basta diferenciar 
+    *   entre los static y alive; o solo una lista de visibleObjects y hacer un 
     *   "instance of" para crear los threads de los alive?
-     */ //creo q instanceOf es la mejor solucion
+     */ //creo q instanceOf es la mejor solución
     private ArrayList<Autonomous> autonomousObjects; //cambiar a alive?
 
 //    private KillerServerHandler killerServerHandler;
     private KillerServer killerServer;
-    private int width;
-    private int height;
+
     private Viewer viewer;
 
     public KillerGame() {
-        this.setFrameSize(500, 400);
+
+        //setear parametros iniciales
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setSize(this.width, this.height);
+        this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.setVisible(true);
 
+        //añadir elementos
         this.killerClients = new ArrayList<>(); //x si es cliente de mas maquinas
         this.autonomousObjects = new ArrayList<>();
         this.killerServer = new KillerServer(this);
 
+        //añadir comunicaciones
         this.startServer(this.killerServer);
         this.addClient();
-        this.startClient();
-        this.addViewer(this.width, this.height);
-        this.addVisibleObjects();
+//        this.startClient();
 
+        //crear y añadir elementos graficos
+        this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
+        this.createVisibleObjects();
+
+        //empezar el juego (colisiones, etc)
         this.startGame();
 
     }
@@ -50,20 +58,20 @@ class KillerGame extends JFrame {
         this.killerClients.add(new KillerClient(this));
     }
 
-    private void addViewer(int width, int height) {
+    private void createViewer(int width, int height) {
         this.viewer = new Viewer(this, width, height);
         this.getContentPane().add(this.viewer);
     }
 
-    private void addVisibleObjects() {
-        Autonomous bola = new Autonomous(this);
+    private void createVisibleObjects() {
+        Autonomous bola = new Autonomous(this, 10, 49);
         bola.setPosX(30);
         bola.setPosY(30);
         this.addAutonomousObj(bola);
     }
 
     private void startClient() {
-        //deberia haber solo uno de momento
+        //de momento solo uno
         this.killerClients.get(0).makeContact();
     }
 
@@ -81,19 +89,20 @@ class KillerGame extends JFrame {
         //pintar todo
         new Thread(this.viewer).start();
 
-        try {
-            Thread.sleep(900);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+        while (true) {
+            for (Autonomous aObj : autonomousObjects) {
+                kr.comprobarColision(aObj);
+            }
+
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
 
 //        this.killerClients.get(0).sendBola(this.autonomousObjects.get(0));
-
-        while (true) {
-            for (Autonomous aObj : this.autonomousObjects) {
-                kr.comprobarColision(aObj);
-            }
-        }
     }
 
     private void startServer(KillerServer ks) {
@@ -103,10 +112,5 @@ class KillerGame extends JFrame {
     //Getters & setters
     public ArrayList getAoutonomousObjects() {
         return this.autonomousObjects;
-    }
-
-    private void setFrameSize(int width, int height) {
-        this.width = width;
-        this.height = height;
     }
 }

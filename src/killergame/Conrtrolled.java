@@ -14,8 +14,8 @@ public class Conrtrolled extends Alive
 	 * <!--  end-user-doc  -->
 	 * @generated
 	 */
-	public Conrtrolled(KillerGame kGame){
-		super(kGame);
+	public Conrtrolled(KillerGame kGame, int width, int height){
+		super(kGame, width, height);
 	}
 
 }

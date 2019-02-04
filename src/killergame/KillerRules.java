@@ -17,11 +17,13 @@ public class KillerRules {
 
     public void comprobarColision(VisibleObject vObj) {
         
-        System.out.println("el objeto ha sido invocado");
+//        System.out.println("el objeto ha sido invocado");
         if (vObj instanceof Autonomous) {
-            if (vObj.getPosX() > 400) {
-                vObj.setPosX(0);
-                vObj.setPosY(8);
+            //alguna manera de no tener que crar una nueva variable?
+            Autonomous aObj = (Autonomous) vObj;
+            if (vObj.getPosY() >= 400 - aObj.getHeight() || vObj.getPosY() <= 0) {
+                aObj.setVelY(aObj.getVelY() * -1);
+              
             }
         }
     }
