@@ -1,6 +1,8 @@
 package killergame;
 
+import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -66,7 +68,7 @@ public class VisibleObject implements Renderizable {
     }
 
     public void setPosX(int posX) {
-        this.posX = posX;
+        this.posX = posX;       
     }
 
     public int getPosY() {
@@ -87,8 +89,10 @@ public class VisibleObject implements Renderizable {
     
 
     @Override
-    public void pintar(Graphics g) {
-        g.drawImage(this.imagen, this.posX, this.posY, null);
+    public void pintar(Graphics2D g2d) {
+      //  g2d.drawImage(this.imagen, this.posX, this.posY, null);
+      g2d.setColor(Color.red);
+      g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
     }
 
 }

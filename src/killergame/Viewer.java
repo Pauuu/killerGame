@@ -48,19 +48,23 @@ public class Viewer extends Canvas implements Runnable {
 
         }
 
-        this.modifyAplphaChannel(this.backgroundImg, 120);
+        this.modifyAplphaChannel(this.backgroundImg, 100);
 
         this.setBackground(Color.blue);
         this.setSize(this.width, this.heigth); //cambiar en un futuro
 
     }
 
-    private void paintComponents(Graphics2D g) {
+    private void paintComponents(Graphics2D g2d) {
 
         try {
+            g2d.fillRect(0, 0, 1000, 1000);
+
             for (VisibleObject vObj : visibleObjects) {
-                vObj.pintar(g);
-                g.drawImage(this.backgroundImg, 0, 0, null);
+//                g.drawImage(this.backgroundImg, 0, 0, null);
+
+                vObj.pintar(g2d);
+
             }
 
         } catch (Exception e) {
@@ -112,7 +116,7 @@ public class Viewer extends Canvas implements Runnable {
         int fps;                //sera dividido entre 1seg para controlar freqüenica
 
         previousTimeMili = System.currentTimeMillis();
-        fps = 60;
+        fps = 64;
 
         while (true) {
 
@@ -121,13 +125,13 @@ public class Viewer extends Canvas implements Runnable {
 
             //si diferencia mayor o igual...
             if (timeDiffMili >= 1000 / fps) {
-                
+
                 //actualiza el tiempo anterior
                 previousTimeMili = System.currentTimeMillis();
-                
+
                 //actualiza lista de objetos visibles
                 this.visibleObjects = this.killerGame.getAoutonomousObjects();
-                
+
                 //pinta todos los elementos
                 this.updateFrame();
 

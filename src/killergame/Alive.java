@@ -1,6 +1,8 @@
 package killergame;
 
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 /**
  * <!-- begin-user-doc -->
@@ -12,14 +14,22 @@ public class Alive extends VisibleObject implements Runnable {
     private int velX = 2;
     private int velY = 4;
 
+
     public Alive(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
 
     }
 
+    public boolean testColision(ArrayList<VisibleObject> vObjs) {
+        
+
+        return false;
+    }
+
     public void moveX() {
         this.setPosX(this.getPosX() + this.velX);
     }
+
     public void moveY() {
         this.setPosY(this.getPosY() + this.velY);
     }

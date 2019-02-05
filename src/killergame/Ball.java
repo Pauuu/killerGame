@@ -17,7 +17,7 @@ public class Ball extends Autonomous {
     public Ball(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
         
-        this.setImagen("imgs/cocinero.png");
+        this.setImagen("imgs/blackBall.png");
 
     }
 
@@ -27,7 +27,7 @@ public class Ball extends Autonomous {
             this.moveX();
             this.moveY();
             try {
-                Thread.sleep(18);
+                Thread.sleep(10);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }

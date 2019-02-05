@@ -12,15 +12,16 @@ import java.net.Socket;
 public class KillerClient {
 
     private KillerGame killerGame;
-    private static final int PORT = 12345;
+    private final int PORT = 12345;
     // server details
-    private static final String HOST = "localhost";
+    private String host;
     private Socket sock;
     private BufferedReader in;
     private PrintWriter out;
 
-    public KillerClient(KillerGame kg) {
+    public KillerClient(KillerGame kg, String ip) {
         this.killerGame = kg;
+        this.host = ip;
     }
 
     public void closeLink() {
@@ -46,7 +47,7 @@ public class KillerClient {
 
     public void makeContact() {
         try {
-            this.sock = new Socket(HOST, PORT);
+            this.sock = new Socket(this.host, this.PORT);
 
             /*
              * puntero a un input stream (datos de llegada en crudo) __this.sock.getInputStream()__

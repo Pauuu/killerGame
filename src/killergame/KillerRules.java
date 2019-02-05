@@ -23,11 +23,21 @@ public class KillerRules {
             Autonomous aObj = (Autonomous) vObj;
 
             //mira si colision en eje Y
-            if (vObj.getPosY() >= 400 - aObj.getHeight() || vObj.getPosY() <= 0) {
+            if (vObj.getPosY() >= 1020 - aObj.getHeight()) {
+                aObj.setPosY(1020 - aObj.getHeight() -1);
+                aObj.setVelY(aObj.getVelY() * -1);
+
+            } else if (vObj.getPosY() <= 0) {
+                aObj.setPosY(1);
                 aObj.setVelY(aObj.getVelY() * -1);
             }
 
-            if (vObj.getPosX() >= 600 - aObj.getWith() || vObj.getPosX() <= 0) {
+            if (vObj.getPosX() >= 1900 - aObj.getWith()) {
+                aObj.setPosX(1900 - aObj.getHeight() - 1);
+                aObj.setVelX(aObj.getVelX() * -1);
+
+            } else if (vObj.getPosX() <= 0) {
+                aObj.setPosX(1);
                 aObj.setVelX(aObj.getVelX() * -1);
             }
 

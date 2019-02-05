@@ -28,6 +28,62 @@ public class KillerServer implements Runnable {
 
     }
 
+    public void inicioEspera() {
+        try {
+//            la ip es la suya misma
+            ServerSocket serverSock = new ServerSocket(12345);
+
+//            socket por el cual recibirá al cliente
+            Socket cliSock;
+            String cliAddr;
+
+            while (true) {
+
+                System.out.println("KS: Waiting for a client...");
+
+                //crea un nuevo socket para el cliente que ha "entrado" 
+                //del "server socket" gracias al metodo accept();
+                cliSock = serverSock.accept();
+
+//                imprime la ip del cliente
+                System.out.println("KS: Client connection from "
+                        + cliSock.getInetAddress().getHostAddress());
+
+                //guarda la direccion del cliente
+                cliAddr = cliSock.getInetAddress().getHostAddress();
+
+                //mira si null, crea conexiones.Primero izq, luego derecha
+                this.crearConexiones(cliSock, cliAddr);
+            }
+
+        } catch (Exception e) {
+            System.out.println("test" + e);
+        }
+    }
+
+    private void crearConexiones(Socket cliSock, String cliAddr) {
+        //crea un nuevo socket con un nuevo hilo de ejecucion pasandole
+        //la direccion del cliente y del nuevo socket <clientSock>
+
+        if (this.killerGame.getPreviousKiller() == null) {
+            new Thread(new PreviousKiller(
+                    this.killerGame,
+                    cliSock,
+                    cliAddr)
+            ).start();
+            System.out.println("KS: thread Previous Killer started");
+
+        } else if (this.killerGame.getPreviousKiller() == null) {
+            new Thread(new NextKiller(
+                    this.killerGame,
+                    clientSock,
+                    cliAddr)
+            ).start();
+            System.out.println("KS: thread Next Killer started");
+
+        }
+    }
+
     public void inicio() {
         try {
 //            la ip es la suya misma
@@ -70,7 +126,7 @@ public class KillerServer implements Runnable {
 
     @Override
     public void run() {
-        this.inicio();
+        this.inicioEspera();
     }
 
 }

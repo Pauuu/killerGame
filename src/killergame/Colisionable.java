@@ -5,16 +5,10 @@
  */
 package killergame;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 /**
  *
  * @author pau
  */
-interface Renderizable {
-    
-//public class Renderizable{
-    void pintar(Graphics2D g2d);
+interface Colisionable {
     
 }

@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 
 class KillerGame extends JFrame {
 
-    private final int FRAME_WIDTH = 600;
-    private final int FRAME_HEIGHT = 400;
+    private final int FRAME_WIDTH = 1920;
+    private final int FRAME_HEIGHT = 1080;
 
     private ArrayList<KillerClient> killerClients;
 
@@ -17,7 +17,9 @@ class KillerGame extends JFrame {
     *   entre los static y alive; o solo una lista de visibleObjects y hacer un 
     *   "instance of" para crear los threads de los alive?
      */ //creo q instanceOf es la mejor solución
-    private ArrayList<Autonomous> autonomousObjects; //cambiar a alive?
+    private ArrayList<Autonomous> autonomousObjects; //cambiar a alive? a VisibleObject?
+    private PreviousKiller pk;
+    private NextKiller nk;
 
 //    private KillerServerHandler killerServerHandler;
     private KillerServer killerServer;
@@ -37,18 +39,37 @@ class KillerGame extends JFrame {
 
         //añadir comunicaciones
         this.startServer(this.killerServer);
-        this.addClient();
+
+        try {
+            Thread.sleep(900);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        this.addClient("localhost");
+        this.addClient("localhost");
         this.startClient();
 
         //crear y añadir elementos graficos
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
-        this.createVisibleObjects();
+//        this.createVisibleObjects();
+        for (int i = 0; i < 200; i++) {
+            this.createBall(20, 20, i * 32 , i + 7);
+
+           
+
+        }
+//        this.createBall(20, 20, 25, 10);
+//        this.createBall(20, 20, 100, 0);
+//        this.createBall(20, 20, 500, 200);
+//        this.createBall(20, 20, 1900, 190);
 
         this.pack();
         this.setVisible(true);
 
         //empezar el juego (colisiones, etc)
         this.startGame();
+        
 
     }
 
@@ -56,8 +77,15 @@ class KillerGame extends JFrame {
         this.autonomousObjects.add(aObj);
     }
 
-    private void addClient() {
-        this.killerClients.add(new KillerClient(this));
+    private void addClient(String ip) {
+        this.killerClients.add(new KillerClient(this, ip));
+    }
+
+    private void createBall(int witdh, int height, int posX, int posY) {
+        Ball bola = new Ball(this, witdh, height);
+        bola.setPosX(posX);
+        bola.setPosY(posY);
+        this.addAutonomousObj(bola);
     }
 
     private void createViewer(int width, int height) {
@@ -66,7 +94,7 @@ class KillerGame extends JFrame {
     }
 
     private void createVisibleObjects() {
-        Ball bola = new Ball(this, 17, 23);
+        Ball bola = new Ball(this, 20, 20);
         bola.setPosX(30);
         bola.setPosY(30);
         this.addAutonomousObj(bola);
@@ -90,15 +118,8 @@ class KillerGame extends JFrame {
         //--crear un hilo por cada nuevo elemento--
         //pintar todo
         new Thread(this.viewer).start();
-        
-        try {
-                Thread.sleep(1500);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-//        this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
 
+//        this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
         while (true) {
             for (Autonomous aObj : autonomousObjects) {
                 kr.comprobarColision(aObj);
@@ -133,8 +154,29 @@ class KillerGame extends JFrame {
         new Thread(ks).start();
     }
 
+    public void testColision() {
+
+    }
+
     //Getters & setters
     public ArrayList getAoutonomousObjects() {
         return this.autonomousObjects;
     }
+
+    public PreviousKiller getPreviousKiller() {
+        return pk;
+    }
+
+    public void setPreviousKiller(PreviousKiller pk) {
+        this.pk = pk;
+    }
+
+    public NextKiller getNextKiller() {
+        return nk;
+    }
+
+    public void setNextKiller(NextKiller nk) {
+        this.nk = nk;
+    }
+
 }

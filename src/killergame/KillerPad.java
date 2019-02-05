@@ -5,16 +5,15 @@
  */
 package killergame;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-
 /**
  *
  * @author pau
  */
-interface Renderizable {
-    
-//public class Renderizable{
-    void pintar(Graphics2D g2d);
+public class KillerPad implements Runnable{
+
+    @Override
+    public void run() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
