@@ -12,7 +12,7 @@ import java.net.Socket;
 public class KillerClient {
 
     private KillerGame killerGame;
-    private final int PORT = 12345;
+    private final int PORT = 30123;
     // server details
     private String host;
     private Socket sock;
@@ -61,6 +61,8 @@ public class KillerClient {
              * puntero al stream que se enviara al servidor y en el que escribiremos
              */
             this.out = new PrintWriter(this.sock.getOutputStream(), true);
+            
+            
         } catch (Exception e) {
             System.out.println(e);
         }

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class Alive extends VisibleObject implements Runnable {
 
     //quitar las velocidades x defecto
-    private int velX = 2;
-    private int velY = 4;
+    protected int velX;
+    protected int velY;
 
 
     public Alive(KillerGame kGame, int width, int height) {
@@ -20,6 +20,7 @@ public class Alive extends VisibleObject implements Runnable {
 
     }
 
+    //no dejar de lado OJO
     public boolean testColision(ArrayList<VisibleObject> vObjs) {
         
 

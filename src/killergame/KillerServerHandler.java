@@ -8,112 +8,97 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  --> @generated
- */
 public class KillerServerHandler implements Runnable {
 
     public KillerGame killerGame;
-    private Socket clientSock;
-    private String clientAddr;
+    private Socket clientSocket;
+    private String clientAddress;
 
-//    private BufferedReader in;
-//    private PrintWriter out;
     public KillerServerHandler(KillerGame kGame, Socket cliSocket, String cliAddr) {
         this.killerGame = kGame;
-        this.clientSock = cliSocket;
-        this.clientAddr = cliAddr;
-
+        this.clientSocket = cliSocket;
+        this.clientAddress = cliAddr;
     }
 
-    private void processClient(BufferedReader in, PrintWriter out) {
-        String line;
-        Boolean done = false;
+    private boolean comprobarSiModuloVisual() {
+        return true; //añadir comprobacion si modulo
+    }
+
+    private PreviousKiller createPreviousKiller() {
+        PreviousKiller pk = new PreviousKiller(
+                this.killerGame,
+                this.clientSocket,
+                this.clientAddress);
+
+        new Thread(pk).start();
+
+        this.killerGame.setPreviousKiller(pk);
+
+        System.out.println("KSH: thread Previous Killer started");
+
+        return pk;
+    }
+
+    private NextKiller createNextKiller() {
+        NextKiller nk = new NextKiller(
+                this.killerGame,
+                this.clientSocket,
+                this.clientAddress);
+
+        new Thread(nk).start();
+
+        this.killerGame.setNextKiller(nk);
+
+        System.out.println("KSH: thread Next Killer started");
+
+        return nk;
+    }
+
+    private void processClient() {
 
         try {
-            while (!done) {
-                System.out.println("read line()");
-                line = in.readLine();
+            if (this.comprobarSiModuloVisual()) { //de momento siempre verdadero
 
-                //si line null es que el cliente ha cerrado/perdido la conexion
-                if (line == null) {
-                    done = true;
+                //cambiar comprobacion
+                boolean success;
 
-                } else {
-                    String[] lines = line.trim().split(">>");
-                    switch (lines[0]) {
+                success = this.killerGame.tryConnectPreviousKiller(
+                        this.clientSocket,
+                        this.clientAddress);
 
-                        case "bye":
-                            done = true;
-                            break;
-
-                        case "ball":
-                            //o recibe el obj bola o cada parametro x separado
-                            Autonomous ball = new Autonomous(this.killerGame, 5, 10);
-                            ball.setPosX(Integer.parseInt(lines[1]));
-                            ball.setPosY(Integer.parseInt(lines[2]) + 100);
-                            this.startBola(ball);
-                            break;
-
-                        default:
-                            System.out.println("Client msg (default): " + line);
-                            this.doRequest(line, out);
-                            break;
-                    }
+                if (!success) {
+                    success = this.killerGame.tryConnectNextKiller(
+                            this.clientSocket,
+                            this.clientAddress);
                 }
+
+                if (!success) {    //si no se cumple ninguna condicion
+                    System.err.println("KSH: Address: " + this.clientAddress
+                            + " no se ha llegado a conectar");
+                }
+
             }
+
         } catch (Exception e) {
-            System.err.println("algo ha fallado");
-        }
-    }
-
-    private void startBola(Autonomous aObj) {
-        this.killerGame.addAutonomousObj(aObj);
-        new Thread(aObj).start();
-    }
-
-    private void doRequest(String line, PrintWriter out) {
-        if (line.trim().toLowerCase().equals("get")) {
-
-            System.out.println("Processing 'get'");
-            out.print("");
-
-        } else {
-            System.out.println("Ignoring input line");
-            out.println("debug: " + line);
+            System.err.println("KSH: algo ha fallado");
+            System.err.println("KSH: " + e);
         }
     }
 
     @Override
     public void run() {
-        BufferedReader in;
-        PrintWriter out;
 
         try {
-            // Get I/O streams from the socket
-            in = new BufferedReader(new InputStreamReader(
-                    this.clientSock.getInputStream()));
 
-            out = new PrintWriter(this.clientSock.getOutputStream(), true);
-
-            // interact with a client
-            this.processClient(in, out);
+            this.processClient();
 
             // Close client connection
-            this.clientSock.close();
-
         } catch (Exception ex) {
-            System.err.println("kk");
+            System.err.println("KSH: kk");
+            System.err.println("KSH: " + ex);
+
         }
 
-        System.out.println("Client connection closed\n");
-
-        //lo vuelve a imprimir desde esta clase
-        System.out.println("Waiting for a client...\n");
-
-        // backup scores after client finish
-        //this.hs.saveScores();
     }
 
 }

@@ -28,15 +28,16 @@ public class KillerServer implements Runnable {
 
     }
 
-    public void inicioEspera() {
+    public void inicioEsperaConexion() {
         try {
 //            la ip es la suya misma
-            ServerSocket serverSock = new ServerSocket(12345);
+            ServerSocket serverSock = new ServerSocket(30123);
 
 //            socket por el cual recibirá al cliente
             Socket cliSock;
             String cliAddr;
 
+            //de momento no discrimina si es un killer pad o no
             while (true) {
 
                 System.out.println("KS: Waiting for a client...");
@@ -52,8 +53,10 @@ public class KillerServer implements Runnable {
                 //guarda la direccion del cliente
                 cliAddr = cliSock.getInetAddress().getHostAddress();
 
-                //mira si null, crea conexiones.Primero izq, luego derecha
                 this.crearConexiones(cliSock, cliAddr);
+
+                //mira si null, crea conexiones.Primero izq, luego derecha
+//                this.crearConexiones(cliSock, cliAddr);
             }
 
         } catch (Exception e) {
@@ -62,71 +65,16 @@ public class KillerServer implements Runnable {
     }
 
     private void crearConexiones(Socket cliSock, String cliAddr) {
-        //crea un nuevo socket con un nuevo hilo de ejecucion pasandole
-        //la direccion del cliente y del nuevo socket <clientSock>
-
-        if (this.killerGame.getPreviousKiller() == null) {
-            new Thread(new PreviousKiller(
-                    this.killerGame,
-                    cliSock,
-                    cliAddr)
-            ).start();
-            System.out.println("KS: thread Previous Killer started");
-
-        } else if (this.killerGame.getPreviousKiller() == null) {
-            new Thread(new NextKiller(
-                    this.killerGame,
-                    clientSock,
-                    cliAddr)
-            ).start();
-            System.out.println("KS: thread Next Killer started");
-
-        }
-    }
-
-    public void inicio() {
-        try {
-//            la ip es la suya misma
-            ServerSocket serverSock = new ServerSocket(12345);
-
-//            socket por el cual se comunicará el server con el cliente (?)
-            Socket clientSock;
-            String cliAddr;
-
-            while (true) {
-
-                System.out.println("Waiting for a client...");
-
-                //crea un nuevo socket para el cliente que ha "entrado" 
-                //del "server socket" gracias al metodo accept();
-                clientSock = serverSock.accept();
-
-//                imprime la ip del cliente
-                System.out.println("Client connection from "
-                        + clientSock.getInetAddress().getHostAddress());
-
-                //guarda la direccion del cliente
-                cliAddr = clientSock.getInetAddress().getHostAddress();
-
-                //crea un nuevo socket con un nuevo hilo de ejecucion pasandole
-                //la direccion del cliente y del nuevo socket <clientSock>
-                new Thread(new KillerServerHandler(
-                        this.killerGame,
-                        clientSock,
-                        cliAddr)
-                ).start();
-
-////               
-            }
-
-        } catch (Exception e) {
-            System.out.println("test" + e);
-        }
+        new Thread(new KillerServerHandler(
+                this.killerGame, 
+                cliSock, 
+                cliAddr)
+        ).start();
     }
 
     @Override
     public void run() {
-        this.inicioEspera();
+        this.inicioEsperaConexion();
     }
 
 }

@@ -1,6 +1,6 @@
 package killergame;
 
-import java.awt.Color;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -8,8 +8,8 @@ import javax.swing.JFrame;
 
 class KillerGame extends JFrame {
 
-    private final int FRAME_WIDTH = 1920;
-    private final int FRAME_HEIGHT = 1080;
+    private final int FRAME_WIDTH = 920;
+    private final int FRAME_HEIGHT = 800;
 
     private ArrayList<KillerClient> killerClients;
 
@@ -18,8 +18,8 @@ class KillerGame extends JFrame {
     *   "instance of" para crear los threads de los alive?
      */ //creo q instanceOf es la mejor solución
     private ArrayList<Autonomous> autonomousObjects; //cambiar a alive? a VisibleObject?
-    private PreviousKiller pk;
-    private NextKiller nk;
+    private PreviousKiller previousKiller;
+    private NextKiller nextKiller;
 
 //    private KillerServerHandler killerServerHandler;
     private KillerServer killerServer;
@@ -41,35 +41,29 @@ class KillerGame extends JFrame {
         this.startServer(this.killerServer);
 
         try {
-            Thread.sleep(900);
+            Thread.sleep(90);
         } catch (InterruptedException ex) {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         this.addClient("localhost");
         this.addClient("localhost");
-        this.startClient();
+        this.addClient("localhost");
+        this.startClient(0);
+        this.startClient(1);
+        this.startClient(2);
 
         //crear y añadir elementos graficos
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 //        this.createVisibleObjects();
-        for (int i = 0; i < 200; i++) {
-            this.createBall(20, 20, i * 32 , i + 7);
 
-           
-
-        }
-//        this.createBall(20, 20, 25, 10);
-//        this.createBall(20, 20, 100, 0);
-//        this.createBall(20, 20, 500, 200);
-//        this.createBall(20, 20, 1900, 190);
+        this.createBall(20, 20, 100, 500);
 
         this.pack();
         this.setVisible(true);
 
         //empezar el juego (colisiones, etc)
         this.startGame();
-        
 
     }
 
@@ -85,7 +79,7 @@ class KillerGame extends JFrame {
         Ball bola = new Ball(this, witdh, height);
         bola.setPosX(posX);
         bola.setPosY(posY);
-        this.addAutonomousObj(bola);
+        this.addAutonomousObj(bola); //necesario?
     }
 
     private void createViewer(int width, int height) {
@@ -100,9 +94,9 @@ class KillerGame extends JFrame {
         this.addAutonomousObj(bola);
     }
 
-    private void startClient() {
+    private void startClient(int index) {
         //de momento solo uno
-        this.killerClients.get(0).makeContact();
+        this.killerClients.get(index).makeContact();
     }
 
     private void startGame() {
@@ -119,35 +113,38 @@ class KillerGame extends JFrame {
         //pintar todo
         new Thread(this.viewer).start();
 
-//        this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
-        while (true) {
-            for (Autonomous aObj : autonomousObjects) {
-                kr.comprobarColision(aObj);
+    }
 
-            }
-//
-//            if (this.autonomousObjects.get(0).getPosX() >= this.FRAME_WIDTH - this.autonomousObjects.get(0).getWith()) {
-//                    this.killerClients.get(0).sendBola(2, 3, 1, 1, 0, 0);
-//            }
-            //mandar un array de info
-//                if (aObj.getPosX() >= 400 - aObj.getWith()) {
-//                    this.killerClients.get(0).sendBola(
-//                            aObj.getPosX()
-//                            , aObj.getPosY()
-//                            , aObj.getVelX()
-//                            , aObj.getVelY()
-//                            , aObj.getHeight()
-//                            , aObj.getWith());
-//                    this.autonomousObjects.remove(0);
-//                }
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+    public synchronized Boolean tryConnectPreviousKiller(Socket cliSock, String cliAddr) {
+        if (this.previousKiller != null) {
+            return false;   //============= NextKiller ya existe ===========>>>>
         }
 
+        //crear nuevo previousKiller
+        PreviousKiller pk = new PreviousKiller(this, cliSock, cliAddr);
+
+        //iniciar nuevo hilo 
+        new Thread(pk).start();
+
+        //almacenar variable en atributo de clase
+        this.previousKiller = pk;
+        return true;        //============ NextKiller creado y añadido=======>>>
+    }
+
+    public synchronized Boolean tryConnectNextKiller(Socket cliSock, String cliAddr) {
+        if (this.nextKiller != null) {
+            return false;   //========= PreviousKiller ya existe ===========>>>>
+        }
+
+        //crear nuevo nextKiller
+        NextKiller nk = new NextKiller(this, cliSock, cliAddr);
+
+        //iniciar nuevo hilo 
+        new Thread(nk).start();
+
+        //almacenar variable en atributo de clase
+        this.nextKiller = nk;
+        return true;        //======== PreviousKiller creado y añadido=======>>>
     }
 
     private void startServer(KillerServer ks) {
@@ -164,19 +161,27 @@ class KillerGame extends JFrame {
     }
 
     public PreviousKiller getPreviousKiller() {
-        return pk;
-    }
-
-    public void setPreviousKiller(PreviousKiller pk) {
-        this.pk = pk;
+        return this.previousKiller;
     }
 
     public NextKiller getNextKiller() {
-        return nk;
+        return this.nextKiller;
+    }
+
+    public int getFrameHeight() {
+        return this.FRAME_HEIGHT;
+    }
+
+    public int getFrameWidth() {
+        return this.FRAME_WIDTH;
     }
 
     public void setNextKiller(NextKiller nk) {
-        this.nk = nk;
+        this.nextKiller = nk;
+    }
+
+    public void setPreviousKiller(PreviousKiller pk) {
+        this.previousKiller = pk;
     }
 
 }

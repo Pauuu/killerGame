@@ -12,15 +12,17 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 public class VisibleObject implements Renderizable {
+    
+    //permite ser accedido a solo las clases que hereden de esta (en teoria)
 
-    private BufferedImage imagen;
+    protected BufferedImage imagen;
 
-    private KillerGame killerGame;
+    protected KillerGame killerGame;
 
-    private int height;
-    private int posX;
-    private int posY;
-    private int witdh;
+    protected int height;
+    protected int posX;
+    protected int posY;
+    protected int witdh;
 
     public VisibleObject(KillerGame kGame, int width, int height) {
         this.killerGame = kGame;
@@ -89,7 +91,7 @@ public class VisibleObject implements Renderizable {
     
 
     @Override
-    public void pintar(Graphics2D g2d) {
+    public void render(Graphics2D g2d) {
       //  g2d.drawImage(this.imagen, this.posX, this.posY, null);
       g2d.setColor(Color.red);
       g2d.fillOval(this.posX, this.posY, this.witdh, this.height);

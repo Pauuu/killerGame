@@ -15,7 +15,7 @@ import java.net.Socket;
  * @author pau
  */
 public class NextKiller implements Runnable{
-     private KillerGame killerGame;
+    private KillerGame killerGame;
     private Socket clientSock;
     private String clientAddr;
 
@@ -32,6 +32,7 @@ public class NextKiller implements Runnable{
 
         try {
             while (!done) {
+                System.out.println("NK: Waiting for reading lines...");
                 line = in.readLine();
 
                 //si line null es que el cliente ha cerrado/perdido la conexion
@@ -102,16 +103,10 @@ public class NextKiller implements Runnable{
             this.clientSock.close();
 
         } catch (Exception ex) {
-            System.err.println("kk");
+            System.err.println("NK: kk");
         }
 
-        System.out.println("Client connection closed\n");
-
-        //lo vuelve a imprimir desde esta clase
-        System.out.println("Waiting for a client...\n");
-
-        // backup scores after client finish
-        //this.hs.saveScores();
+        System.out.println("NK: Client connection closed\n");
     }
     
 }

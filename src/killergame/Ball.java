@@ -16,18 +16,40 @@ public class Ball extends Autonomous {
 
     public Ball(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
-        
-        this.setImagen("imgs/blackBall.png");
+        this.setVelX(1);
+        this.setVelY(7);
 
+        //this.setImagen("imgs/blackBall.png");
+    }
+
+    //eliminar --> pasar a killer rules?
+    private void comprobarColision() {
+
+        //mira si colision en eje X
+        if (this.posX >= this.killerGame.getFrameWidth() - this.witdh) {
+            this.velX *= -1;
+
+        } else if (this.posX <= 0) {
+            this.velX *= -1;
+        }
+
+        //mira si colision en eje Y
+        if (this.posY >= this.killerGame.getFrameHeight()- this.height) {
+            this.velY *= -1;
+
+        } else if (this.posY <= 0) {
+            this.velY *= -1;
+        }
     }
 
     @Override
     public void run() {
         while (true) {
+            this.comprobarColision();
             this.moveX();
             this.moveY();
             try {
-                Thread.sleep(10);
+                Thread.sleep(9);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }

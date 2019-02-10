@@ -58,12 +58,12 @@ public class Viewer extends Canvas implements Runnable {
     private void paintComponents(Graphics2D g2d) {
 
         try {
-            g2d.fillRect(0, 0, 1000, 1000);
+            g2d.fillRect(0, 0, 1920, 1080);
 
             for (VisibleObject vObj : visibleObjects) {
 //                g.drawImage(this.backgroundImg, 0, 0, null);
 
-                vObj.pintar(g2d);
+                vObj.render(g2d);
 
             }
 
