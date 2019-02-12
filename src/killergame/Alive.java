@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * <!-- begin-user-doc -->
  * <!--  end-user-doc  --> @generated
  */
-public class Alive extends VisibleObject implements Runnable {
+public abstract class Alive extends VisibleObject implements Runnable {
 
     //quitar las velocidades x defecto
     protected int velX;
@@ -20,18 +20,26 @@ public class Alive extends VisibleObject implements Runnable {
 
     }
 
-    //no dejar de lado OJO
-    public boolean testColision(ArrayList<VisibleObject> vObjs) {
-        
+    protected void testColision() {
+        this.killerGame.testColision(this);
 
-        return false;
+    }    
+    
+    protected void invertirEjeX() {
+        this.velX *= -1;
     }
 
-    public void moveX() {
+    protected void invertirEjeY() {
+        this.velY *= -1;
+    }
+
+    public void moveX(int vel) {
+        this.velX = vel;
         this.setPosX(this.getPosX() + this.velX);
     }
 
-    public void moveY() {
+    public void moveY(int vel) {
+        this.velY = vel;
         this.setPosY(this.getPosY() + this.velY);
     }
 
@@ -51,9 +59,6 @@ public class Alive extends VisibleObject implements Runnable {
         return velY;
     }
 
-    @Override
-    public void run() {
-        System.out.println("hola");
-    }
+    
 
 }

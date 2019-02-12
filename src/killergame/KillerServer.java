@@ -20,8 +20,8 @@ import java.util.logging.Logger;
 public class KillerServer implements Runnable {
 
     KillerGame killerGame;
-    private Socket clientSock;
-    private String clientAddr;
+//    private Socket clientSock;
+//    private String clientAddr;
 
     public KillerServer(KillerGame kg) {
         this.killerGame = kg;
@@ -53,21 +53,27 @@ public class KillerServer implements Runnable {
                 //guarda la direccion del cliente
                 cliAddr = cliSock.getInetAddress().getHostAddress();
 
-                this.crearConexiones(cliSock, cliAddr);
+                this.crearKillerPad(cliSock, cliAddr);
+
+//                this.crearConexiones(cliSock, cliAddr);
 
                 //mira si null, crea conexiones.Primero izq, luego derecha
 //                this.crearConexiones(cliSock, cliAddr);
             }
 
         } catch (Exception e) {
-            System.out.println("test" + e);
+            System.err.println("test" + e);
         }
+    }
+
+    private void discriminarConexion() {
+        //como discriminar si es de un mando o de un modul visual
     }
 
     private void crearConexiones(Socket cliSock, String cliAddr) {
         new Thread(new KillerServerHandler(
-                this.killerGame, 
-                cliSock, 
+                this.killerGame,
+                cliSock,
                 cliAddr)
         ).start();
     }
@@ -75,6 +81,13 @@ public class KillerServer implements Runnable {
     @Override
     public void run() {
         this.inicioEsperaConexion();
+    }
+
+    private void crearKillerPad(Socket cliSock, String cliAddr) {
+        new Thread(new KillerPad(killerGame,
+                cliSock,
+                cliAddr)
+        ).start();
     }
 
 }

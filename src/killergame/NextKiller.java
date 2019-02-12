@@ -14,11 +14,11 @@ import java.net.Socket;
  *
  * @author pau
  */
-public class NextKiller implements Runnable{
+public class NextKiller implements Runnable {
+
     private KillerGame killerGame;
     private Socket clientSock;
     private String clientAddr;
-
 
     public NextKiller(KillerGame kGame, Socket cliSocket, String cliAddress) {
         this.killerGame = kGame;
@@ -26,7 +26,7 @@ public class NextKiller implements Runnable{
         this.clientAddr = cliAddress;
     }
 
-   private void processClient(BufferedReader in, PrintWriter out) {
+    private void processClient(BufferedReader in, PrintWriter out) {
         String line;
         Boolean done = false;
 
@@ -49,10 +49,9 @@ public class NextKiller implements Runnable{
 
                         case "ball":
                             //o recibe el obj bola o cada parametro x separado
-                            Autonomous ball = new Autonomous(this.killerGame, 5, 10);
-                            ball.setPosX(Integer.parseInt(lines[1]));
-                            ball.setPosY(Integer.parseInt(lines[2]) + 100);
-                            this.startBola(ball);
+                            this.killerGame.createAlive(
+                                    new Ball(this.killerGame, 20, 20),
+                                    30, 50);
                             break;
 
                         default:
@@ -65,11 +64,6 @@ public class NextKiller implements Runnable{
         } catch (Exception e) {
             System.err.println("algo ha fallado");
         }
-    }
-
-    private void startBola(Autonomous aObj) {
-        this.killerGame.addAutonomousObj(aObj);
-        new Thread(aObj).start();
     }
 
     private void doRequest(String line, PrintWriter out) {
@@ -108,5 +102,5 @@ public class NextKiller implements Runnable{
 
         System.out.println("NK: Client connection closed\n");
     }
-    
+
 }

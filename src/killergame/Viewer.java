@@ -22,6 +22,8 @@ public class Viewer extends Canvas implements Runnable {
     private BufferedImage biFrame;
     private BufferedImage backgroundImg;
 
+    private Graphics2D g2d;
+
     private KillerGame killerGame;
 
     //si la vetnana cambia tamaño, las variables se cambian tmb?
@@ -37,6 +39,7 @@ public class Viewer extends Canvas implements Runnable {
                 this.width,
                 this.heigth,
                 BufferedImage.TYPE_4BYTE_ABGR);
+        this.g2d = (Graphics2D) biFrame.getGraphics();
 
         //cargar imagen de "fondo"
         try {
@@ -55,33 +58,27 @@ public class Viewer extends Canvas implements Runnable {
 
     }
 
-    private void paintComponents(Graphics2D g2d) {
+    private void paintComponents() {
 
         try {
-            g2d.fillRect(0, 0, 1920, 1080);
-
+            this.g2d.fillRect(0, 0, 1920, 1080);
             for (VisibleObject vObj : visibleObjects) {
-//                g.drawImage(this.backgroundImg, 0, 0, null);
 
-                vObj.render(g2d);
-
+                vObj.render(this.g2d);
             }
+            
+            this.g2d.drawImage(this.backgroundImg, 0, 0, null);
+            this.g2d.setColor(Color.blue);
 
         } catch (Exception e) {
-            System.out.println("Exception on paintComponents");
-            System.out.println("=== Solo debug ===");
+            System.err.println(e);
         }
     }
 
     private void updateFrame() {
 
-        Graphics2D g2d = (Graphics2D) biFrame.getGraphics();
-
-        //poner fondo con canal aplpha y luego pintar elemento (ojo cambair orden pintada componentes)
-        g2d.drawImage(this.backgroundImg, 0, 0, null);
-
         //pinta todos los elementos en la BufferedImage
-        this.paintComponents(g2d);
+        this.paintComponents();
 
         //pinta la imagen en el canvas
         this.getGraphics().drawImage(biFrame, 0, 0, null);
@@ -116,21 +113,21 @@ public class Viewer extends Canvas implements Runnable {
         int fps;                //sera dividido entre 1seg para controlar freqüenica
 
         previousTimeMili = System.currentTimeMillis();
-        fps = 64;
+        fps = 60;
 
         while (true) {
 
             //calcula tiempo actual menos el anterior (diferencia tiempo)
-            timeDiffMili = System.currentTimeMillis() - previousTimeMili;
+            timeDiffMili = System.nanoTime()- previousTimeMili;
 
             //si diferencia mayor o igual...
-            if (timeDiffMili >= 1000 / fps) {
+            if (timeDiffMili >= 10000 / fps) {
 
                 //actualiza el tiempo anterior
                 previousTimeMili = System.currentTimeMillis();
 
                 //actualiza lista de objetos visibles
-                this.visibleObjects = this.killerGame.getAoutonomousObjects();
+                this.visibleObjects = this.killerGame.getVisibleObjects();
 
                 //pinta todos los elementos
                 this.updateFrame();
