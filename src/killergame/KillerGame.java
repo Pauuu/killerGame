@@ -60,7 +60,7 @@ class KillerGame extends JFrame {
 //        this.createVisibleObjects();
 
 //        this.createBall(20, 20, 100, 500);
-        Ball a = new Ball(this, 30, 30);
+        Ball a = new Ball(this, 30, 30);    
         
         a.setColor(Color.red);
         
