@@ -1,5 +1,6 @@
 package killergame;
 
+import java.awt.Color;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -59,8 +60,34 @@ class KillerGame extends JFrame {
 //        this.createVisibleObjects();
 
 //        this.createBall(20, 20, 100, 500);
-        this.createAlive(new Ball(this, 30, 30), 500, 200);
-        this.createAlive(new Ball(this, 30, 30), 600, 200);
+        Ball a = new Ball(this, 30, 30);
+        
+        a.setColor(Color.red);
+        
+        Ball b = new Ball(this, 300, 30);
+        b.setColor(Color.green);
+        
+        Ball c = new Ball(this, 300, 300);
+        c.setColor(Color.green);
+        
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(a, 500, 200);
+        this.createAlive(b, 600, 200);
+        this.createAlive(c, 190, 200);
         
         this.pack();
         this.setVisible(true);
@@ -147,19 +174,23 @@ class KillerGame extends JFrame {
         this.visibleObjects.add(vObj);
     }
     
+    private void aplicarRegla(int regla, Alive vObj){
+        vObj.invertirVelocidades();
+    }
+    
     private void testTocadoMargenPantalla(Alive objTest) {
         //comprobar si ha chocado con el marco
         if ((objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.witdh)
                 || (objTest.posX <= 0)) {
             
-            objTest.invertirEjeX();
+            objTest.invertirVelX();
         }
 
         //mira si colision en eje Y (marco pantalla)
         if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
                 || (objTest.posY <= 0)) {
             
-            objTest.invertirEjeY();
+            objTest.invertirVelY();
         }
     }
     
@@ -171,9 +202,10 @@ class KillerGame extends JFrame {
 
                 //comprobar si colision
                 if (objTest.getHitBox().intersects(vObj.getHitBox())){ //lamar a las reglas para conocer que han de hacer
-                
-                    KillerRules.testColision(objTest, vObj);
-                    System.out.println("killergame.KillerGame.testColision()");
+                    int regla = KillerRules.testColision(objTest, vObj);
+                    this.aplicarRegla(regla, objTest);
+                    
+//                    System.out.println("killergame.KillerGame.testColision()");
                 }
                 
             }

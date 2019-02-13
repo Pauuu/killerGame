@@ -66,7 +66,7 @@ public class Viewer extends Canvas implements Runnable {
 
                 vObj.render(this.g2d);
             }
-            
+
             this.g2d.drawImage(this.backgroundImg, 0, 0, null);
             this.g2d.setColor(Color.blue);
 
@@ -108,29 +108,31 @@ public class Viewer extends Canvas implements Runnable {
     public void run() {
         //modificar esto 
 
-        long timeDiffMili;      //direfencia de tiempo actual menos anterior
-        long previousTimeMili;  //timepo anterior
+        double timeDiffNano;      //direfencia de tiempo actual menos anterior
+        double previousTimeNano;  //timepo anterior
         int fps;                //sera dividido entre 1seg para controlar freqüenica
 
-        previousTimeMili = System.currentTimeMillis();
+        previousTimeNano = System.nanoTime();
         fps = 60;
 
         while (true) {
 
             //calcula tiempo actual menos el anterior (diferencia tiempo)
-            timeDiffMili = System.nanoTime()- previousTimeMili;
+            timeDiffNano = System.nanoTime() - previousTimeNano;
 
             //si diferencia mayor o igual...
-            if (timeDiffMili >= 10000 / fps) {
+            if (timeDiffNano >= 1000000000d / fps) {
+
+                System.out.println("timediff:" + timeDiffNano);
 
                 //actualiza el tiempo anterior
-                previousTimeMili = System.currentTimeMillis();
-
                 //actualiza lista de objetos visibles
                 this.visibleObjects = this.killerGame.getVisibleObjects();
 
                 //pinta todos los elementos
                 this.updateFrame();
+
+                previousTimeNano = System.nanoTime();
 
             }
 

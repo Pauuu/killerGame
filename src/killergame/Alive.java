@@ -14,25 +14,42 @@ public abstract class Alive extends VisibleObject implements Runnable {
     protected int velX;
     protected int velY;
 
-
     public Alive(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
 
     }
 
+    protected void updateHitBox() {
+        this.hitBox.setLocation(this.posX, this.posY);
+    }
+
     protected void testColision() {
         this.killerGame.testColision(this);
 
-    }    
-    
-    protected void invertirEjeX() {
+    }
+
+    protected void updatePosition() {
+
+        this.moveX((int) (this.velX));
+        this.moveY((int) (this.velY));
+        this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
+        this.testColision();
+
+    }
+
+    protected void invertirVelX() {
         this.velX *= -1;
     }
 
-    protected void invertirEjeY() {
+    protected void invertirVelY() {
         this.velY *= -1;
     }
 
+    public void invertirVelocidades(){
+        this.velX *= -1;
+        this.velY *= -1;
+    }
+    
     public void moveX(int vel) {
         this.velX = vel;
         this.setPosX(this.getPosX() + this.velX);
@@ -58,7 +75,5 @@ public abstract class Alive extends VisibleObject implements Runnable {
     public int getVelY() {
         return velY;
     }
-
-    
 
 }

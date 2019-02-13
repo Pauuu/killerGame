@@ -32,15 +32,21 @@ public abstract class VisibleObject implements Renderizable {
         this.witdh = width;
         this.height = height;
 
-        this.addHitBox(this.witdh, this.height);
+        this.addHitBox();
 
     }
 
-    private void addHitBox(int width, int heihgt) {
-        this.hitBox = new Rectangle();
-        this.hitBox.width = width;
-        this.hitBox.height = heihgt;
-        this.hitBox.setLocation(this.posX, this.posY);
+    private void addHitBox() {
+        this.hitBox = new Rectangle(
+                this.posX, 
+                this.posY, 
+                this.witdh, 
+                this.height
+        );
+        
+//        this.hitBox.width = width;
+//        this.hitBox.height = heihgt;
+//        this.hitBox.setLocation(this.posX, this.posY);
     }
 
     //getters & setters

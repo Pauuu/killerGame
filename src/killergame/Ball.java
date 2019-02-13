@@ -15,16 +15,23 @@ import java.util.logging.Logger;
  * @author pau
  */
 public class Ball extends Autonomous {
+    Color c;
 
     public Ball(KillerGame kGame, int width, int height) {
         super(kGame, width, height);
+        this.velX = 1;  //quitar?
+        this.velY = 1;  //quitar?
 
         //this.setImagen("imgs/blackBall.png");
+    }
+    
+    public void setColor(Color c){
+        this.c = c;
     }
 
     @Override
     public void render(Graphics2D g2d) {
-        g2d.setColor(Color.red);
+        g2d.setColor(c);
         g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
 
     }
@@ -32,26 +39,31 @@ public class Ball extends Autonomous {
     @Override
     public void run() {
 
-        long timeDiffNano;      //direfencia de tiempo actual menos anterior
-        long previousTimeNano;  //timepo anterior
+        //direfencia de tiempo actual menos anterior
+        double timeDiffNano;
+
+        //timepo anterior
+        double previousTimeNano;
 
         previousTimeNano = System.nanoTime();
 
-        this.velX = 1;
-        this.velY = 1;
-
         while (true) {
 
+            //calcula la diferencia
             timeDiffNano = System.nanoTime() - previousTimeNano;
 
-            long dist = this.velX * timeDiffNano;
+            if (timeDiffNano > 9000000) {   //tiempo puesto a boleo
 
-            this.testColision();
-            this.moveX((int) (this.velX));
-            this.moveY((int) (this.velY));
-            this.hitBox.setLocation(posX, posY);
+                //actualiza la posicion del obj
+                this.updatePosition();
+
+                //actualiza el tiempo anterior cada vez q entra
+                previousTimeNano = System.nanoTime();
+            }
+
+            //para que el procesador no pete
             try {
-                Thread.sleep(15);
+                Thread.sleep(1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
