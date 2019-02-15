@@ -16,8 +16,8 @@ import java.util.logging.Logger;
  */
 public class Player extends Controlled {
 
-    public Player(KillerGame kGame, int width, int height) {
-        super(kGame, width, height);
+    public Player(KillerGame kGame, int posX, int posY, int width, int height) {
+        super(kGame, posX, posY, width, height);
 
     }
 

@@ -15,17 +15,25 @@ import java.util.logging.Logger;
  * @author pau
  */
 public class Ball extends Autonomous {
-    Color c;
 
-    public Ball(KillerGame kGame, int width, int height) {
-        super(kGame, width, height);
-        this.velX = 1;  //quitar?
-        this.velY = 1;  //quitar?
+    Color c;
+    private boolean dead = false;
+
+    public Ball(KillerGame kGame, int posX, int posY, int width, int height) {
+        super(kGame, posX, posY, width, height);
+        this.velX = 5;  //quitar?
+        this.velY = 5;  //quitar?
+        
+        this.disparo();
 
         //this.setImagen("imgs/blackBall.png");
     }
     
-    public void setColor(Color c){
+    public void disparo(){
+        new Thread(new Bala(this.killerGame, this, this.posX, this.posY)).start();
+    }
+
+    public void setColor(Color c) {
         this.c = c;
     }
 
@@ -35,39 +43,43 @@ public class Ball extends Autonomous {
         g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
 
     }
-
-    @Override
-    public void run() {
-
-        //direfencia de tiempo actual menos anterior
-        double timeDiffNano;
-
-        //timepo anterior
-        double previousTimeNano;
-
-        previousTimeNano = System.nanoTime();
-
-        while (true) {
-
-            //calcula la diferencia
-            timeDiffNano = System.nanoTime() - previousTimeNano;
-
-            if (timeDiffNano > 9000000) {   //tiempo puesto a boleo
-
-                //actualiza la posicion del obj
-                this.updatePosition();
-
-                //actualiza el tiempo anterior cada vez q entra
-                previousTimeNano = System.nanoTime();
-            }
-
-            //para que el procesador no pete
-            try {
-                Thread.sleep(1);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
+//
+//    @Override
+//    public void run() {
+////
+////        //direfencia de tiempo actual menos anterior
+////        double timeDiffNano;
+////
+////        //timepo anterior
+////        double previousTimeNano;
+////
+////        previousTimeNano = System.nanoTime();
+////
+////        while (true) {
+////
+////            //calcula la diferencia
+////            timeDiffNano = System.nanoTime() - previousTimeNano;
+////
+////            //tiempo puesto a boleo pero que va bien
+////            if (timeDiffNano >= 10000000) {
+////
+////                //actualiza la posicion del obj
+////                this.updatePosition(timeDiffNano);
+////
+////                //actualiza el tiempo anterior cada vez q entra
+////                previousTimeNano = System.nanoTime();
+////
+////                System.out.println("timediff: " + timeDiffNano);
+////
+////            }
+////
+////            //para que el procesador no pete?
+////            try {
+////                Thread.sleep(9);
+////            } catch (InterruptedException ex) {
+////                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
+////            }
+////        }
+//    }
 
 }

@@ -113,7 +113,7 @@ public class Viewer extends Canvas implements Runnable {
         int fps;                //sera dividido entre 1seg para controlar freqüenica
 
         previousTimeNano = System.nanoTime();
-        fps = 60;
+        fps = 20;
 
         while (true) {
 
@@ -121,9 +121,9 @@ public class Viewer extends Canvas implements Runnable {
             timeDiffNano = System.nanoTime() - previousTimeNano;
 
             //si diferencia mayor o igual...
-            if (timeDiffNano >= 1000000000d / fps) {
+            if (timeDiffNano >= 1000000000 / fps) {
 
-                System.out.println("timediff:" + timeDiffNano);
+//                System.out.println("timediff: " + timeDiffNano);
 
                 //actualiza el tiempo anterior
                 //actualiza lista de objetos visibles

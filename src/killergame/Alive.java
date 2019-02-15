@@ -14,8 +14,8 @@ public abstract class Alive extends VisibleObject implements Runnable {
     protected int velX;
     protected int velY;
 
-    public Alive(KillerGame kGame, int width, int height) {
-        super(kGame, width, height);
+    public Alive(KillerGame kGame, int posX, int posY, int width, int height) {
+        super(kGame, posX, posY, width, height);
 
     }
 
@@ -28,10 +28,20 @@ public abstract class Alive extends VisibleObject implements Runnable {
 
     }
 
-    protected void updatePosition() {
+    protected void updatePosition(double time) {
+        
+//        System.out.println("tttttttttttttt: " + time);
 
-        this.moveX((int) (this.velX));
-        this.moveY((int) (this.velY));
+        int intTime = (int) time / 10000000;    //lo pasamos a decisegundos
+
+        //  position' = position + (vel * time); -> M.R.U.
+        this.posX += this.velX * intTime;
+        this.posY += this.velY * intTime;
+//        System.out.println("posX: " + this.posX);
+//        System.out.println("posY: " + this.posY);
+//        System.out.println("time: " + intTime + "\n");
+//        this.moveX((int) (this.velX));
+//        this.moveY((int) (this.velY));
         this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
         this.testColision();
 
@@ -45,19 +55,22 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.velY *= -1;
     }
 
-    public void invertirVelocidades(){
+    public void invertirVelocidades() {
         this.velX *= -1;
         this.velY *= -1;
     }
-    
+
     public void moveX(int vel) {
         this.velX = vel;
-        this.setPosX(this.getPosX() + this.velX);
+        this.posX += this.velX;
+//        this.setPosX(this.getPosX() + this.velX);
     }
 
     public void moveY(int vel) {
         this.velY = vel;
-        this.setPosY(this.getPosY() + this.velY);
+        this.posY += this.velY;
+
+//        this.setPosY(this.getPosY() + this.velY);
     }
 
     public int getVelX() {

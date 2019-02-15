@@ -27,8 +27,11 @@ public abstract class VisibleObject implements Renderizable {
     protected int posY;
     protected int witdh;
 
-    public VisibleObject(KillerGame kGame, int width, int height) {
+    //otro construcoe para indicar la posicion?
+    public VisibleObject(KillerGame kGame, int posX, int posY, int width, int height) {
         this.killerGame = kGame;
+        this.posX = posX;
+        this.posY = posY;
         this.witdh = width;
         this.height = height;
 
@@ -38,12 +41,12 @@ public abstract class VisibleObject implements Renderizable {
 
     private void addHitBox() {
         this.hitBox = new Rectangle(
-                this.posX, 
-                this.posY, 
-                this.witdh, 
+                this.posX,
+                this.posY,
+                this.witdh,
                 this.height
         );
-        
+
 //        this.hitBox.width = width;
 //        this.hitBox.height = heihgt;
 //        this.hitBox.setLocation(this.posX, this.posY);

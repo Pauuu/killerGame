@@ -50,8 +50,7 @@ public class NextKiller implements Runnable {
                         case "ball":
                             //o recibe el obj bola o cada parametro x separado
                             this.killerGame.createAlive(
-                                    new Ball(this.killerGame, 20, 20),
-                                    30, 50);
+                                    new Ball(this.killerGame, 5, 5, 20, 20)); //cambiar
                             break;
 
                         default:
