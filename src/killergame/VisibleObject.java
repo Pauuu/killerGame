@@ -8,11 +8,20 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.shape.Shape;
 import javax.imageio.ImageIO;
 
+/**
+ * Todo objeto visible, una vez instanciado es añadido a la lista de objetos
+ * visibles del objeto killerGame gracias al metodo <i>addVisibleObject</i>.
+ *
+ * De esta manera, cunado es creado, en la pantalla se pinta auntomaticamente.
+ *
+ * @author pau
+ */
 public abstract class VisibleObject implements Renderizable {
 
     //permite ser accedido a solo las clases que hereden de esta (en teoria)
@@ -34,12 +43,12 @@ public abstract class VisibleObject implements Renderizable {
         this.posY = posY;
         this.witdh = width;
         this.height = height;
-
         this.addHitBox();
+        this.killerGame.addVisibleObject(this);
 
     }
 
-    private void addHitBox() {
+    protected void addHitBox() {
         this.hitBox = new Rectangle(
                 this.posX,
                 this.posY,
@@ -47,9 +56,20 @@ public abstract class VisibleObject implements Renderizable {
                 this.height
         );
 
-//        this.hitBox.width = width;
-//        this.hitBox.height = heihgt;
-//        this.hitBox.setLocation(this.posX, this.posY);
+    }
+
+    protected void deleteThisFromVisibleObjs() {
+
+        ArrayList<VisibleObject> listVisibleObjs;
+
+        // puntero a la lista de visual objects del killerGame
+        listVisibleObjs = this.killerGame.getVisibleObjects();
+
+        for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
+            if (listVisibleObjs.get(pos) == this) {
+                listVisibleObjs.remove(pos);
+            }
+        }
     }
 
     //getters & setters
@@ -63,8 +83,9 @@ public abstract class VisibleObject implements Renderizable {
 
     public void setImagen(String url) {
         try {
-            //cambiar la imagen
+            // --cambiar la imagen--
             this.imagen = ImageIO.read(new File(url));
+
         } catch (IOException ex) {
             System.err.println("-- Imagen no cargada --");
             Logger.getLogger(VisibleObject.class.getName()).log(Level.SEVERE, null, ex);
@@ -117,7 +138,6 @@ public abstract class VisibleObject implements Renderizable {
 
     @Override
     public void render(Graphics2D g2d) {
-        //  g2d.drawImage(this.imagen, this.posX, this.posY, null);
 
     }
 

@@ -23,14 +23,13 @@ public class Ball extends Autonomous {
         super(kGame, posX, posY, width, height);
         this.velX = 5;  //quitar?
         this.velY = 5;  //quitar?
-        
-        this.disparo();
+      
 
         //this.setImagen("imgs/blackBall.png");
     }
     
     public void disparo(){
-        new Thread(new Bala(this.killerGame, this, this.posX, this.posY)).start();
+        new Thread(new Bala(this.killerGame, this)).start();
     }
 
     public void setColor(Color c) {

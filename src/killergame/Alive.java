@@ -30,18 +30,11 @@ public abstract class Alive extends VisibleObject implements Runnable {
 
     protected void updatePosition(double time) {
         
-//        System.out.println("tttttttttttttt: " + time);
-
         int intTime = (int) time / 10000000;    //lo pasamos a decisegundos
 
         //  position' = position + (vel * time); -> M.R.U.
         this.posX += this.velX * intTime;
         this.posY += this.velY * intTime;
-//        System.out.println("posX: " + this.posX);
-//        System.out.println("posY: " + this.posY);
-//        System.out.println("time: " + intTime + "\n");
-//        this.moveX((int) (this.velX));
-//        this.moveY((int) (this.velY));
         this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
         this.testColision();
 

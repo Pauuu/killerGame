@@ -17,9 +17,8 @@ class KillerGame extends JFrame {
     /*  hace falta tener todas las listas de cada uno; basta diferenciar 
     *   entre los static y alive; o solo una lista de visibleObjects y hacer un 
     *   "instance of" para crear los threads de los alive?
-     */ //creo q instanceOf es la mejor solución
-//    private ArrayList<Autonomous> autonomousObjects; //cambiar a alive? a VisibleObject?
-    private ArrayList<VisibleObject> visibleObjects; //cambiar a alive? a VisibleObject?
+     */
+    private ArrayList<VisibleObject> visibleObjects;
     private PreviousKiller previousKiller;
     private NextKiller nextKiller;
 
@@ -36,14 +35,13 @@ class KillerGame extends JFrame {
 
         //añadir elementos
         this.killerClients = new ArrayList<>(); //x si es cliente de mas maquinas
-//        this.autonomousObjects = new ArrayList<>();
         this.visibleObjects = new ArrayList<>();
         this.killerServer = new KillerServer(this);
 
         //añadir comunicaciones
         this.startServer(this.killerServer);
 
-        //ojo poner un contador para poner los clientes despues
+        //ojo poner un contador para "encender" los clientes despues
         try {
             Thread.sleep(90);
         } catch (InterruptedException ex) {
@@ -57,20 +55,23 @@ class KillerGame extends JFrame {
 //        this.startClient(1);
 //        this.startClient(2);
         //crear y añadir elementos graficos
-//        this.createVisibleObjects();
-//        this.createBall(20, 20, 100, 500);
         Ball a = new Ball(this, 5, 5, 30, 30);
         Ball b = new Ball(this, 59, 5, 30, 30);
 
-//        a.setColor(Color.red);
-
-        this.createAlive(a);
-        
+        a.setColor(Color.PINK);
 
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
         this.setVisible(true);
         this.startGame();
+
+        try {
+            Thread.sleep(900);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        a.disparo();
     }
 
     private void addClient(String ip) {
@@ -96,60 +97,23 @@ class KillerGame extends JFrame {
             }
         }
 
-        //input del usuario
-        //comprobar colisiones/normas/etc
+        //input del usuario?
         //--crear un hilo por cada nuevo elemento--
         //pintar todo
         new Thread(this.viewer).start();
 
     }
 
-    public synchronized Boolean tryConnectPreviousKiller(Socket cliSock, String cliAddr) {
-        if (this.previousKiller != null) {
-            return false;   //============= NextKiller ya existe ===========>>>>
-        }
-
-        //crear nuevo previousKiller
-        PreviousKiller pk = new PreviousKiller(this, cliSock, cliAddr);
-
-        //iniciar nuevo hilo 
-        new Thread(pk).start();
-
-        //almacenar variable en atributo de clase
-        this.previousKiller = pk;
-        return true;        //============ NextKiller creado y añadido=======>>>
-    }
-
-    public synchronized Boolean tryConnectNextKiller(Socket cliSock, String cliAddr) {
-        if (this.nextKiller != null) {
-            return false;   //========= PreviousKiller ya existe ===========>>>>
-        }
-
-        //crear nuevo nextKiller
-        NextKiller nk = new NextKiller(this, cliSock, cliAddr);
-
-        //iniciar nuevo hilo 
-        new Thread(nk).start();
-
-        //almacenar variable en atributo de clase
-        this.nextKiller = nk;
-        return true;        //======== PreviousKiller creado y añadido=======>>>
-    }
-
-    public void createAlive(Alive aObj) {
-        this.addVisibleObject(aObj);
-    }
-
     private void startServer(KillerServer ks) {
         new Thread(ks).start();
     }
 
-    private void addVisibleObject(VisibleObject vObj) {
-        this.visibleObjects.add(vObj);
-    }
-
     private void aplicarRegla(int regla, Alive vObj) {
-        vObj.invertirVelocidades();
+        // --discriminar reglas--
+
+        if (regla == 1) {
+            vObj.invertirVelocidades();
+        }
     }
 
     private void testTocadoMargenPantalla(Alive objTest) {
@@ -176,14 +140,54 @@ class KillerGame extends JFrame {
 
                 //comprobar si colision
                 if (objTest.getHitBox().intersects(vObj.getHitBox())) { //lamar a las reglas para conocer que han de hacer
+
                     int regla = KillerRules.testColision(objTest, vObj);
                     this.aplicarRegla(regla, objTest);
-
-//                    System.out.println("killergame.KillerGame.testColision()");
                 }
-
             }
         }
+    }
+
+    public void createAlive(Alive aObj) {
+        this.addVisibleObject(aObj);
+    }
+
+    public synchronized Boolean tryConnectPreviousKiller(Socket cliSock, String cliAddr) {
+
+        if (this.previousKiller != null) {
+            return false;   //============= NextKiller ya existe ===========>>>>
+        }
+
+        //crear nuevo previousKiller
+        PreviousKiller pk = new PreviousKiller(this, cliSock, cliAddr);
+
+        //iniciar nuevo hilo 
+        new Thread(pk).start();
+
+        //almacenar variable en atributo de clase
+        this.previousKiller = pk;
+        return true;        //============ NextKiller creado y añadido=======>>>
+    }
+
+    public synchronized Boolean tryConnectNextKiller(Socket cliSock, String cliAddr) {
+
+        if (this.nextKiller != null) {
+            return false;   //========= PreviousKiller ya existe ===========>>>>
+        }
+
+        //crear nuevo nextKiller
+        NextKiller nk = new NextKiller(this, cliSock, cliAddr);
+
+        //iniciar nuevo hilo 
+        new Thread(nk).start();
+
+        //almacenar variable en atributo de clase
+        this.nextKiller = nk;
+        return true;        //======== PreviousKiller creado y añadido=======>>>
+    }
+
+    public void addVisibleObject(VisibleObject vObj) {
+        this.visibleObjects.add(vObj);
     }
 
     public void testColision(Alive objTest) {

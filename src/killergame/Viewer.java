@@ -113,7 +113,7 @@ public class Viewer extends Canvas implements Runnable {
         int fps;                //sera dividido entre 1seg para controlar freqüenica
 
         previousTimeNano = System.nanoTime();
-        fps = 20;
+        fps = 60;
 
         while (true) {
 
