@@ -14,12 +14,12 @@ import java.util.logging.Logger;
  *
  * @author pau
  */
-public class Bala extends Autonomous {
+public class Bullet extends Autonomous {
 
     private Autonomous origenBala;
     private int distancia = 0;
 
-    public Bala(KillerGame kGame, Autonomous aObj) {
+    public Bullet(KillerGame kGame, Autonomous aObj) {
         super(kGame, aObj.posX, aObj.posX, 10, 10);
        // --cambiar--
                 
@@ -27,7 +27,7 @@ public class Bala extends Autonomous {
         this.posX = aObj.posX;
         this.posY = aObj.posY;
 
-        this.velX = 1;
+        this.velX = 6;
         this.velY = 0;
     }
 
@@ -50,7 +50,7 @@ public class Bala extends Autonomous {
 
         previousTimeNano = System.nanoTime();
 
-        while (this.distancia < 100) {
+        while (this.distancia < 250) {
 
             //calcula la diferencia
             timeDiffNano = System.nanoTime() - previousTimeNano;

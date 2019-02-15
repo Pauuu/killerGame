@@ -29,7 +29,7 @@ public class Ball extends Autonomous {
     }
     
     public void disparo(){
-        new Thread(new Bala(this.killerGame, this)).start();
+        new Thread(new Bullet(this.killerGame, this)).start();
     }
 
     public void setColor(Color c) {

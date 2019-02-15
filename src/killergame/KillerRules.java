@@ -17,9 +17,15 @@ public class KillerRules {
 
     public static int testColision(VisibleObject vObj1, VisibleObject vObj2) {
         if ((vObj1 instanceof Ball) &&
-                !(vObj2 instanceof Bala)) {
+                (vObj2 instanceof Ball)) {
             return 1;
         }
+        
+        if ((vObj1 instanceof Ball) &&
+                (vObj2 instanceof Bullet)) {
+            return 2;
+        }
+       
 
         return 0;
     }

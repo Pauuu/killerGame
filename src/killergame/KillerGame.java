@@ -55,8 +55,8 @@ class KillerGame extends JFrame {
 //        this.startClient(1);
 //        this.startClient(2);
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 5, 5, 30, 30);
-        Ball b = new Ball(this, 59, 5, 30, 30);
+        Ball a = new Ball(this, 5, 150, 30, 30);
+        Ball b = new Ball(this, 30, 0, 30, 30);
 
         a.setColor(Color.PINK);
 
@@ -111,8 +111,19 @@ class KillerGame extends JFrame {
     private void aplicarRegla(int regla, Alive vObj) {
         // --discriminar reglas--
 
+        switch(regla)  {
+            case 1:
+                vObj.invertirVelocidades();
+                break;
+            case 2:
+                vObj.deleteThisFromVisibleObjs();
+                break;
+            default:
+                break;
+        }
+
         if (regla == 1) {
-            vObj.invertirVelocidades();
+            
         }
     }
 
@@ -133,9 +144,11 @@ class KillerGame extends JFrame {
     }
 
     private void testColisionVisibleObjects(Alive objTest) {
-        for (VisibleObject vObj : visibleObjects) {
-
-            //si no es el mismo
+        VisibleObject vObj;
+        
+        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+            vObj = this.visibleObjects.get(pos);
+            
             if (objTest != vObj) {
 
                 //comprobar si colision
