@@ -106,34 +106,20 @@ public class Viewer extends Canvas implements Runnable {
 
     @Override
     public void run() {
-        //modificar esto 
-
-        double timeDiffNano;      //direfencia de tiempo actual menos anterior
-        double previousTimeNano;  //timepo anterior
-        int fps;                //sera dividido entre 1seg para controlar freqüenica
-
-        previousTimeNano = System.nanoTime();
-        fps = 60;
 
         while (true) {
 
-            //calcula tiempo actual menos el anterior (diferencia tiempo)
-            timeDiffNano = System.nanoTime() - previousTimeNano;
-
-            //si diferencia mayor o igual...
-            if (timeDiffNano >= 1000000000 / fps) {
-
 //                System.out.println("timediff: " + timeDiffNano);
+            //actualiza el tiempo anterior
+            //actualiza lista de objetos visibles
+            this.visibleObjects = this.killerGame.getVisibleObjects();
 
-                //actualiza el tiempo anterior
-                //actualiza lista de objetos visibles
-                this.visibleObjects = this.killerGame.getVisibleObjects();
-
-                //pinta todos los elementos
-                this.updateFrame();
-
-                previousTimeNano = System.nanoTime();
-
+            //pinta todos los elementos
+            this.updateFrame();
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }
@@ -141,3 +127,5 @@ public class Viewer extends Canvas implements Runnable {
     }
 
 }
+
+

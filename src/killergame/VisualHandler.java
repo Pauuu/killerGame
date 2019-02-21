@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package killergame;
 
 import java.io.BufferedReader;
@@ -9,25 +14,25 @@ import java.net.Socket;
  *
  * @author pau
  */
-public class NextKiller implements Runnable {
+public class VisualHandler implements Runnable {
 
     private KillerGame killerGame;
-    private Socket clientSock;
+    private Socket clientSocket;
     private String clientAddr;
 
-    public NextKiller(KillerGame kGame, Socket cliSocket, String cliAddress) {
-        this.killerGame = kGame;
-        this.clientSock = cliSocket;
-        this.clientAddr = cliAddress;
+    public VisualHandler(KillerGame kg, Socket cliSock, String cliAddr) {
+        this.killerGame = kg;
+        this.clientSocket = cliSock;
+        this.clientAddr = cliAddr;
     }
 
-    private void processClient(BufferedReader in, PrintWriter out) {
+    private void processMessage(BufferedReader in, PrintWriter out) {
         String line;
         Boolean done = false;
 
         try {
             while (!done) {
-                System.out.println("NK: Waiting for reading lines...");
+                System.out.println("PK: Waiting for reading lines...");
                 line = in.readLine();
 
                 //si line null es que el cliente ha cerrado/perdido la conexion
@@ -44,57 +49,49 @@ public class NextKiller implements Runnable {
 
                         case "ball":
                             //o recibe el obj bola o cada parametro x separado
-//                            this.killerGame.createAlive(
-//                                    new Ball(this.killerGame, 5, 5, 20, 20)); //cambiar
+                            //cambiar coordenadas hardcodeadas
+//                            this.killerGame.createAlive(new Ball(this.killerGame, 5, 5, 50, 50));
+                            new Ball(this.killerGame, 1, 1, 300, 300);
                             break;
 
                         default:
                             System.out.println("Client msg (default): " + line);
-                            this.doRequest(line, out);
                             break;
                     }
                 }
             }
         } catch (Exception e) {
-            System.err.println("algo ha fallado");
-        }
-    }
-
-    private void doRequest(String line, PrintWriter out) {
-        if (line.trim().toLowerCase().equals("get")) {
-
-            System.out.println("Processing 'get'");
-            out.print("");
-
-        } else {
-            System.out.println("Ignoring input line");
-            out.println("debug: " + line);
+            System.err.println("PK: " + e);
         }
     }
 
     @Override
     public void run() {
+        System.out.println("lkasdjfñlkasjfd");
+        
         BufferedReader in;
         PrintWriter out;
 
         try {
             // Get I/O streams from the socket
             in = new BufferedReader(new InputStreamReader(
-                    this.clientSock.getInputStream()));
+                    this.clientSocket.getInputStream()));
 
-            out = new PrintWriter(this.clientSock.getOutputStream(), true);
+            out = new PrintWriter(this.clientSocket.getOutputStream(), true);
 
             // interact with a client
-            this.processClient(in, out);
+            this.processMessage(in, out);
 
             // Close client connection
-            this.clientSock.close();
+            this.clientSocket.close();
+            
+            System.out.println("User " + this.clientAddr + " disconected");
 
         } catch (Exception ex) {
-            System.err.println("NK: kk");
+            System.err.println("PK: kk");
+            System.err.println("PK: " + ex);
         }
 
-        System.out.println("NK: Client connection closed\n");
     }
 
 }

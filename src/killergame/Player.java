@@ -33,7 +33,7 @@ public class Player extends Controlled {
 
         while (true) {
             this.testColision();
-            this.moveX(this.velX);
+           // this.moveX(this.velX);
             this.moveY(this.velY);
             try {
                 Thread.sleep(15);

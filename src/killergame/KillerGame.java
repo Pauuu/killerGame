@@ -9,37 +9,35 @@ import javax.swing.JFrame;
 
 class KillerGame extends JFrame {
 
+    // constantes
     private final int FRAME_WIDTH = 920;
     private final int FRAME_HEIGHT = 800;
 
-    private ArrayList<KillerClient> killerClients;
 
-    /*  hace falta tener todas las listas de cada uno; basta diferenciar 
-    *   entre los static y alive; o solo una lista de visibleObjects y hacer un 
-    *   "instance of" para crear los threads de los alive?
-     */
+    // objetos visibles del juego
     private ArrayList<VisibleObject> visibleObjects;
-    private PreviousKiller previousKiller;
-    private NextKiller nextKiller;
 
-//    private KillerServerHandler killerServerHandler;
+    // conexiones
     private KillerServer killerServer;
+    private VisualHandler killerRight;
+    private VisualHandler killerLeft;
+    private ArrayList<KillerPad> killerPads;
 
+    // graficos
     private Viewer viewer;
 
     public KillerGame() {
 
-        //setear parametros iniciales
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//        this.setSize(this.FRAME_WIDTH, this.FRAME_HEIGHT);
 
-        //añadir elementos
-        this.killerClients = new ArrayList<>(); //x si es cliente de mas maquinas
+        // instanciar elementos
         this.visibleObjects = new ArrayList<>();
+        this.killerPads = new ArrayList<>();
         this.killerServer = new KillerServer(this);
 
         //añadir comunicaciones
-        this.startServer(this.killerServer);
+        this.startServer();
+        this.startVisualModels();
 
         //ojo poner un contador para "encender" los clientes despues
         try {
@@ -55,8 +53,8 @@ class KillerGame extends JFrame {
 //        this.startClient(1);
 //        this.startClient(2);
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 5, 150, 30, 30);
-        Ball b = new Ball(this, 30, 0, 30, 30);
+        Ball a = new Ball(this, 1, 0, 300, 300);
+//        Ball b = new Ball(this, 65, 0, 30, 30);
 
         a.setColor(Color.PINK);
 
@@ -71,21 +69,12 @@ class KillerGame extends JFrame {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        a.disparo();
-    }
-
-    private void addClient(String ip) {
-        this.killerClients.add(new KillerClient(this, ip));
+        // a.disparo();
     }
 
     private void createViewer(int width, int height) {
         this.viewer = new Viewer(this, width, height);
         this.getContentPane().add(this.viewer);
-    }
-
-    private void startClient(int index) {
-        //de momento solo uno
-        this.killerClients.get(index).makeContact();
     }
 
     private void startGame() {
@@ -104,27 +93,32 @@ class KillerGame extends JFrame {
 
     }
 
-    private void startServer(KillerServer ks) {
-        new Thread(ks).start();
+    private void startServer() {
+        new Thread(this.killerServer).start();
+    }
+
+    private void startVisualModels() {
+        // como es que no salta excepcion???????
+        new Thread(this.killerRight).start();
+        new Thread(this.killerLeft).start();
     }
 
     private void aplicarRegla(int regla, Alive vObj) {
         // --discriminar reglas--
 
-        switch(regla)  {
+        switch (regla) {
             case 1:
                 vObj.invertirVelocidades();
                 break;
+
             case 2:
-                vObj.deleteThisFromVisibleObjs();
+                vObj.kill();
                 break;
+
             default:
                 break;
         }
 
-        if (regla == 1) {
-            
-        }
     }
 
     private void testTocadoMargenPantalla(Alive objTest) {
@@ -145,10 +139,10 @@ class KillerGame extends JFrame {
 
     private void testColisionVisibleObjects(Alive objTest) {
         VisibleObject vObj;
-        
+
         for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
             vObj = this.visibleObjects.get(pos);
-            
+
             if (objTest != vObj) {
 
                 //comprobar si colision
@@ -161,42 +155,51 @@ class KillerGame extends JFrame {
         }
     }
 
-    public void createAlive(Alive aObj) {
-        this.addVisibleObject(aObj);
-    }
+    // conexinoes
+    public synchronized Boolean tryConnectLeftKiller(Socket cliSock, String cliAddr) {
 
-    public synchronized Boolean tryConnectPreviousKiller(Socket cliSock, String cliAddr) {
-
-        if (this.previousKiller != null) {
+        if (this.killerLeft != null) {
             return false;   //============= NextKiller ya existe ===========>>>>
         }
 
         //crear nuevo previousKiller
-        PreviousKiller pk = new PreviousKiller(this, cliSock, cliAddr);
+        this.killerLeft = new VisualHandler(this, cliSock, cliAddr);
 
         //iniciar nuevo hilo 
-        new Thread(pk).start();
+        new Thread(this.killerLeft).start();
 
-        //almacenar variable en atributo de clase
-        this.previousKiller = pk;
+        System.out.println("KG: conexion izquirda exitosa");
         return true;        //============ NextKiller creado y añadido=======>>>
     }
 
-    public synchronized Boolean tryConnectNextKiller(Socket cliSock, String cliAddr) {
+    public synchronized Boolean tryConnectRightKiller(Socket cliSock, String cliAddr) {
 
-        if (this.nextKiller != null) {
+        if (this.killerRight != null) {
             return false;   //========= PreviousKiller ya existe ===========>>>>
         }
 
-        //crear nuevo nextKiller
-        NextKiller nk = new NextKiller(this, cliSock, cliAddr);
+        // crear nuevo nextKiller
+        this.killerRight = new VisualHandler(this, cliSock, cliAddr);
 
-        //iniciar nuevo hilo 
-        new Thread(nk).start();
+        // iniciar nuevo hilo 
+        new Thread(this.killerRight).start();
 
-        //almacenar variable en atributo de clase
-        this.nextKiller = nk;
+        System.out.println("KG: conexion derecha exitosa");
         return true;        //======== PreviousKiller creado y añadido=======>>>
+    }
+
+    public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
+
+        // crear nuevo killerPad
+        KillerPad kp = new KillerPad(this, cliSock, cliAddr);
+
+        // añadir killerPad a la lista
+        this.killerPads.add(kp);
+
+        // iniciar nuevo hilo
+        new Thread(kp).start();
+        
+        System.out.println("KG: conexoin killerPad exitosa");
     }
 
     public void addVisibleObject(VisibleObject vObj) {
@@ -213,20 +216,9 @@ class KillerGame extends JFrame {
 
     }
 
-    //Getters & setters
-//    public ArrayList getAoutonomousObjects() {
-//        return this.autonomousObjects;
-//    }
+    // Getters & setters
     public ArrayList getVisibleObjects() {
         return this.visibleObjects;
-    }
-
-    public PreviousKiller getPreviousKiller() {
-        return this.previousKiller;
-    }
-
-    public NextKiller getNextKiller() {
-        return this.nextKiller;
     }
 
     public int getFrameHeight() {
@@ -235,14 +227,6 @@ class KillerGame extends JFrame {
 
     public int getFrameWidth() {
         return this.FRAME_WIDTH;
-    }
-
-    public void setNextKiller(NextKiller nk) {
-        this.nextKiller = nk;
-    }
-
-    public void setPreviousKiller(PreviousKiller pk) {
-        this.previousKiller = pk;
     }
 
 }

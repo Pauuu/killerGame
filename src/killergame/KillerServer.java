@@ -19,45 +19,46 @@ import java.util.logging.Logger;
  */
 public class KillerServer implements Runnable {
 
-    KillerGame killerGame;
-//    private Socket clientSock;
-//    private String clientAddr;
+    private KillerGame killerGame;
 
     public KillerServer(KillerGame kg) {
         this.killerGame = kg;
 
     }
 
-    public void inicioEsperaConexion() {
+    public void abrirConexion() {
+        ServerSocket serverSock;    // repasar pq serverSocket
+        Socket cliSock;
+        String cliAddr;
+
         try {
-//            la ip es la suya misma
-            ServerSocket serverSock = new ServerSocket(30123);
+            // la ip es la suya misma, port 8000
+            serverSock = new ServerSocket(8000);
 
-//            socket por el cual recibirá al cliente
-            Socket cliSock;
-            String cliAddr;
-
-            //de momento no discrimina si es un killer pad o no
+            // socket por el cual recibirá al cliente
+            // de momento no discrimina si es un killer pad o no //lo hace el ch
             while (true) {
 
                 System.out.println("KS: Waiting for a client...");
 
-                //crea un nuevo socket para el cliente que ha "entrado" 
-                //del "server socket" gracias al metodo accept();
+                // crea un nuevo socket para el cliente que ha "entrado" 
+                // del "server socket" gracias al metodo accept();
+                // --repasar que hace este metodo--
                 cliSock = serverSock.accept();
 
-//                imprime la ip del cliente
+                //  imprime la ip del cliente
                 System.out.println("KS: Client connection from "
                         + cliSock.getInetAddress().getHostAddress());
 
                 //guarda la direccion del cliente
                 cliAddr = cliSock.getInetAddress().getHostAddress();
+                
+                
 
-                this.crearKillerPad(cliSock, cliAddr);
+                this.gestionarConexion(cliSock, cliAddr);
 
 //                this.crearConexiones(cliSock, cliAddr);
-
-                //mira si null, crea conexiones.Primero izq, luego derecha
+                // mira si null, crea conexiones.Primero izq, luego derecha
 //                this.crearConexiones(cliSock, cliAddr);
             }
 
@@ -66,28 +67,16 @@ public class KillerServer implements Runnable {
         }
     }
 
-    private void discriminarConexion() {
-        //como discriminar si es de un mando o de un modul visual
-    }
-
-    private void crearConexiones(Socket cliSock, String cliAddr) {
-        new Thread(new KillerServerHandler(
-                this.killerGame,
-                cliSock,
-                cliAddr)
-        ).start();
+     private void gestionarConexion(Socket cliSock, String cliAddr) {
+        ConectionHandler ch = new ConectionHandler(this.killerGame, cliSock, cliAddr);
+        new Thread(ch).start();
     }
 
     @Override
     public void run() {
-        this.inicioEsperaConexion();
+        this.abrirConexion();
     }
 
-    private void crearKillerPad(Socket cliSock, String cliAddr) {
-        new Thread(new KillerPad(killerGame,
-                cliSock,
-                cliAddr)
-        ).start();
-    }
+   
 
 }

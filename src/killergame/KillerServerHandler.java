@@ -8,6 +8,10 @@ import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @deprecated ?
+ * @author pau
+ */
 public class KillerServerHandler implements Runnable {
 
     public KillerGame killerGame;
@@ -32,7 +36,7 @@ public class KillerServerHandler implements Runnable {
 
         new Thread(pk).start();
 
-        this.killerGame.setPreviousKiller(pk);
+//        this.killerGame.setPreviousKiller(pk);
 
         System.out.println("KSH: thread Previous Killer started");
 
@@ -47,7 +51,7 @@ public class KillerServerHandler implements Runnable {
 
         new Thread(nk).start();
 
-        this.killerGame.setNextKiller(nk);
+//        this.killerGame.setNextKiller(nk);
 
         System.out.println("KSH: thread Next Killer started");
 
@@ -62,20 +66,20 @@ public class KillerServerHandler implements Runnable {
                 //cambiar comprobacion
                 boolean success;
 
-                success = this.killerGame.tryConnectPreviousKiller(
-                        this.clientSocket,
-                        this.clientAddress);
+//                success = this.killerGame.tryConnectPreviousKiller(
+//                        this.clientSocket,
+//                        this.clientAddress);
 
-                if (!success) {
-                    success = this.killerGame.tryConnectNextKiller(
-                            this.clientSocket,
-                            this.clientAddress);
-                }
+//                if (!success) {
+//                    success = this.killerGame.tryConnectNextKiller(
+//                            this.clientSocket,
+//                            this.clientAddress);
+//                }
 
-                if (!success) {    //si no se cumple ninguna condicion
-                    System.err.println("KSH: Address: " + this.clientAddress
-                            + " no se ha llegado a conectar");
-                }
+//                if (!success) {    //si no se cumple ninguna condicion
+//                    System.err.println("KSH: Address: " + this.clientAddress
+//                            + " no se ha llegado a conectar");
+//                }
 
             }
 

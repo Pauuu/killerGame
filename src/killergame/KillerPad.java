@@ -17,6 +17,8 @@ import java.util.logging.Logger;
  *
  * @author pau
  */
+
+//añadir metodos estaticos para interpretar x si algun kg no tiene kp
 public class KillerPad implements Runnable {
 
     private KillerGame killerGame;
@@ -80,7 +82,7 @@ public class KillerPad implements Runnable {
 
     public void startNave(int x, int y) {
         this.player = new Player(this.killerGame,10,10, 20, 20); //cambiar
-        this.killerGame.createAlive(player);
+        //this.killerGame.createAlive(player);
         new Thread(this.player).start();
     }
 

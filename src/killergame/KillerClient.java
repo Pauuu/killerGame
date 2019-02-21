@@ -12,7 +12,7 @@ import java.net.Socket;
 public class KillerClient {
 
     private KillerGame killerGame;
-    private final int PORT = 30123;
+    private final int PORT = 8000;
     // server details
     private String host;
     private Socket sock;
@@ -48,7 +48,7 @@ public class KillerClient {
     public void makeContact() {
         try {
             this.sock = new Socket(this.host, this.PORT);
-
+            
             /*
              * puntero a un input stream (datos de llegada en crudo) __this.sock.getInputStream()__
              * "traduce la info cruda a texto(?)" __InputStreamReader()__

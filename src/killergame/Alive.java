@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public abstract class Alive extends VisibleObject implements Runnable {
 
     //quitar las velocidades x defecto
-    protected int velX;
-    protected int velY;
+    protected double velX;
+    protected double velY;
 
     public Alive(KillerGame kGame, int posX, int posY, int width, int height) {
         super(kGame, posX, posY, width, height);
@@ -30,7 +30,7 @@ public abstract class Alive extends VisibleObject implements Runnable {
 
     protected void updatePosition(double time) {
         
-        int intTime = (int) time / 10000000;    //lo pasamos a decisegundos
+        double intTime = time / 10000000;    //lo pasamos a decisegundos
 
         //  position' = position + (vel * time); -> M.R.U.
         this.posX += this.velX * intTime;
@@ -53,20 +53,20 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.velY *= -1;
     }
 
-    public void moveX(int vel) {
+    public void moveX(double vel) {
         this.velX = vel;
         this.posX += this.velX;
 //        this.setPosX(this.getPosX() + this.velX);
     }
 
-    public void moveY(int vel) {
+    public void moveY(double vel) {
         this.velY = vel;
         this.posY += this.velY;
 
 //        this.setPosY(this.getPosY() + this.velY);
     }
 
-    public int getVelX() {
+    public double getVelX() {
         return velX;
     }
 
@@ -78,7 +78,7 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.velY = velY;
     }
 
-    public int getVelY() {
+    public double getVelY() {
         return velY;
     }
 

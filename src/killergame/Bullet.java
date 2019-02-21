@@ -24,10 +24,10 @@ public class Bullet extends Autonomous {
        // --cambiar--
                 
         this.origenBala = aObj;
-        this.posX = aObj.posX;
-        this.posY = aObj.posY;
+        this.posX = aObj.posX + 1;
+        this.posY = aObj.posY -1;
 
-        this.velX = 6;
+        this.velX = 1;
         this.velY = 0;
     }
 
@@ -79,7 +79,7 @@ public class Bullet extends Autonomous {
             }
         }
         
-        this.deleteThisFromVisibleObjs();
+        this.kill();
     }
 
 }

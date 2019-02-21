@@ -58,7 +58,7 @@ public abstract class VisibleObject implements Renderizable {
 
     }
 
-    protected void deleteThisFromVisibleObjs() {
+    protected void kill() {
 
         ArrayList<VisibleObject> listVisibleObjs;
 

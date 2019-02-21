@@ -23,6 +23,7 @@ public class KillerRules {
         
         if ((vObj1 instanceof Ball) &&
                 (vObj2 instanceof Bullet)) {
+            
             return 2;
         }
        

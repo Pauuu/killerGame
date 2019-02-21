@@ -50,8 +50,8 @@ public class PreviousKiller implements Runnable {
                         case "ball":
                             //o recibe el obj bola o cada parametro x separado
                             //cambiar coordenadas hardcodeadas
-                            this.killerGame.createAlive(
-                                    new Ball(this.killerGame, 5, 5, 20, 20));
+//                            this.killerGame.createAlive(
+//                                    new Ball(this.killerGame, 5, 5, 20, 20));
                             break;
 
                         default:
