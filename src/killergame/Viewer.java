@@ -39,11 +39,12 @@ public class Viewer extends Canvas implements Runnable {
                 this.width,
                 this.heigth,
                 BufferedImage.TYPE_4BYTE_ABGR);
+        
         this.g2d = (Graphics2D) biFrame.getGraphics();
 
         //cargar imagen de "fondo"
         try {
-            //cambiar la imagen
+            //--cambiar la imagen--
             this.backgroundImg = ImageIO.read(new File("imgs/seaBackground.png"));
         } catch (IOException ex) {
             System.err.println("-- Imagen no cargada --");
@@ -62,12 +63,12 @@ public class Viewer extends Canvas implements Runnable {
 
         try {
             this.g2d.fillRect(0, 0, 1920, 1080);
-            for (VisibleObject vObj : visibleObjects) {
-
-                vObj.render(this.g2d);
+            
+            for (int index = 0; index < this.visibleObjects.size(); index++ ) {
+                this.visibleObjects.get(index).render(this.g2d);
             }
 
-            this.g2d.drawImage(this.backgroundImg, 0, 0, null);
+            //this.g2d.drawImage(this.backgroundImg, 0, 0, null);
             this.g2d.setColor(Color.blue);
 
         } catch (Exception e) {
@@ -117,7 +118,7 @@ public class Viewer extends Canvas implements Runnable {
             //pinta todos los elementos
             this.updateFrame();
             try {
-                Thread.sleep(10);
+                Thread.sleep(9);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -13,7 +13,6 @@ class KillerGame extends JFrame {
     private final int FRAME_WIDTH = 920;
     private final int FRAME_HEIGHT = 800;
 
-
     // objetos visibles del juego
     private ArrayList<VisibleObject> visibleObjects;
 
@@ -37,7 +36,9 @@ class KillerGame extends JFrame {
 
         //añadir comunicaciones
         this.startServer();
-        this.startVisualModels();
+        this.killerLeft = new VisualHandler(this);
+//        this.killerRight = new VisualHandler(this);
+//        this.startVisualModels();
 
         //ojo poner un contador para "encender" los clientes despues
         try {
@@ -46,17 +47,10 @@ class KillerGame extends JFrame {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-//        this.addClient("localhost");
-//        this.addClient("localhost");
-//        this.addClient("localhost");
-//        this.startClient(0);
-//        this.startClient(1);
-//        this.startClient(2);
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 1, 0, 300, 300);
-//        Ball b = new Ball(this, 65, 0, 30, 30);
+        Ball a = new Ball(this, 0, 0, 30, 30);
 
-        a.setColor(Color.PINK);
+        a.setColor(Color.ORANGE);
 
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
@@ -86,8 +80,7 @@ class KillerGame extends JFrame {
             }
         }
 
-        //input del usuario?
-        //--crear un hilo por cada nuevo elemento--
+        //--crear un hilo por cada nuevo elemento--?
         //pintar todo
         new Thread(this.viewer).start();
 
@@ -97,12 +90,11 @@ class KillerGame extends JFrame {
         new Thread(this.killerServer).start();
     }
 
-    private void startVisualModels() {
-        // como es que no salta excepcion???????
-        new Thread(this.killerRight).start();
-        new Thread(this.killerLeft).start();
-    }
-
+//    private void startVisualModels() {
+//        // como es que no salta excepcion???????
+//        new Thread(this.killerRight).start();
+//        new Thread(this.killerLeft).start();
+//    }
     private void aplicarRegla(int regla, Alive vObj) {
         // --discriminar reglas--
 
@@ -158,29 +150,30 @@ class KillerGame extends JFrame {
     // conexinoes
     public synchronized Boolean tryConnectLeftKiller(Socket cliSock, String cliAddr) {
 
-        if (this.killerLeft != null) {
+        if (this.killerLeft.getSocket() != null) {
             return false;   //============= NextKiller ya existe ===========>>>>
         }
 
         //crear nuevo previousKiller
-        this.killerLeft = new VisualHandler(this, cliSock, cliAddr);
+//        this.killerLeft = new VisualHandler(this);
+        this.killerLeft.setSocket(cliSock);
+        this.killerLeft.setClientAddress(cliAddr);
 
         //iniciar nuevo hilo 
         new Thread(this.killerLeft).start();
 
-        System.out.println("KG: conexion izquirda exitosa");
+        System.out.println("KG: conexion izquierda exitosa");
         return true;        //============ NextKiller creado y añadido=======>>>
     }
 
     public synchronized Boolean tryConnectRightKiller(Socket cliSock, String cliAddr) {
 
-        if (this.killerRight != null) {
+        if (this.killerRight.getSocket() != null) {
             return false;   //========= PreviousKiller ya existe ===========>>>>
         }
 
         // crear nuevo nextKiller
-        this.killerRight = new VisualHandler(this, cliSock, cliAddr);
-
+//        this.killerRight = new VisualHandler(this);
         // iniciar nuevo hilo 
         new Thread(this.killerRight).start();
 
@@ -198,7 +191,7 @@ class KillerGame extends JFrame {
 
         // iniciar nuevo hilo
         new Thread(kp).start();
-        
+
         System.out.println("KG: conexoin killerPad exitosa");
     }
 

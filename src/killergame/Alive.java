@@ -3,6 +3,8 @@ package killergame;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +31,7 @@ public abstract class Alive extends VisibleObject implements Runnable {
     }
 
     protected void updatePosition(double time) {
-        
+
         double intTime = time / 10000000;    //lo pasamos a decisegundos
 
         //  position' = position + (vel * time); -> M.R.U.
@@ -37,6 +39,9 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.posY += this.velY * intTime;
         this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
         this.testColision();
+
+        
+        System.out.println("X: " + this.posX);
 
     }
 
@@ -64,6 +69,42 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.posY += this.velY;
 
 //        this.setPosY(this.getPosY() + this.velY);
+    }
+
+    @Override
+    public void run() {
+
+        //direfencia de tiempo actual menos anterior
+        double timeDiffNano;
+
+        //timepo anterior
+        double previousTimeNano;
+
+        previousTimeNano = System.nanoTime();
+
+        while (true) {
+
+            //calcula la diferencia
+            timeDiffNano = System.nanoTime() - previousTimeNano;
+
+            if (timeDiffNano >= 10000000) {
+
+                //actualiza la posicion del obj
+                this.updatePosition(timeDiffNano);
+
+                //actualiza el tiempo anterior cada vez q entra
+                previousTimeNano = System.nanoTime();
+
+//                System.out.println("timediff: " + timeDiffNano);
+            }
+
+            //para que el procesador no pete?
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public double getVelX() {

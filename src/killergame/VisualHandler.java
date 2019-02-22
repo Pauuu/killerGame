@@ -9,6 +9,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import static javax.swing.JFrame.EXIT_ON_CLOSE;
+import javax.swing.JTextField;
 
 /**
  *
@@ -17,13 +21,74 @@ import java.net.Socket;
 public class VisualHandler implements Runnable {
 
     private KillerGame killerGame;
-    private Socket clientSocket;
+    private KillerClient2 killerClient;
+    private Socket socket = null;
     private String clientAddr;
 
-    public VisualHandler(KillerGame kg, Socket cliSock, String cliAddr) {
+    private PrintWriter out;
+
+    public VisualHandler(KillerGame kg) {
         this.killerGame = kg;
-        this.clientSocket = cliSock;
+        this.killerClient = new KillerClient2(this, this.socket, "localhost", this.out);
+//        this.clientSocket = cliSock;
+//        this.clientAddr = cliAddr;
+
+        this.tryConnection();
+            
+        
+
+    }
+
+    /**
+     * crea conexion con un server gracias al cliente creado
+     */
+    public void tryConnection() {
+        
+        new Thread(this.killerClient).start();
+    }
+    
+    /**
+     * --sin acabar--
+     */
+    private void createFrame(){
+        JFrame jf = new JFrame("IP");
+        
+        JButton ok = new JButton("OK");
+        JTextField textField = new JTextField(40);
+        
+        
+        jf.setSize(300, 100);
+        
+        jf.add(ok);
+        jf.add(textField);
+        
+        jf.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        jf.setVisible(true);
+    }
+
+    public void setClientAddress(String cliAddr) {
         this.clientAddr = cliAddr;
+    }
+    
+    public void sendBall(){
+        this.out.println("ball");
+    }
+    
+    
+    /**
+     * Comprobar si funciona
+     * @param msj 
+     */
+    public void sendMessage(String msj){
+        this.out.println(msj);
+    }
+
+    public void setSocket(Socket cliSock) {
+        this.socket = cliSock;
+    }
+
+    public Socket getSocket() {
+        return this.socket;
     }
 
     private void processMessage(BufferedReader in, PrintWriter out) {
@@ -32,7 +97,7 @@ public class VisualHandler implements Runnable {
 
         try {
             while (!done) {
-                System.out.println("PK: Waiting for reading lines...");
+                System.out.println("VH: Waiting for reading lines...");
                 line = in.readLine();
 
                 //si line null es que el cliente ha cerrado/perdido la conexion
@@ -67,24 +132,25 @@ public class VisualHandler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("lkasdjfñlkasjfd");
-        
+        System.out.println("VH: Ha entrado en el run");
+
         BufferedReader in;
         PrintWriter out;
 
         try {
             // Get I/O streams from the socket
             in = new BufferedReader(new InputStreamReader(
-                    this.clientSocket.getInputStream()));
+                    this.socket.getInputStream()));
 
-            out = new PrintWriter(this.clientSocket.getOutputStream(), true);
+            out = new PrintWriter(this.socket.getOutputStream(), true);
+
 
             // interact with a client
             this.processMessage(in, out);
 
             // Close client connection
-            this.clientSocket.close();
-            
+            this.socket.close();
+
             System.out.println("User " + this.clientAddr + " disconected");
 
         } catch (Exception ex) {
