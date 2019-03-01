@@ -1,70 +1,74 @@
 package killergame;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * <!-- begin-user-doc -->
- * <!--  end-user-doc  --> @generated
+ *
+ * @author pau
  */
-public class KillerClient {
+public class KillerClient implements Runnable {
 
-    private KillerGame killerGame;
-    private final int PORT = 8000;
-    // server details
-    private String host;
-    private Socket sock;
-    private BufferedReader in;
-    private PrintWriter out;
+    private VisualHandler visualHandler;
+    private Socket socket;
+    private char position;
+    private String clienAddress;
 
-    public KillerClient(KillerGame kg, String ip) {
-        this.killerGame = kg;
-        this.host = ip;
+    public KillerClient(VisualHandler vh, Socket sock, char position) {
+        this.visualHandler = vh;
+        this.position = this.visualHandler.getPosition();
+        this.socket = sock;
     }
 
-    public void closeLink() {
+    public void tryContact(Socket sock) {
+//        Socket vhSocket = this.visualHandler.getSocket();
+
         try {
-            this.out.println("bye");
-            // tell server
-            this.sock.close();
+            PrintWriter out = new PrintWriter(sock.getOutputStream());
+            out = new PrintWriter(sock.getOutputStream(), true);
+
+            out.println("vm&" + this.position);
+            System.out.println("KC2: mensaje 'vm' enviado");
+
         } catch (Exception e) {
-            System.out.println(e);
+            System.out.println("KC: " + e);
         }
-        System.exit(0);
     }
 
-    public void sendBola(Autonomous aObj) {
-        this.out.println("ball>>" + aObj.getPosX() + ">>" + aObj.getPosY());
-        System.out.println("test enviada bola?");
-    }
+    @Override
+    public void run() {
+        System.out.println("KC: entrado en el run");
 
-    public void sendBola(int a, int b, int c, int d, int e, int f) {
-        this.out.println("ball>>" + 0 + ">>" + b);
-        System.out.println("test enviada bola?");
-    }
+        while (true) {
+            try {
+                Socket vhSocket = this.visualHandler.getSocket();
+                
+                if (vhSocket == null) {
 
-    public void makeContact() {
-        try {
-            this.sock = new Socket(this.host, this.PORT);
-            
-            /*
-             * puntero a un input stream (datos de llegada en crudo) __this.sock.getInputStream()__
-             * "traduce la info cruda a texto(?)" __InputStreamReader()__
-             * lo guarfa en un buffer reader __BufferedReader(<toda la mierda de arriba>)__
-             * 
-             */
-            this.in = new BufferedReader(new InputStreamReader(this.sock.getInputStream()));
+                    vhSocket = new Socket(
+                            this.visualHandler.getIp(),
+                            this.visualHandler.getPort());
 
-            /*
-             * puntero al stream que se enviara al servidor y en el que escribiremos
-             */
-            this.out = new PrintWriter(this.sock.getOutputStream(), true);
-            
-            
-        } catch (Exception e) {
-            System.out.println(e);
+                    System.out.println("test");
+                    System.out.println("KC while true socket:" + vhSocket.toString());
+                    this.tryContact(vhSocket);
+
+                    this.visualHandler.setSocket(vhSocket);
+                }
+
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+
+            // duerme el bucle
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         }
     }
 

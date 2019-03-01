@@ -20,59 +20,54 @@ import java.util.logging.Logger;
 public class ConectionHandler implements Runnable {
 
     private KillerGame killerGame;
+    private KillerServer killerServer;
     private Socket clientSocket;
     private String clientAddress;
 
-    public ConectionHandler(KillerGame kg, Socket cliSock, String cliAddr) {
+    public ConectionHandler(KillerServer ks, Socket cliSock, String cliAddr) {
 
-        this.killerGame = kg;
+        this.killerServer = ks;
         this.clientSocket = cliSock;
         this.clientAddress = cliAddr;
 
+        this.killerGame = this.killerServer.getKillerGame();
+
     }
 
-    private void discriminarModulo() {
+    private void discriminarModuloVisual(String[] peticion) {
+
+        if (peticion[1].equalsIgnoreCase("r")) {
+            this.killerGame.getVisualHandler('r').setKiller(clientSocket, clientAddress);
+            System.out.println("CH: conexion recibida >> " + peticion[1]);
+
+        } else if (peticion[1].equalsIgnoreCase("l")) {
+            this.killerGame.getVisualHandler('l').setKiller(clientSocket, clientAddress);
+            System.out.println("CH: conexion recibida >> " + peticion[1]);
+
+        } else {
+            System.out.println("CH: ignorando msjs -> " + peticion[1]);
+        }
+    }
+
+    private void gestionarPeticion() {
 
         try {
             BufferedReader in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
-            String tipoModulo = in.readLine();
+            String peticion[] = in.readLine().trim().split("&");
+            
+            System.out.println("CH: peticion[0] " + peticion[0]);
 
-            switch (tipoModulo) {
-                case "vm":
+            if (peticion[0].equalsIgnoreCase("vm")) {
+                // gestionar si es un moduo visual
+                this.discriminarModuloVisual(peticion);
+                System.out.println("CH: conexion recibida >> VM");
 
-                    // hacer que lo compruebe el visual handler (?)
-                    
-                    //cambiar comprobacion
-                    boolean success = this.killerGame.tryConnectLeftKiller(
-                            this.clientSocket,
-                            this.clientAddress);
-                    
-                    if (success) {
-                        System.out.println("izquierda");
-                    }
+            } else if (peticion[0].equalsIgnoreCase("kp")) {
+                // gestionar conexion de Killer Pad
 
-                    if (!success) {
-                        success = killerGame.tryConnectRightKiller(
-                                this.clientSocket,
-                                this.clientAddress);
-                        System.out.println("derecha");
-                    }
-
-                    if (!success) {
-                        System.out.println("no se ha podido conectar");
-                    }
-
-                    break;
-                    
-                case "kp":
-                    
-                    this.killerGame.connectKillerPad(this.clientSocket, this.clientAddress);
-                    System.out.println("killerpad");
-                    break;
-                    
-                default:
-                    System.out.println("default");
-                    break;
+            } else {
+                // ignorsr la peticion
+                System.out.println("CH: Se ha ignorado la peticion: " + peticion[0]);
             }
 
         } catch (IOException ex) {
@@ -81,13 +76,9 @@ public class ConectionHandler implements Runnable {
 
     }
 
-    public void startConectionHandler(KillerGame kg) {
-
-    }
-
     @Override
     public void run() {
-        this.discriminarModulo();
+        this.gestionarPeticion();
     }
 
 }

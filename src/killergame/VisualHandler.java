@@ -20,66 +20,72 @@ import javax.swing.JTextField;
  */
 public class VisualHandler implements Runnable {
 
+    private BufferedReader in;
+    private char position;
     private KillerGame killerGame;
-    private KillerClient2 killerClient;
+    private KillerClient killerClient;
+    private PrintWriter out;
     private Socket socket = null;
     private String clientAddr;
+    private String ip;
+    private int port;
 
-    private PrintWriter out;
-
-    public VisualHandler(KillerGame kg) {
+    public VisualHandler(KillerGame kg, char position) {
         this.killerGame = kg;
-        this.killerClient = new KillerClient2(this, this.socket, "localhost", this.out);
-//        this.clientSocket = cliSock;
-//        this.clientAddr = cliAddr;
+        this.position = position;
 
-        this.tryConnection();
-            
+        this.killerClient = new KillerClient(this, this.socket, this.position);
+
+        //  this.tryConnection();
+    }
+
+    public synchronized void setKiller(Socket cliSock, String cliAddr) {
+
+        // comprobar si conexion establecida
+        // probar con Socket.isConnected() para cerrar los sockets
+        if (this.getSocket() != null) {
+            System.out.println("KG: soket left ocupado");
+            return;  //========= KillerLeft ya existe ======================>>>>
+        }
         
+        this.setSocket(cliSock);
+        this.setClientAddress(cliAddr);
 
+        //iniciar y crearF nuevo hilo de visual handler
+        this.startThread();
+
+        System.out.println("KG: conexion izquierda exitosa");
     }
 
     /**
      * crea conexion con un server gracias al cliente creado
      */
     public void tryConnection() {
-        
+
         new Thread(this.killerClient).start();
     }
-    
-    /**
-     * --sin acabar--
-     */
-    private void createFrame(){
-        JFrame jf = new JFrame("IP");
-        
-        JButton ok = new JButton("OK");
-        JTextField textField = new JTextField(40);
-        
-        
-        jf.setSize(300, 100);
-        
-        jf.add(ok);
-        jf.add(textField);
-        
-        jf.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        jf.setVisible(true);
+
+    public void startThread() {
+        new Thread(this).start();
     }
 
     public void setClientAddress(String cliAddr) {
         this.clientAddr = cliAddr;
     }
-    
-    public void sendBall(){
-        this.out.println("ball");
+
+    public void sendBall() {
+        System.out.println("VH sendBall out >> " + this.out);
+        this.out.println("ball&tttt");
+        System.out.println("ball sended");
+
     }
-    
-    
+
     /**
      * Comprobar si funciona
-     * @param msj 
+     *
+     * @param msj
      */
-    public void sendMessage(String msj){
+    public void sendMessage(String msj) {
         this.out.println(msj);
     }
 
@@ -91,6 +97,22 @@ public class VisualHandler implements Runnable {
         return this.socket;
     }
 
+    public char getPosition() {
+        return this.position;
+    }
+
+    public KillerGame getKillerGame() {
+        return this.killerGame;
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
     private void processMessage(BufferedReader in, PrintWriter out) {
         String line;
         Boolean done = false;
@@ -99,13 +121,15 @@ public class VisualHandler implements Runnable {
             while (!done) {
                 System.out.println("VH: Waiting for reading lines...");
                 line = in.readLine();
+                
+                System.out.println("VH: line>>> " + line);
 
                 //si line null es que el cliente ha cerrado/perdido la conexion
                 if (line == null) {
                     done = true;
 
                 } else {
-                    String[] lines = line.trim().split(">>");
+                    String[] lines = line.trim().split("&");
                     switch (lines[0]) {
 
                         case "bye":
@@ -116,6 +140,7 @@ public class VisualHandler implements Runnable {
                             //o recibe el obj bola o cada parametro x separado
                             //cambiar coordenadas hardcodeadas
 //                            this.killerGame.createAlive(new Ball(this.killerGame, 5, 5, 50, 50));
+                            System.out.println("VH: recivdo ball");
                             new Ball(this.killerGame, 1, 1, 300, 300);
                             break;
 
@@ -134,19 +159,18 @@ public class VisualHandler implements Runnable {
     public void run() {
         System.out.println("VH: Ha entrado en el run");
 
-        BufferedReader in;
-        PrintWriter out;
-
         try {
-            // Get I/O streams from the socket
-            in = new BufferedReader(new InputStreamReader(
+            // Get I/O streams from the socket. 
+            System.out.println("VH run try socket: " + this.socket.toString());
+            this.in = new BufferedReader(new InputStreamReader(
                     this.socket.getInputStream()));
+            System.out.println("VH run try out>> " + this.out.toString());
+            this.out = new PrintWriter(this.socket.getOutputStream(), true);
 
-            out = new PrintWriter(this.socket.getOutputStream(), true);
-
+            
 
             // interact with a client
-            this.processMessage(in, out);
+            this.processMessage(this.in, this.out);
 
             // Close client connection
             this.socket.close();
@@ -158,6 +182,14 @@ public class VisualHandler implements Runnable {
             System.err.println("PK: " + ex);
         }
 
+    }
+
+    void startClient(String ip, int port) {
+
+        this.ip = ip;
+        this.port = port;
+
+        new Thread(this.killerClient).start();
     }
 
 }

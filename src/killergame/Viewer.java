@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
@@ -39,7 +40,7 @@ public class Viewer extends Canvas implements Runnable {
                 this.width,
                 this.heigth,
                 BufferedImage.TYPE_4BYTE_ABGR);
-        
+
         this.g2d = (Graphics2D) biFrame.getGraphics();
 
         //cargar imagen de "fondo"
@@ -63,8 +64,8 @@ public class Viewer extends Canvas implements Runnable {
 
         try {
             this.g2d.fillRect(0, 0, 1920, 1080);
-            
-            for (int index = 0; index < this.visibleObjects.size(); index++ ) {
+
+            for (int index = 0; index < this.visibleObjects.size(); index++) {
                 this.visibleObjects.get(index).render(this.g2d);
             }
 
@@ -76,13 +77,25 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-    private void updateFrame() {
+    
+    private void updateFrame2(){
+    BufferStrategy bs;
+        
+        bs = this.getBufferStrategy();
+        if (bs == null) {
+            System.out.println("kgd");
+            return; // =======================================================>>
+        }       
+        
+        Graphics gg = bs.getDrawGraphics();
 
-        //pinta todos los elementos en la BufferedImage
+        gg.drawImage(biFrame, 0, 0, null);
         this.paintComponents();
 
-        //pinta la imagen en el canvas
-        this.getGraphics().drawImage(biFrame, 0, 0, null);
+     //   Toolkit.getDefaultToolkit().sync();
+        bs.show();
+
+        gg.dispose();
     }
 
     private void modifyAplphaChannel(BufferedImage bImg, int lvl) {
@@ -108,17 +121,19 @@ public class Viewer extends Canvas implements Runnable {
     @Override
     public void run() {
 
-        while (true) {
+        //this.createBufferStrategy(2);
 
-//                System.out.println("timediff: " + timeDiffNano);
-            //actualiza el tiempo anterior
+        while (true) {
+            
             //actualiza lista de objetos visibles
             this.visibleObjects = this.killerGame.getVisibleObjects();
 
             //pinta todos los elementos
-            this.updateFrame();
+            this.paintComponents();
+            this.getGraphics().drawImage(biFrame, 0, 0, null);
+            
             try {
-                Thread.sleep(9);
+                Thread.sleep(1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -126,7 +141,7 @@ public class Viewer extends Canvas implements Runnable {
         }
 
     }
+    
+    
 
 }
-
-

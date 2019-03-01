@@ -1,11 +1,19 @@
 package killergame;
 
 import java.awt.Color;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 class KillerGame extends JFrame {
 
@@ -36,8 +44,9 @@ class KillerGame extends JFrame {
 
         //añadir comunicaciones
         this.startServer();
-        this.killerLeft = new VisualHandler(this);
-//        this.killerRight = new VisualHandler(this);
+        this.killerLeft = new VisualHandler(this, 'l');
+        this.killerRight = new VisualHandler(this,'r');
+        this.createJFrameForKillerClients();
 //        this.startVisualModels();
 
         //ojo poner un contador para "encender" los clientes despues
@@ -58,12 +67,11 @@ class KillerGame extends JFrame {
         this.startGame();
 
         try {
-            Thread.sleep(900);
+            Thread.sleep(20000);
+            this.killerLeft.sendBall();
         } catch (InterruptedException ex) {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        // a.disparo();
     }
 
     private void createViewer(int width, int height) {
@@ -90,11 +98,6 @@ class KillerGame extends JFrame {
         new Thread(this.killerServer).start();
     }
 
-//    private void startVisualModels() {
-//        // como es que no salta excepcion???????
-//        new Thread(this.killerRight).start();
-//        new Thread(this.killerLeft).start();
-//    }
     private void aplicarRegla(int regla, Alive vObj) {
         // --discriminar reglas--
 
@@ -148,37 +151,19 @@ class KillerGame extends JFrame {
     }
 
     // conexinoes
-    public synchronized Boolean tryConnectLeftKiller(Socket cliSock, String cliAddr) {
 
-        if (this.killerLeft.getSocket() != null) {
-            return false;   //============= NextKiller ya existe ===========>>>>
+    
+    public VisualHandler getVisualHandler(char posicion){
+        if (posicion == 'r'){
+            return this.killerRight;
+        
+        } else if (posicion == 'l'){
+            return this.killerLeft;
+        
+        } else {
+            System.out.println("KG: no se ha devuelto nada");
+            return null;
         }
-
-        //crear nuevo previousKiller
-//        this.killerLeft = new VisualHandler(this);
-        this.killerLeft.setSocket(cliSock);
-        this.killerLeft.setClientAddress(cliAddr);
-
-        //iniciar nuevo hilo 
-        new Thread(this.killerLeft).start();
-
-        System.out.println("KG: conexion izquierda exitosa");
-        return true;        //============ NextKiller creado y añadido=======>>>
-    }
-
-    public synchronized Boolean tryConnectRightKiller(Socket cliSock, String cliAddr) {
-
-        if (this.killerRight.getSocket() != null) {
-            return false;   //========= PreviousKiller ya existe ===========>>>>
-        }
-
-        // crear nuevo nextKiller
-//        this.killerRight = new VisualHandler(this);
-        // iniciar nuevo hilo 
-        new Thread(this.killerRight).start();
-
-        System.out.println("KG: conexion derecha exitosa");
-        return true;        //======== PreviousKiller creado y añadido=======>>>
     }
 
     public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
@@ -209,6 +194,74 @@ class KillerGame extends JFrame {
 
     }
 
+    private void createJFrameForKillerClients() {
+        JFrame ventanaConfiguracion = new JFrame("Configuracion killer client");
+        ventanaConfiguracion.setLayout(new GridBagLayout());
+        ventanaConfiguracion.setSize(500, 200);
+
+        JLabel jlKillerRight = new JLabel("Right killer");
+        JLabel jlKillerLeft = new JLabel("Left killer");
+
+        JTextField jtfKillerRightIp = new JTextField("localhost", 16);
+        JTextField jtfKillerLeftIp = new JTextField("localhost", 16);
+        
+        JTextField jtfKillerRightPort = new JTextField("port",5);
+        JTextField jtfKillerLeftPort = new JTextField("port",5);
+
+        JButton jbAceptar = new JButton("Aceptar");
+//        jbAceptar.addActionListener(this);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        ventanaConfiguracion.add(jlKillerRight, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        ventanaConfiguracion.add(jtfKillerRightIp, gbc);
+        
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        ventanaConfiguracion.add(jtfKillerRightPort, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        ventanaConfiguracion.add(jlKillerLeft, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        ventanaConfiguracion.add(jtfKillerLeftIp, gbc);
+        
+        gbc.gridx = 2;
+        gbc.gridy = 1;
+        ventanaConfiguracion.add(jtfKillerLeftPort, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        ventanaConfiguracion.add(jbAceptar, gbc);
+
+        ventanaConfiguracion.setVisible(true);
+
+        jbAceptar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // -- compobar si ha sido el boton u otro elemento --
+                
+                killerRight.startClient(jtfKillerRightIp.getText(), 
+                        Integer.parseInt(jtfKillerRightPort.getText()));
+                
+                
+                killerLeft.startClient(jtfKillerLeftIp.getText(), 
+                        Integer.parseInt(jtfKillerLeftPort.getText()));
+            }
+        });
+
+        // añadir listener al boton acepatar
+    }
+
+   
+
     // Getters & setters
     public ArrayList getVisibleObjects() {
         return this.visibleObjects;
@@ -220,6 +273,14 @@ class KillerGame extends JFrame {
 
     public int getFrameWidth() {
         return this.FRAME_WIDTH;
+    }
+
+    public VisualHandler getKillerLeft() {
+        return this.killerLeft;
+    }
+
+    public VisualHandler getKillerRight() {
+        return this.killerRight;
     }
 
 }

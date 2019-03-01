@@ -23,7 +23,7 @@ public class Player extends Controlled {
 
     @Override
     public void render(Graphics2D g2d) {
-        //  g2d.drawImage(this.imagen, this.posX, this.posY, null);
+        
         g2d.setColor(Color.green);
         g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
     }

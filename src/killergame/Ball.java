@@ -21,8 +21,8 @@ public class Ball extends Autonomous {
 
     public Ball(KillerGame kGame, int posX, int posY, int width, int height) {
         super(kGame, posX, posY, width, height);
-        this.velX = 2d;  //quitar?
-        this.velY = 0;  //quitar?
+        this.velX = 5d;  //quitar?
+        this.velY = 7d;  //quitar?
       
 
         //this.setImagen("imgs/blackBall.png");

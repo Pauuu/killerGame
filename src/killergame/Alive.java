@@ -39,9 +39,8 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.posY += this.velY * intTime;
         this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
         this.testColision();
-
         
-        System.out.println("X: " + this.posX);
+       
 
     }
 
@@ -71,36 +70,55 @@ public abstract class Alive extends VisibleObject implements Runnable {
 //        this.setPosY(this.getPosY() + this.velY);
     }
 
+//    @Override
+//    public void run() {
+//
+//        //direfencia de tiempo actual menos anterior
+//        double timeDiffNano;
+//
+//        //timepo anterior
+//        double previousTimeNano;
+//
+//        previousTimeNano = System.nanoTime();
+//
+//        while (true) {
+//
+//            //calcula la diferencia
+//            timeDiffNano = System.nanoTime() - previousTimeNano;
+//
+//            if (timeDiffNano >= 10000000) {
+//
+//                //actualiza la posicion del obj
+//                this.updatePosition(timeDiffNano);
+//
+//                //actualiza el tiempo anterior cada vez q entra
+//                previousTimeNano = System.nanoTime();
+//
+////                System.out.println("timediff: " + timeDiffNano);
+//            }
+//
+//            
+//            try {
+//                Thread.sleep(1);
+//            } catch (InterruptedException ex) {
+//                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
+//    }
     @Override
     public void run() {
 
-        //direfencia de tiempo actual menos anterior
-        double timeDiffNano;
-
-        //timepo anterior
-        double previousTimeNano;
-
-        previousTimeNano = System.nanoTime();
-
+       
         while (true) {
 
-            //calcula la diferencia
-            timeDiffNano = System.nanoTime() - previousTimeNano;
 
-            if (timeDiffNano >= 10000000) {
+            //actualiza la posicion del obj
+            this.updatePosition(10000000);
 
-                //actualiza la posicion del obj
-                this.updatePosition(timeDiffNano);
-
-                //actualiza el tiempo anterior cada vez q entra
-                previousTimeNano = System.nanoTime();
 
 //                System.out.println("timediff: " + timeDiffNano);
-            }
-
-            //para que el procesador no pete?
             try {
-                Thread.sleep(0);
+                Thread.sleep(17);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
