@@ -47,7 +47,7 @@ public class KillerClient implements Runnable {
                     out = new PrintWriter(cliSock.getOutputStream(), true);
                     out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
 
-                    this.vh.setConnection(cliSock, serverPort);
+                    this.vh.startConnection(cliSock, serverPort);
 
                 } catch (IOException ex) {
                     Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -57,7 +57,7 @@ public class KillerClient implements Runnable {
 
             // dormir el hilo 0.2 seg
             try {
-                Thread.sleep(2000);
+                Thread.sleep(200);
 
             } catch (InterruptedException ex) {
                 Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);

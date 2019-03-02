@@ -67,9 +67,10 @@ public class VisualHandler implements Runnable {
 
                 System.out.println("VH: mensaje recibido: " + line);
 
-                //si line null es que el cliente ha cerrado/perdido la conexion
-                if (line == null) {
+                // si line null es que el cliente ha cerrado/perdido la conexion
+                if (line.equalsIgnoreCase("bye")) {
                     done = true;
+                    this.socket = null;
 
                 } else {
                     String[] lines = line.trim().split("&");
@@ -96,6 +97,8 @@ public class VisualHandler implements Runnable {
             }
         } catch (Exception e) {
             System.err.println("PK: " + e);
+//                this.socket.close();
+            this.socket = null;
         }
     }
 
@@ -128,8 +131,8 @@ public class VisualHandler implements Runnable {
         this.ip = ip;
     }
 
-    public synchronized void setConnection(Socket cliSock, int serverPort) {
-        if (this.socket == null) {
+    public synchronized void startConnection(Socket cliSock, int serverPort) {
+        if (this.getSocket() == null) {
 
             try {
                 // setear socket
@@ -140,22 +143,25 @@ public class VisualHandler implements Runnable {
 
                 // setar BufferedReader (poder recibir msjs)
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-                
+
                 // setear port del servidor
                 this.serverPort = serverPort;
 
                 System.out.println("VH: toda conexion ok?");
                 System.out.println("VH: Iniciando run de de VM");
-                
+
                 new Thread(this).start();
 
             } catch (IOException ex) {
                 // excepcion al no poder(?) leer
                 Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
+
             }
 
         } else {
             System.out.println("VH: no se ha seteado el socket");
+
+            // 
         }
     }
 

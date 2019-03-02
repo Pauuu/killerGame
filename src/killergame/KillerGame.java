@@ -69,7 +69,7 @@ class KillerGame extends JFrame {
         } catch (InterruptedException ex) {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.killerRight.sendMessage("ball");
+//        this.killerRight.sendMessage("ball");
     }
 
     private void createViewer(int width, int height) {

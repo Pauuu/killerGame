@@ -37,14 +37,19 @@ public class ConectionHandler implements Runnable {
     private void discriminarModuloVisual(String[] peticion) {
         
         String posicion;
+        int serverPort;
+        
         posicion = peticion[1];
+        serverPort = Integer.parseInt(peticion[2]);
+        
 
-        if (posicion.equalsIgnoreCase("l") || posicion.equalsIgnoreCase("r")) {
+        if (!posicion.equalsIgnoreCase("l") && !posicion.equalsIgnoreCase("r")) {
             System.out.println("CH: ignorando msjs -> " + posicion);
             return; //====================== peticion ignorada ==============>>>
         }
 
-        this.killerGame.getVisualHandler(posicion).setConnection(this.clientSocket, this.killerServer.getServerPort());
+        // inicia la conexion del visual handler
+        this.killerGame.getVisualHandler(posicion).startConnection(this.clientSocket, serverPort);
         System.out.println("CH: conexion recibida >> " + posicion);
     }
 
@@ -59,6 +64,7 @@ public class ConectionHandler implements Runnable {
             System.out.println("CH: peticion[0] " + peticion[0]);
 
             if (peticion[0].equalsIgnoreCase("vm")) {
+                
                 // gestionar si es un moduo visual
                 System.out.println("CH: conexion recibida >> VM");
                 this.discriminarModuloVisual(peticion);

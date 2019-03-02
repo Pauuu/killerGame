@@ -133,7 +133,7 @@ public class Viewer extends Canvas implements Runnable {
             this.getGraphics().drawImage(biFrame, 0, 0, null);
             
             try {
-                Thread.sleep(1);
+                Thread.sleep(16);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Viewer.class.getName()).log(Level.SEVERE, null, ex);
             }

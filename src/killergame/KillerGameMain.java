@@ -16,7 +16,6 @@ public class KillerGameMain {
      */
     public static void main(String[] args) {
         KillerGame kg = new KillerGame();
-//        KillerGame kgd = new KillerGame();
     }
     
 }
