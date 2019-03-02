@@ -100,7 +100,12 @@ public class KillerServer implements Runnable {
 
     @Override
     public void run() {
+        
         this.abrirConexion();
+    }
+    
+    public int getServerPort(){
+        return this.port;
     }
 
 }

@@ -6,13 +6,12 @@
 package killergame;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import static javax.swing.JFrame.EXIT_ON_CLOSE;
-import javax.swing.JTextField;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -34,50 +33,17 @@ public class VisualHandler implements Runnable {
         this.killerGame = kg;
         this.position = position;
 
-        this.killerClient = new KillerClient(this, this.socket, this.position);
+        // crear killerClient
+        this.killerClient = new KillerClient(this, this.position);
+
+        // aseguro iniciar el cliente siempre
+        this.startClient(); // ponerlo siempre en la excepcion de conexion no encotrada???
 
         //  this.tryConnection();
     }
 
-    public synchronized void setKiller(Socket cliSock, String cliAddr) {
-
-        // comprobar si conexion establecida
-        // probar con Socket.isConnected() para cerrar los sockets
-        if (this.getSocket() != null) {
-            System.out.println("KG: soket left ocupado");
-            return;  //========= KillerLeft ya existe ======================>>>>
-        }
-        
-        this.setSocket(cliSock);
-        this.setClientAddress(cliAddr);
-
-        //iniciar y crearF nuevo hilo de visual handler
-        this.startThread();
-
-        System.out.println("KG: conexion izquierda exitosa");
-    }
-
-    /**
-     * crea conexion con un server gracias al cliente creado
-     */
-    public void tryConnection() {
-
+    public void startClient() {
         new Thread(this.killerClient).start();
-    }
-
-    public void startThread() {
-        new Thread(this).start();
-    }
-
-    public void setClientAddress(String cliAddr) {
-        this.clientAddr = cliAddr;
-    }
-
-    public void sendBall() {
-        System.out.println("VH sendBall out >> " + this.out);
-        this.out.println("ball&tttt");
-        System.out.println("ball sended");
-
     }
 
     /**
@@ -89,30 +55,6 @@ public class VisualHandler implements Runnable {
         this.out.println(msj);
     }
 
-    public void setSocket(Socket cliSock) {
-        this.socket = cliSock;
-    }
-
-    public Socket getSocket() {
-        return this.socket;
-    }
-
-    public char getPosition() {
-        return this.position;
-    }
-
-    public KillerGame getKillerGame() {
-        return this.killerGame;
-    }
-
-    public String getIp() {
-        return this.ip;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
     private void processMessage(BufferedReader in, PrintWriter out) {
         String line;
         Boolean done = false;
@@ -121,8 +63,8 @@ public class VisualHandler implements Runnable {
             while (!done) {
                 System.out.println("VH: Waiting for reading lines...");
                 line = in.readLine();
-                
-                System.out.println("VH: line>>> " + line);
+
+                System.out.println("VH: mensaje recibido: " + line);
 
                 //si line null es que el cliente ha cerrado/perdido la conexion
                 if (line == null) {
@@ -130,6 +72,7 @@ public class VisualHandler implements Runnable {
 
                 } else {
                     String[] lines = line.trim().split("&");
+
                     switch (lines[0]) {
 
                         case "bye":
@@ -157,39 +100,63 @@ public class VisualHandler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("VH: Ha entrado en el run");
-
-        try {
-            // Get I/O streams from the socket. 
-            System.out.println("VH run try socket: " + this.socket.toString());
-            this.in = new BufferedReader(new InputStreamReader(
-                    this.socket.getInputStream()));
-            System.out.println("VH run try out>> " + this.out.toString());
-            this.out = new PrintWriter(this.socket.getOutputStream(), true);
-
-            
-
-            // interact with a client
-            this.processMessage(this.in, this.out);
-
-            // Close client connection
-            this.socket.close();
-
-            System.out.println("User " + this.clientAddr + " disconected");
-
-        } catch (Exception ex) {
-            System.err.println("PK: kk");
-            System.err.println("PK: " + ex);
-        }
-
+        this.processMessage(this.in, this.out);
     }
 
-    void startClient(String ip, int port) {
+    public char getPosition() {
+        return this.position;
+    }
 
+    public KillerGame getKillerGame() {
+        return this.killerGame;
+    }
+
+    public synchronized Socket getSocket() {
+        return this.socket;
+    }
+
+    public String getIp() {
+        return this.ip;
+    }
+
+    public int getPort() {
+        return this.port;
+    }
+
+    public void setIP(String ip) {
         this.ip = ip;
-        this.port = port;
+    }
 
-        new Thread(this.killerClient).start();
+    public synchronized void setConnection(Socket cliSock) {
+        if (this.socket == null) {
+
+            try {
+                // setear socket
+                this.socket = cliSock;
+
+                // setear PrintWriter (poder enviar msjs)
+                this.out = new PrintWriter(this.socket.getOutputStream(), true);
+
+                // setar BufferedReader (poder recibir msjs)
+                this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+
+                System.out.println("VH: toda conexion ok?");
+                System.out.println("VH: Iniciando run de de VM");
+                
+                new Thread(this).start();
+
+            } catch (IOException ex) {
+                // excepcion al no poder(?) leer
+                Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        } else {
+            System.out.println("VH: no se ha seteado el socket");
+        }
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
 }

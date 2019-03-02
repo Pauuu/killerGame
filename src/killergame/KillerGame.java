@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 class KillerGame extends JFrame {
 
     // constantes
-    private final int FRAME_WIDTH = 920;
-    private final int FRAME_HEIGHT = 800;
+    private final int FRAME_WIDTH = 500;
+    private final int FRAME_HEIGHT = 500;
 
     // objetos visibles del juego
     private ArrayList<VisibleObject> visibleObjects;
@@ -40,14 +40,11 @@ class KillerGame extends JFrame {
         // instanciar elementos
         this.visibleObjects = new ArrayList<>();
         this.killerPads = new ArrayList<>();
-        this.killerServer = new KillerServer(this);
 
         //añadir comunicaciones
-        this.startServer();
-        this.killerLeft = new VisualHandler(this, 'l');
-        this.killerRight = new VisualHandler(this,'r');
+        this.createVisualHandlers();
+        this.createStartServer();
         this.createJFrameForKillerClients();
-//        this.startVisualModels();
 
         //ojo poner un contador para "encender" los clientes despues
         try {
@@ -65,13 +62,14 @@ class KillerGame extends JFrame {
         this.pack();
         this.setVisible(true);
         this.startGame();
-
+        
+        
         try {
-            Thread.sleep(20000);
-            this.killerLeft.sendBall();
+            Thread.sleep(15000);
         } catch (InterruptedException ex) {
             Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.killerRight.sendMessage("ball");
     }
 
     private void createViewer(int width, int height) {
@@ -94,7 +92,13 @@ class KillerGame extends JFrame {
 
     }
 
-    private void startServer() {
+    private void createVisualHandlers() {
+        this.killerLeft = new VisualHandler(this, 'l');
+        this.killerRight = new VisualHandler(this, 'r');
+    }
+
+    private void createStartServer() {
+        this.killerServer = new KillerServer(this);
         new Thread(this.killerServer).start();
     }
 
@@ -141,7 +145,8 @@ class KillerGame extends JFrame {
             if (objTest != vObj) {
 
                 //comprobar si colision
-                if (objTest.getHitBox().intersects(vObj.getHitBox())) { //lamar a las reglas para conocer que han de hacer
+                if (objTest.getHitBox().intersects(vObj.getHitBox())) {
+                    //lamar a las reglas para conocer que han de hacer
 
                     int regla = KillerRules.testColision(objTest, vObj);
                     this.aplicarRegla(regla, objTest);
@@ -151,15 +156,13 @@ class KillerGame extends JFrame {
     }
 
     // conexinoes
-
-    
-    public VisualHandler getVisualHandler(char posicion){
-        if (posicion == 'r'){
+    public VisualHandler getVisualHandler(char posicion) {
+        if (posicion == 'r') {
             return this.killerRight;
-        
-        } else if (posicion == 'l'){
+
+        } else if (posicion == 'l') {
             return this.killerLeft;
-        
+
         } else {
             System.out.println("KG: no se ha devuelto nada");
             return null;
@@ -204,15 +207,15 @@ class KillerGame extends JFrame {
 
         JTextField jtfKillerRightIp = new JTextField("localhost", 16);
         JTextField jtfKillerLeftIp = new JTextField("localhost", 16);
-        
-        JTextField jtfKillerRightPort = new JTextField("port",5);
-        JTextField jtfKillerLeftPort = new JTextField("port",5);
+
+        JTextField jtfKillerRightPort = new JTextField("port", 5);
+        JTextField jtfKillerLeftPort = new JTextField("port", 5);
 
         JButton jbAceptar = new JButton("Aceptar");
 //        jbAceptar.addActionListener(this);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         ventanaConfiguracion.add(jlKillerRight, gbc);
@@ -220,7 +223,7 @@ class KillerGame extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         ventanaConfiguracion.add(jtfKillerRightIp, gbc);
-        
+
         gbc.gridx = 2;
         gbc.gridy = 0;
         ventanaConfiguracion.add(jtfKillerRightPort, gbc);
@@ -232,7 +235,7 @@ class KillerGame extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 1;
         ventanaConfiguracion.add(jtfKillerLeftIp, gbc);
-        
+
         gbc.gridx = 2;
         gbc.gridy = 1;
         ventanaConfiguracion.add(jtfKillerLeftPort, gbc);
@@ -246,25 +249,41 @@ class KillerGame extends JFrame {
         jbAceptar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // -- compobar si ha sido el boton u otro elemento --
-                
-                killerRight.startClient(jtfKillerRightIp.getText(), 
-                        Integer.parseInt(jtfKillerRightPort.getText()));
-                
-                
-                killerLeft.startClient(jtfKillerLeftIp.getText(), 
-                        Integer.parseInt(jtfKillerLeftPort.getText()));
+
+                // killerLeft set ip
+                killerLeft.setIP(jtfKillerLeftIp.getText());
+
+                // killerLeft set port 
+                killerLeft.setPort(Integer.parseInt(jtfKillerLeftPort.getText()));
+
+                // killer right set ip
+                killerRight.setIP(jtfKillerRightIp.getText());
+
+                // killer right set port
+                killerRight.setPort(Integer.parseInt(jtfKillerRightPort.getText()));
+
+                // arrancar hilos de los clientes
+                // -- de esta manera solo se iniciaran si se pulsa el btn aceptar 
+                // (no se va a pulsar en todos los lados --
+//                killerRight.startClient();
+//                killerLeft.startClient();
+
+                // cerrar ventana (?)
+                System.out.println("KG: cerrando ventana de configuracion");
+                ventanaConfiguracion.dispose();
             }
         });
 
         // añadir listener al boton acepatar
     }
 
-   
-
     // Getters & setters
     public ArrayList getVisibleObjects() {
         return this.visibleObjects;
+    }
+    
+    public KillerServer getKillerServer(){
+        return this.killerServer;
     }
 
     public int getFrameHeight() {
@@ -282,5 +301,7 @@ class KillerGame extends JFrame {
     public VisualHandler getKillerRight() {
         return this.killerRight;
     }
+    
+    
 
 }
