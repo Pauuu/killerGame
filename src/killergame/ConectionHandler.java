@@ -35,22 +35,17 @@ public class ConectionHandler implements Runnable {
     }
 
     private void discriminarModuloVisual(String[] peticion) {
+        
+        String posicion;
+        posicion = peticion[1];
 
-        if (peticion[1].equalsIgnoreCase("r")
-                && this.killerGame.getVisualHandler('r').getSocket() == null) {
-
-            System.out.println("CH: conexion recibida >> " + peticion[1]);
-            this.killerGame.getVisualHandler('r').setConnection(this.clientSocket);
-
-        } else if (peticion[1].equalsIgnoreCase("l")
-                && this.killerGame.getVisualHandler('l').getSocket() == null) {
-
-            System.out.println("CH: conexion recibida >> " + peticion[1]);
-            this.killerGame.getVisualHandler('l').setConnection(this.clientSocket);
-
-        } else {
-            System.out.println("CH: ignorando msjs -> " + peticion[1]);
+        if (posicion.equalsIgnoreCase("l") || posicion.equalsIgnoreCase("r")) {
+            System.out.println("CH: ignorando msjs -> " + posicion);
+            return; //====================== peticion ignorada ==============>>>
         }
+
+        this.killerGame.getVisualHandler(posicion).setConnection(this.clientSocket, this.killerServer.getServerPort());
+        System.out.println("CH: conexion recibida >> " + posicion);
     }
 
     private void gestionarPeticion() {

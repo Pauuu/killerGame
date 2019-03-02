@@ -156,11 +156,12 @@ class KillerGame extends JFrame {
     }
 
     // conexinoes
-    public VisualHandler getVisualHandler(char posicion) {
-        if (posicion == 'r') {
+    public VisualHandler getVisualHandler(String posicion) {
+        
+        if (posicion.equalsIgnoreCase("r")) {
             return this.killerRight;
 
-        } else if (posicion == 'l') {
+        } else if (posicion.equalsIgnoreCase("l")) {
             return this.killerLeft;
 
         } else {

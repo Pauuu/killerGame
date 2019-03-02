@@ -79,6 +79,7 @@ public class KillerServer implements Runnable {
     public void configurePort() {
         
         while (this.serverSocket == null) {
+            
             try {
                 this.serverSocket = new ServerSocket(this.port);
                 

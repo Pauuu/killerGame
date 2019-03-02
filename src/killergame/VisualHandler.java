@@ -27,6 +27,7 @@ public class VisualHandler implements Runnable {
     private Socket socket = null;
     private String clientAddr;
     private String ip;
+    private int serverPort;
     private int port;
 
     public VisualHandler(KillerGame kg, char position) {
@@ -127,7 +128,7 @@ public class VisualHandler implements Runnable {
         this.ip = ip;
     }
 
-    public synchronized void setConnection(Socket cliSock) {
+    public synchronized void setConnection(Socket cliSock, int serverPort) {
         if (this.socket == null) {
 
             try {
@@ -139,6 +140,9 @@ public class VisualHandler implements Runnable {
 
                 // setar BufferedReader (poder recibir msjs)
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+                
+                // setear port del servidor
+                this.serverPort = serverPort;
 
                 System.out.println("VH: toda conexion ok?");
                 System.out.println("VH: Iniciando run de de VM");
