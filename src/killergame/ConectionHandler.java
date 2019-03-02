@@ -56,7 +56,9 @@ public class ConectionHandler implements Runnable {
     private void gestionarPeticion() {
 
         try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(this.clientSocket.getInputStream()));
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(this.clientSocket.getInputStream()));
+            
             String peticion[] = in.readLine().split("&");
 
             System.out.println("CH: peticion[0] " + peticion[0]);
