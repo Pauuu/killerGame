@@ -28,7 +28,6 @@ public class VisualHandler implements Runnable {
     private String clientAddr;
     private String ip;
     private int serverPort;
-    private int port;
 
     public VisualHandler(KillerGame kg, char position) {
         this.killerGame = kg;
@@ -126,10 +125,6 @@ public class VisualHandler implements Runnable {
         return this.ip;
     }
 
-    public int getPort() {
-        return this.port;
-    }
-
     public void setIP(String ip) {
         this.ip = ip;
     }
@@ -146,16 +141,15 @@ public class VisualHandler implements Runnable {
 
                 // setear BufferedReader (poder recibir msjs)
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-                
+
                 // setear la ip
                 this.ip = this.socket.getInetAddress().getHostAddress();
-                
-                System.out.println("IP" +  this.socket.getInetAddress().getHostAddress());
+
+                System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
 
                 // setear port del servidor
                 this.serverPort = serverPort;
                 System.out.println("DEBUG >> VH: Server port: " + this.serverPort);
-                System.out.println("DEBUG >> VH: port: " + this.port);
 
                 System.out.println("VH: toda conexion ok?");
                 System.out.println("VH: Iniciando run de de VM");
@@ -175,14 +169,10 @@ public class VisualHandler implements Runnable {
         }
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-    
-    public void setServerPort(int serverPort){
+    public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
     }
-    
+
     public int getServerPort() {
         return this.serverPort;
     }
