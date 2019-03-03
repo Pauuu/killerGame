@@ -59,7 +59,7 @@ public class ConectionHandler implements Runnable {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(this.clientSocket.getInputStream()));
             
-            String peticion[] = in.readLine().split("&");
+            String peticion[] = in.readLine().split("/");
 
             System.out.println("CH: peticion[0] " + peticion[0]);
 
@@ -70,7 +70,10 @@ public class ConectionHandler implements Runnable {
                 this.discriminarModuloVisual(peticion);
 
             } else if (peticion[0].equalsIgnoreCase("kp")) {
-                // gestionar conexion de Killer Pad
+                // gestionar conexion de Killer Pad 
+                // -- protocolo distinto al del killer pad --
+                
+            } else if (peticion[0].equalsIgnoreCase("from:p")){
 
             } else {
                 // ignorsr la peticion

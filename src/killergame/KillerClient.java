@@ -47,7 +47,7 @@ public class KillerClient implements Runnable {
                     
                     // enviar msj con datos
                     out = new PrintWriter(cliSock.getOutputStream(), true);
-                    out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
+                    out.println("vm/" + this.vh.getPosition() + "/" + serverPort);
 
                     this.vh.startConnection(cliSock, serverPort);
 

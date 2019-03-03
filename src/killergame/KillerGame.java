@@ -1,4 +1,4 @@
-package killergame;
+    package killergame;
 
 import java.awt.Color;
 import java.awt.GridBagConstraints;

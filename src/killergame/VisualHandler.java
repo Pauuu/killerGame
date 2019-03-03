@@ -101,6 +101,8 @@ public class VisualHandler implements Runnable {
             System.err.println("VH: " + ex);
 //                this.socket.close();
             this.socket = null;
+            
+            // lanzar hilo cliente????? -> no haria falta que el cliente furea runnable
         }
     }
 
