@@ -33,8 +33,10 @@ public class KillerClient implements Runnable {
 
             // mirar si hay conexion (socket) o no en su visual handler
             if (this.vh.getSocket() == null // mirar si no tiene socket
-                    && vh.getIp() != null // mirar si tiene ip
-                    && vh.getPort() != 0) { // mirar si tiene puerto
+                    && vh.getIp() != null) // mirar si tiene ip
+            {
+                
+                System.out.println("DEBUG >> KC: intento conectar");
 
                 try {
                     // crear nuevo socket

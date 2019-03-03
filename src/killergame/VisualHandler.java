@@ -63,12 +63,14 @@ public class VisualHandler implements Runnable {
         try {
             while (!done) {
                 System.out.println("VH: Waiting for reading lines...");
+                System.out.println("DEBUG >> socket string: " + this.socket.toString());
                 line = in.readLine();
 
                 System.out.println("VH: mensaje recibido: " + line);
 
                 // si line null es que el cliente ha cerrado/perdido la conexion
-                if (line.equalsIgnoreCase("bye")) {
+                if (line == null) {
+                    System.err.println("debugkk");
                     done = true;
                     this.socket = null;
 
@@ -95,8 +97,9 @@ public class VisualHandler implements Runnable {
                     }
                 }
             }
-        } catch (Exception e) {
-            System.err.println("PK: " + e);
+        } catch (Exception ex) {
+            Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
+            System.err.println("VH: " + ex);
 //                this.socket.close();
             this.socket = null;
         }
@@ -146,6 +149,8 @@ public class VisualHandler implements Runnable {
 
                 // setear port del servidor
                 this.serverPort = serverPort;
+                System.out.println("DEBUG >> VH: Server port: " + this.serverPort);
+                System.out.println("DEBUG >> VH: port: " + this.port);
 
                 System.out.println("VH: toda conexion ok?");
                 System.out.println("VH: Iniciando run de de VM");
@@ -167,6 +172,10 @@ public class VisualHandler implements Runnable {
 
     public void setPort(int port) {
         this.port = port;
+    }
+    
+    public int getServerPort() {
+        return this.serverPort;
     }
 
 }

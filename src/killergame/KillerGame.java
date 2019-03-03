@@ -63,12 +63,12 @@ class KillerGame extends JFrame {
         this.setVisible(true);
         this.startGame();
         
-        
-        try {
-            Thread.sleep(15000);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            Thread.sleep(20000);
+//        } catch (InterruptedException ex) {
+//            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        System.out.println("envio bola");
 //        this.killerRight.sendMessage("ball");
     }
 
