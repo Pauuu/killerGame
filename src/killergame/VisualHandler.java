@@ -144,8 +144,13 @@ public class VisualHandler implements Runnable {
                 // setear PrintWriter (poder enviar msjs)
                 this.out = new PrintWriter(this.socket.getOutputStream(), true);
 
-                // setar BufferedReader (poder recibir msjs)
+                // setear BufferedReader (poder recibir msjs)
                 this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+                
+                // setear la ip
+                this.ip = this.socket.getInetAddress().getHostAddress();
+                
+                System.out.println("IP" +  this.socket.getInetAddress().getHostAddress());
 
                 // setear port del servidor
                 this.serverPort = serverPort;
@@ -172,6 +177,10 @@ public class VisualHandler implements Runnable {
 
     public void setPort(int port) {
         this.port = port;
+    }
+    
+    public void setServerPort(int serverPort){
+        this.serverPort = serverPort;
     }
     
     public int getServerPort() {

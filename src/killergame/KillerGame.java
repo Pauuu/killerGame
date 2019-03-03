@@ -255,13 +255,13 @@ class KillerGame extends JFrame {
                 killerLeft.setIP(jtfKillerLeftIp.getText());
 
                 // killerLeft set port 
-                killerLeft.setPort(Integer.parseInt(jtfKillerLeftPort.getText()));
+                killerLeft.setServerPort(Integer.parseInt(jtfKillerLeftPort.getText()));
 
                 // killer right set ip
                 killerRight.setIP(jtfKillerRightIp.getText());
 
                 // killer right set port
-                killerRight.setPort(Integer.parseInt(jtfKillerRightPort.getText()));
+                killerRight.setServerPort(Integer.parseInt(jtfKillerRightPort.getText()));
 
                 // arrancar hilos de los clientes
                 // -- de esta manera solo se iniciaran si se pulsa el btn aceptar 
@@ -286,6 +286,8 @@ class KillerGame extends JFrame {
     public KillerServer getKillerServer(){
         return this.killerServer;
     }
+    
+   
 
     public int getFrameHeight() {
         return this.FRAME_HEIGHT;

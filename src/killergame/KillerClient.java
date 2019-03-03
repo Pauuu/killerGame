@@ -40,7 +40,7 @@ public class KillerClient implements Runnable {
 
                 try {
                     // crear nuevo socket
-                    cliSock = new Socket(this.vh.getIp(), this.vh.getPort());
+                    cliSock = new Socket(this.vh.getIp(), this.vh.getServerPort());
 
                     // guardar port del server
                     serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
