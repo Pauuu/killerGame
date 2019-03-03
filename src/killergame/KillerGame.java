@@ -54,9 +54,10 @@ class KillerGame extends JFrame {
         }
 
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 0, 0, 30, 30);
+        Ball a = new Ball(this, 0, 0, 60, 60);
+//        Player p  = new Player(this, 9, 9, 30, 30);
 
-        a.setColor(Color.ORANGE);
+       
 
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
@@ -79,12 +80,12 @@ class KillerGame extends JFrame {
 
     private void startGame() {
 
-        //inicial los todos los elemetnos
-        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
-            if (this.visibleObjects.get(pos) instanceof Autonomous) {
-                new Thread((Autonomous) this.visibleObjects.get(pos)).start();
-            }
-        }
+//        //inicial los todos los elemetnos
+//        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+//            if (this.visibleObjects.get(pos) instanceof Alive) {
+//                new Thread((Alive) this.visibleObjects.get(pos)).start();
+//            }
+//        }
 
         //--crear un hilo por cada nuevo elemento--?
         //pintar todo

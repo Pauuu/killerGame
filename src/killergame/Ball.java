@@ -16,13 +16,13 @@ import java.util.logging.Logger;
  */
 public class Ball extends Autonomous {
 
-    Color c;
+   
     private boolean dead = false;
 
     public Ball(KillerGame kGame, int posX, int posY, int width, int height) {
         super(kGame, posX, posY, width, height);
-        this.velX = 5d;  //quitar?
-        this.velY = 7d;  //quitar?
+        this.velX = 4d;  //quitar?
+        this.velY = 5d;  //quitar?
       
 
         //this.setImagen("imgs/blackBall.png");
@@ -32,53 +32,14 @@ public class Ball extends Autonomous {
         new Thread(new Bullet(this.killerGame, this)).start();
     }
 
-    public void setColor(Color c) {
-        this.c = c;
-    }
+    
 
     @Override
     public void render(Graphics2D g2d) {
-        g2d.setColor(c);
-        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
+        g2d.setColor(Color.ORANGE);
+//        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
+        g2d.fillArc(this.posX, this.posY, this.witdh, this.height, 30, 300);
+
 
     }
-//
-//    @Override
-//    public void run() {
-////
-////        //direfencia de tiempo actual menos anterior
-////        double timeDiffNano;
-////
-////        //timepo anterior
-////        double previousTimeNano;
-////
-////        previousTimeNano = System.nanoTime();
-////
-////        while (true) {
-////
-////            //calcula la diferencia
-////            timeDiffNano = System.nanoTime() - previousTimeNano;
-////
-////            //tiempo puesto a boleo pero que va bien
-////            if (timeDiffNano >= 10000000) {
-////
-////                //actualiza la posicion del obj
-////                this.updatePosition(timeDiffNano);
-////
-////                //actualiza el tiempo anterior cada vez q entra
-////                previousTimeNano = System.nanoTime();
-////
-////                System.out.println("timediff: " + timeDiffNano);
-////
-////            }
-////
-////            //para que el procesador no pete?
-////            try {
-////                Thread.sleep(9);
-////            } catch (InterruptedException ex) {
-////                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
-////            }
-////        }
-//    }
-
 }

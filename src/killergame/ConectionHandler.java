@@ -74,6 +74,8 @@ public class ConectionHandler implements Runnable {
                 // -- protocolo distinto al del killer pad --
                 
             } else if (peticion[0].equalsIgnoreCase("from:p")){
+                //crear nuevo player
+                new Thread(new Player(killerGame, 0, 0, 60, 60)).start();
 
             } else {
                 // ignorsr la peticion

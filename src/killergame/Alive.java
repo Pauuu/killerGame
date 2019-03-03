@@ -18,6 +18,7 @@ public abstract class Alive extends VisibleObject implements Runnable {
 
     public Alive(KillerGame kGame, int posX, int posY, int width, int height) {
         super(kGame, posX, posY, width, height);
+        new Thread(this).start();
 
     }
 
@@ -33,14 +34,14 @@ public abstract class Alive extends VisibleObject implements Runnable {
     protected void updatePosition(double time) {
 
         double intTime = time / 10000000;    //lo pasamos a decisegundos
+        
+        System.out.println("update position");
 
         //  position' = position + (vel * time); -> M.R.U.
         this.posX += this.velX * intTime;
         this.posY += this.velY * intTime;
         this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
         this.testColision();
-        
-       
 
     }
 
@@ -108,13 +109,11 @@ public abstract class Alive extends VisibleObject implements Runnable {
     @Override
     public void run() {
 
-       
         while (true) {
 
-
             //actualiza la posicion del obj
+            // -- calcular la diferencia de tiempo --
             this.updatePosition(10000000);
-
 
 //                System.out.println("timediff: " + timeDiffNano);
             try {

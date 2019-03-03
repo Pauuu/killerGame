@@ -5,13 +5,15 @@
         <group>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/KillerGameMain.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/ConectionHandler.java</file>
+            <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/Alive.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/KillerServer.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/VisualHandler.java</file>
+            <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/Autonomous.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/Viewer.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/KillerClient.java</file>
+            <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/Player.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/Ball.java</file>
             <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/KillerGame.java</file>
-            <file>file:/home/pau/NetBeansProjects/killergame/src/killergame/PreviousKiller.java</file>
         </group>
     </open-files>
 </project-private>
