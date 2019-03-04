@@ -17,19 +17,28 @@ import java.util.logging.Logger;
  *
  * @author pau
  */
-
 //añadir metodos estaticos para interpretar x si algun kg no tiene kp
 public class KillerPad implements Runnable {
 
     private KillerGame killerGame;
     private Socket clientSocket;
-    private String clientAddress;
-    private Player player;
-
-    public KillerPad(KillerGame kg, Socket cliSock, String cliAddr) {
+    private String ip;
+    private String name;
+    private KillerShip player;
+    private int port;
+    
+    public KillerPad(KillerGame kg, Socket cliSock, String ip, int  port, String name) {
         this.killerGame = kg;
         this.clientSocket = cliSock;
-        this.clientAddress = cliAddr;
+        this.ip = ip;
+        this.port = port;
+        this.name = name;
+        
+        // añadir este objeto al array de killerpads del killer game
+        this.killerGame.addKillerPad(this);
+        
+        // crear nueva killerShip
+        new KillerShip(kg, 0, 0, 60, 60, this.ip, this.port, this.name);
     }
 
     private void processClient(BufferedReader in, PrintWriter out) {
@@ -68,8 +77,7 @@ public class KillerPad implements Runnable {
                         this.player.moveX(0);
                         this.player.moveY(0);
                     case ("bbbye"):
-                        
-                        
+
                         break;
                 }
 
@@ -80,10 +88,11 @@ public class KillerPad implements Runnable {
 
     }
 
-    public void startNave(int x, int y) {
-        this.player = new Player(this.killerGame,10,10, 20, 20); //cambiar
-        //this.killerGame.createAlive(player);
-        new Thread(this.player).start();
+    public static void createKillerShip(KillerGame kg, String ip, int port, String name) {
+
+        // crear nueva killerShip
+        new KillerShip(kg, 0, 0, 60, 60, ip, port, name);
+
     }
 
     @Override
@@ -97,8 +106,6 @@ public class KillerPad implements Runnable {
                     this.clientSocket.getInputStream()));
 
             out = new PrintWriter(this.clientSocket.getOutputStream(), true);
-
-            this.startNave(40, 40);
 
             // interact with a client
             this.processClient(in, out);

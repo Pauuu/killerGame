@@ -13,10 +13,10 @@ import java.util.logging.Logger;
 public class KillerClient implements Runnable {
 
     private VisualHandler vh;
-    private char position;
+    private String position;
     private String clienAddress;
 
-    public KillerClient(VisualHandler vh, char position) {
+    public KillerClient(VisualHandler vh, String position) {
         this.vh = vh;
         this.position = this.vh.getPosition();
     }
@@ -32,40 +32,43 @@ public class KillerClient implements Runnable {
         while (true) {
 
             // mirar si hay conexion (socket) o no en su visual handler
-            if (this.vh.getSocket() == null // mirar si no tiene socket
-                    && vh.getIp() != null) // mirar si tiene ip
-            {
+            if (this.vh.getSocket() == null) {
+                System.out.println("socket nulo");
                 
-                System.out.println("DEBUG >> KC: intento conectar");
+                if (vh.getIp() != null) {
+                    System.out.println("ip no nula");
 
+                    System.out.println("DEBUG >> KC: intento conectar");
+
+                    try {
+                        // crear nuevo socket
+                        cliSock = new Socket(this.vh.getIp(), this.vh.getServerPort());
+
+                        // guardar port del server
+                        serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
+
+                        // enviar msj con datos
+                        out = new PrintWriter(cliSock.getOutputStream(), true);
+                        out.println("vm/" + this.vh.getPosition() + "/" + serverPort);
+
+                        this.vh.setConnection(cliSock, serverPort);
+
+                    } catch (IOException ex) {
+                        Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
+                        System.out.println("KC: no se ha podido establecer conexion");
+                    }
+                }
+
+                // dormir el hilo 0.2 seg
                 try {
-                    // crear nuevo socket
-                    cliSock = new Socket(this.vh.getIp(), this.vh.getServerPort());
+                    Thread.sleep(200);
 
-                    // guardar port del server
-                    serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
-                    
-                    // enviar msj con datos
-                    out = new PrintWriter(cliSock.getOutputStream(), true);
-                    out.println("vm/" + this.vh.getPosition() + "/" + serverPort);
-
-                    this.vh.startConnection(cliSock, serverPort);
-
-                } catch (IOException ex) {
-                    Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
-                    System.out.println("KC: no se ha podido establecer conexion");
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
-            // dormir el hilo 0.2 seg
-            try {
-                Thread.sleep(200);
-
-            } catch (InterruptedException ex) {
-                Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
 
     }
-
 }

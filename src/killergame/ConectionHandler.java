@@ -35,13 +35,12 @@ public class ConectionHandler implements Runnable {
     }
 
     private void discriminarModuloVisual(String[] peticion) {
-        
+
         String posicion;
         int serverPort;
-        
+
         posicion = peticion[1];
         serverPort = Integer.parseInt(peticion[2]);
-        
 
         if (!posicion.equalsIgnoreCase("l") && !posicion.equalsIgnoreCase("r")) {
             System.out.println("CH: ignorando msjs -> " + posicion);
@@ -49,22 +48,34 @@ public class ConectionHandler implements Runnable {
         }
 
         // inicia la conexion del visual handler
-        this.killerGame.getVisualHandler(posicion).startConnection(this.clientSocket, serverPort);
-        System.out.println("CH: conexion recibida >> " + posicion);
+        
+        // setea el socket al visual handler
+        this.killerGame.getVisualHandler(posicion).setConnection(this.clientSocket, serverPort);
+//        this.killerGame.getVisualHandler(posicion).startConnection(this.clientSocket, serverPort);
+        System.out.println("CH: conexion recibida -> " + posicion);
     }
 
     private void gestionarPeticion() {
+
+        String shipName;
+        String uglyMessage;
+        String[] peticion;
 
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(this.clientSocket.getInputStream()));
             
-            String peticion[] = in.readLine().split("/");
+            // almacena el msj en crudo
+            uglyMessage = in.readLine();
+            
+            // separa la info por lso caracteres "/"
+            peticion = uglyMessage.split("/");
+            
 
             System.out.println("CH: peticion[0] " + peticion[0]);
 
             if (peticion[0].equalsIgnoreCase("vm")) {
-                
+
                 // gestionar si es un moduo visual
                 System.out.println("CH: conexion recibida >> VM");
                 this.discriminarModuloVisual(peticion);
@@ -72,13 +83,25 @@ public class ConectionHandler implements Runnable {
             } else if (peticion[0].equalsIgnoreCase("kp")) {
                 // gestionar conexion de Killer Pad 
                 // -- protocolo distinto al del killer pad --
+
+            } else if (peticion[0].equalsIgnoreCase("from:p")) {
+                // crear nuevo player desde el killerPad
+
+                // --test--
+                shipName = uglyMessage.substring(uglyMessage.lastIndexOf("from:") + 1);
                 
-            } else if (peticion[0].equalsIgnoreCase("from:p")){
-                //crear nuevo player
-                new Thread(new Player(killerGame, 0, 0, 60, 60)).start();
+                new KillerPad(
+                        this.killerGame, 
+                        this.clientSocket, 
+                        this.clientAddress,
+                        this.killerServer.getServerPort(), 
+                        shipName
+                );
+
+                
 
             } else {
-                // ignorsr la peticion
+                // ignorar la peticion
                 System.out.println("CH: Se ha ignorado la peticion: " + peticion[0]);
             }
 

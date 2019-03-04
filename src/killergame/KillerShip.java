@@ -12,9 +12,25 @@ import java.awt.Graphics2D;
  *
  * @author pau
  */
-public class Player extends Controlled {
+public class KillerShip extends Controlled {
 
-    public Player(KillerGame kGame, int posX, int posY, int width, int height) {
+    // ip del mando de origen
+    private String ip;
+
+    // nombre de la nave dado por el usuario
+    private String name;
+
+    // puerto del mando de origen (x si juego en local)
+    private int port;
+
+    public KillerShip(KillerGame kGame,
+            int posX,
+            int posY,
+            int width,
+            int height,
+            String killerPadIp,
+            int port,
+            String name) {
         super(kGame, posX, posY, width, height);
 
         this.velX = 4d;
@@ -28,7 +44,4 @@ public class Player extends Controlled {
         g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
     }
 
-   
-
-//    }
 }

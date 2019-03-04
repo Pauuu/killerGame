@@ -44,6 +44,8 @@ public abstract class VisibleObject implements Renderizable {
         this.witdh = width;
         this.height = height;
         this.addHitBox();
+        
+        // añadir objeto en la lista de visible objects del killergame
         this.killerGame.addVisibleObject(this);
 
     }

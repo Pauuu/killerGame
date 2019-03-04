@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class VisualHandler implements Runnable {
 
     private BufferedReader in;
-    private char position;
+    private String position;
     private KillerGame killerGame;
     private KillerClient killerClient;
     private PrintWriter out;
@@ -29,7 +29,7 @@ public class VisualHandler implements Runnable {
     private String ip;
     private int serverPort;
 
-    public VisualHandler(KillerGame kg, char position) {
+    public VisualHandler(KillerGame kg, String position) {
         this.killerGame = kg;
         this.position = position;
 
@@ -61,8 +61,9 @@ public class VisualHandler implements Runnable {
 
         try {
             while (!done) {
+
                 System.out.println("VH: Waiting for reading lines...");
-                System.out.println("DEBUG >> socket string: " + this.socket.toString());
+                System.out.println("Debug VH >> socket string: " + this.socket.toString());
                 line = in.readLine();
 
                 System.out.println("VH: mensaje recibido: " + line);
@@ -101,17 +102,39 @@ public class VisualHandler implements Runnable {
             System.err.println("VH: " + ex);
 //                this.socket.close();
             this.socket = null;
-            
+            done = true;
+
             // lanzar hilo cliente????? -> no haria falta que el cliente furea runnable
         }
     }
 
     @Override
     public void run() {
-        this.processMessage(this.in, this.out);
+        while (true) {
+
+            try {
+                System.out.println("loop: socket>>>>>> ");
+
+                if (this.socket != null) {
+
+                    // setear PrintWriter (poder enviar msjs)
+                    this.out = new PrintWriter(this.socket.getOutputStream(), true);
+
+                    // setear BufferedReader (poder recibir msjs)
+                    this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+
+                    this.processMessage(this.in, this.out);
+
+                }
+
+                Thread.sleep(100);
+            } catch (Exception ex) {
+                Logger.getLogger(VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
-    public char getPosition() {
+    public String getPosition() {
         return this.position;
     }
 
@@ -123,6 +146,63 @@ public class VisualHandler implements Runnable {
         return this.socket;
     }
 
+    public synchronized void setConnection(Socket cliSock, int serverPort) {
+        if (this.getSocket() == null) {
+
+            // setear socket
+            this.socket = cliSock;
+
+            // setear la ip
+            this.ip = this.socket.getInetAddress().getHostAddress();
+
+            System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
+
+            // setear port del servidor
+            this.serverPort = serverPort;
+            System.out.println("DEBUG >> VH: Server port: " + this.serverPort);
+
+            System.out.println("VH: toda conexion ok?");
+
+        } else {
+            System.err.println("VH: no se ha seteado el socket");
+        }
+    }
+
+//    public synchronized void startConnection(Socket cliSock, int serverPort) {
+//        if (this.getSocket() == null) {
+//
+//            try {
+//                // setear socket
+//                this.socket = cliSock;
+//
+//                // setear PrintWriter (poder enviar msjs)
+//                this.out = new PrintWriter(this.socket.getOutputStream(), true);
+//
+//                // setear BufferedReader (poder recibir msjs)
+//                this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+//
+//                // setear la ip
+//                this.ip = this.socket.getInetAddress().getHostAddress();
+//
+//                System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
+//
+//                // setear port del servidor
+//                this.serverPort = serverPort;
+//                System.out.println("DEBUG >> VH: Server port: " + this.serverPort);
+//
+//                System.out.println("VH: toda conexion ok?");
+//                System.out.println("VH: Iniciando run de de VM");
+//
+//                new Thread(this).start();
+//
+//            } catch (IOException ex) {
+//                // excepcion al no poder(?) leer
+//                Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        } else {
+//            System.out.println("VH: no se ha seteado el socket");
+//        }
+//    }
     public String getIp() {
         return this.ip;
     }
@@ -131,52 +211,16 @@ public class VisualHandler implements Runnable {
         this.ip = ip;
     }
 
-    public synchronized void startConnection(Socket cliSock, int serverPort) {
-        if (this.getSocket() == null) {
-
-            try {
-                // setear socket
-                this.socket = cliSock;
-
-                // setear PrintWriter (poder enviar msjs)
-                this.out = new PrintWriter(this.socket.getOutputStream(), true);
-
-                // setear BufferedReader (poder recibir msjs)
-                this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-
-                // setear la ip
-                this.ip = this.socket.getInetAddress().getHostAddress();
-
-                System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
-
-                // setear port del servidor
-                this.serverPort = serverPort;
-                System.out.println("DEBUG >> VH: Server port: " + this.serverPort);
-
-                System.out.println("VH: toda conexion ok?");
-                System.out.println("VH: Iniciando run de de VM");
-
-                new Thread(this).start();
-
-            } catch (IOException ex) {
-                // excepcion al no poder(?) leer
-                Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
-
-            }
-
-        } else {
-            System.out.println("VH: no se ha seteado el socket");
-
-            // 
-        }
-    }
-
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
     }
 
     public int getServerPort() {
         return this.serverPort;
+    }
+
+    void setSocket() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -1,8 +1,5 @@
 package killergame;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,8 +31,6 @@ public abstract class Alive extends VisibleObject implements Runnable {
     protected void updatePosition(double time) {
 
         double intTime = time / 10000000;    //lo pasamos a decisegundos
-        
-        System.out.println("update position");
 
         //  position' = position + (vel * time); -> M.R.U.
         this.posX += this.velX * intTime;

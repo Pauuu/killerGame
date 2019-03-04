@@ -1,9 +1,7 @@
     package killergame;
 
-import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.Socket;
@@ -42,7 +40,7 @@ class KillerGame extends JFrame {
         this.killerPads = new ArrayList<>();
 
         //añadir comunicaciones
-        this.createVisualHandlers();
+        this.createStartVisualHandlers();
         this.createStartServer();
         this.createJFrameForKillerClients();
 
@@ -93,9 +91,14 @@ class KillerGame extends JFrame {
 
     }
 
-    private void createVisualHandlers() {
-        this.killerLeft = new VisualHandler(this, 'l');
-        this.killerRight = new VisualHandler(this, 'r');
+    private void createStartVisualHandlers() {
+        
+        this.killerLeft = new VisualHandler(this, "l");
+        this.killerRight = new VisualHandler(this, "r");
+        
+        new Thread(this.killerLeft).start();
+        new Thread(this.killerRight).start();        
+        
     }
 
     private void createStartServer() {
@@ -170,23 +173,29 @@ class KillerGame extends JFrame {
             return null;
         }
     }
+    
+   
 
-    public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
-
-        // crear nuevo killerPad
-        KillerPad kp = new KillerPad(this, cliSock, cliAddr);
-
-        // añadir killerPad a la lista
-        this.killerPads.add(kp);
-
-        // iniciar nuevo hilo
-        new Thread(kp).start();
-
-        System.out.println("KG: conexoin killerPad exitosa");
-    }
+//    public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
+//
+//        // crear nuevo killerPad
+//        KillerPad kp = new KillerPad(this, cliSock, cliAddr,);
+//
+//        // añadir killerPad a la lista
+//        this.killerPads.add(kp);
+//
+//        // iniciar nuevo hilo
+//        new Thread(kp).start();
+//
+//        System.out.println("KG: conexoin killerPad exitosa");
+//    }
 
     public void addVisibleObject(VisibleObject vObj) {
         this.visibleObjects.add(vObj);
+    }
+    
+    public void addKillerPad(KillerPad kp){
+        this.killerPads.add(kp);
     }
 
     public void testColision(Alive objTest) {
@@ -287,8 +296,6 @@ class KillerGame extends JFrame {
     public KillerServer getKillerServer(){
         return this.killerServer;
     }
-    
-   
 
     public int getFrameHeight() {
         return this.FRAME_HEIGHT;
