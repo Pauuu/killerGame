@@ -33,7 +33,6 @@ public class KillerClient implements Runnable {
 
             // mirar si hay conexion (socket) o no en su visual handler
             if (this.vh.getSocket() == null) {
-                System.out.println("socket nulo");
                 
                 if (vh.getIp() != null) {
                     System.out.println("ip no nula");
@@ -49,13 +48,13 @@ public class KillerClient implements Runnable {
 
                         // enviar msj con datos
                         out = new PrintWriter(cliSock.getOutputStream(), true);
-                        out.println("vm/" + this.vh.getPosition() + "/" + serverPort);
+                        out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
 
                         this.vh.setConnection(cliSock, serverPort);
 
                     } catch (IOException ex) {
                         Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
-                        System.out.println("KC: no se ha podido establecer conexion");
+                        System.out.println("KC: no se ha podido establecer conexion \n");
                     }
                 }
 

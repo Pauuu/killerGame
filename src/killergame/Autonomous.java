@@ -3,8 +3,8 @@ package killergame;
 
 public abstract class Autonomous extends Alive implements Colisionable {
 
-    public Autonomous(KillerGame kGame, int posX, int posY, int width, int height) {
-        super(kGame, posX, posY, width, height);
+    public Autonomous(KillerGame kGame, double posX, double posY, int width, int height, double velX, double velY) {
+        super(kGame, posX, posY, width, height, velX, velY);
     }
 
 }

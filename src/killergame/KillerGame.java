@@ -1,4 +1,4 @@
-    package killergame;
+package killergame;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -52,16 +52,14 @@ class KillerGame extends JFrame {
         }
 
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 0, 0, 60, 60);
+        Ball a = new Ball(this, 0, 0, 60, 60, 2, 3);
 //        Player p  = new Player(this, 9, 9, 30, 30);
-
-       
 
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
         this.setVisible(true);
         this.startGame();
-        
+
 //        try {
 //            Thread.sleep(20000);
 //        } catch (InterruptedException ex) {
@@ -84,21 +82,35 @@ class KillerGame extends JFrame {
 //                new Thread((Alive) this.visibleObjects.get(pos)).start();
 //            }
 //        }
-
         //--crear un hilo por cada nuevo elemento--?
         //pintar todo
         new Thread(this.viewer).start();
 
     }
 
+    public void moveShip(String shipId, int velX, int velY) {
+        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+
+            if (this.visibleObjects.get(pos) instanceof KillerShip) {
+                KillerShip ks = (KillerShip) this.visibleObjects.get(pos);
+
+                if (ks.getIp() == shipId) {
+                    ks.setVelX(velX);
+                    ks.setVelY(velY);
+                    return;
+                }
+            }
+        }
+    }
+
     private void createStartVisualHandlers() {
-        
+
         this.killerLeft = new VisualHandler(this, "l");
         this.killerRight = new VisualHandler(this, "r");
-        
+
         new Thread(this.killerLeft).start();
-        new Thread(this.killerRight).start();        
-        
+        new Thread(this.killerRight).start();
+
     }
 
     private void createStartServer() {
@@ -124,12 +136,164 @@ class KillerGame extends JFrame {
 
     }
 
+    /**
+     * corregir y mejorar metodo
+     *
+     * @param objTest
+     */
     private void testTocadoMargenPantalla(Alive objTest) {
-        //comprobar si ha chocado con el marco
-        if ((objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.witdh)
-                || (objTest.posX <= 0)) {
 
-            objTest.invertirVelX();
+        // marco derecho
+        if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.witdh) {
+
+            // nave
+            if (objTest instanceof KillerShip) {
+
+                if (this.killerRight.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerRight.sendMessage(
+                            this.killerRight.getPosition()
+                            + "&" + "ks"
+                            + "&" + objTest.getPosX()
+                            + "&" + objTest.getPosY()
+                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                            + "&" + ((KillerShip) objTest).getIp()
+                            + "&" + ((KillerShip) objTest).getPort()
+                            + "&" + ((KillerShip) objTest).getName()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.invertirVelX();
+                }
+
+                return;
+
+                // bola
+            } else {
+
+                if (this.killerRight.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerRight.sendMessage(
+                            this.killerRight.getPosition()
+                            + "&" + "ball"
+                            + "&" + objTest.getPosX()
+                            + "&" + objTest.getPosY()
+                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.invertirVelX();
+                }
+
+                return;
+
+            }
+        }
+
+        // marco izquierdo
+        if (objTest.posX <= 0) {
+
+            // nave
+            if (objTest instanceof KillerShip) {
+
+                if (this.killerLeft.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerLeft.sendMessage(
+                            this.killerLeft.getPosition()
+                            + "&" + "ks"
+                            + "&" + objTest.getPosX()
+                            + "&" + objTest.getPosY()
+                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                            + "&" + ((KillerShip) objTest).getIp()
+                            + "&" + ((KillerShip) objTest).getPort()
+                            + "&" + ((KillerShip) objTest).getName()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.invertirVelX();
+                }
+
+                return;
+
+                // bola
+            } else {
+
+                if (this.killerLeft.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerLeft.sendMessage(
+                            this.killerLeft.getPosition()
+                            + "&" + "ball"
+                            + "&" + objTest.getPosX()
+                            + "&" + objTest.getPosY()
+                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.invertirVelX();
+                }
+
+                return;
+
+            }
+
+        }
+    
+
+        // marco superior e inferior ------------------------------------
+        if (objTest.posX <= 0) {
+
+            if (this.killerLeft.getSocket() != null) {
+
+                // eliminar objeto
+                objTest.kill();
+
+                // enviar objeto
+                this.killerLeft.sendMessage(
+                        this.killerLeft.getPosition()
+                        + "&" + "ball"
+                        + "&" + objTest.getPosX()
+                        + "&" + objTest.getPosY()
+                        + "&" + objTest.getWitdh()
+                        + "&" + objTest.getHeight()
+                        + "&" + objTest.getVelX()
+                        + "&" + objTest.getVelY()
+                );
+
+            } else {
+                // rebotar
+                objTest.invertirVelX();
+            }
+
+            return;
+
         }
 
         //mira si colision en eje Y (marco pantalla)
@@ -138,6 +302,19 @@ class KillerGame extends JFrame {
 
             objTest.invertirVelY();
         }
+    }
+
+    private String createMessageBall(Ball b) {
+        String msg;
+
+        msg = "ball"
+                + "&" + b.getPosX()
+                + "&" + b.getPosY()
+                + "&" + b.getWitdh()
+                + "&" + b.getHeight()
+                + "&" + b.getVelX()
+                + "&" + b.getVelY();
+        return msg;
     }
 
     private void testColisionVisibleObjects(Alive objTest) {
@@ -161,7 +338,7 @@ class KillerGame extends JFrame {
 
     // conexinoes
     public VisualHandler getVisualHandler(String posicion) {
-        
+
         if (posicion.equalsIgnoreCase("r")) {
             return this.killerRight;
 
@@ -173,8 +350,6 @@ class KillerGame extends JFrame {
             return null;
         }
     }
-    
-   
 
 //    public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
 //
@@ -189,12 +364,11 @@ class KillerGame extends JFrame {
 //
 //        System.out.println("KG: conexoin killerPad exitosa");
 //    }
-
     public void addVisibleObject(VisibleObject vObj) {
         this.visibleObjects.add(vObj);
     }
-    
-    public void addKillerPad(KillerPad kp){
+
+    public void addKillerPad(KillerPad kp) {
         this.killerPads.add(kp);
     }
 
@@ -278,7 +452,6 @@ class KillerGame extends JFrame {
                 // (no se va a pulsar en todos los lados --
 //                killerRight.startClient();
 //                killerLeft.startClient();
-
                 // cerrar ventana (?)
                 System.out.println("KG: cerrando ventana de configuracion");
                 ventanaConfiguracion.dispose();
@@ -292,8 +465,8 @@ class KillerGame extends JFrame {
     public ArrayList getVisibleObjects() {
         return this.visibleObjects;
     }
-    
-    public KillerServer getKillerServer(){
+
+    public KillerServer getKillerServer() {
         return this.killerServer;
     }
 
@@ -304,6 +477,8 @@ class KillerGame extends JFrame {
     public int getFrameWidth() {
         return this.FRAME_WIDTH;
     }
+    
+   
 
     public VisualHandler getKillerLeft() {
         return this.killerLeft;
@@ -312,7 +487,5 @@ class KillerGame extends JFrame {
     public VisualHandler getKillerRight() {
         return this.killerRight;
     }
-    
-    
 
 }

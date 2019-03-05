@@ -17,6 +17,7 @@ public class KillerServer implements Runnable {
 
     private KillerGame killerGame;
     private ServerSocket serverSocket;
+    private String ip;
     private int port = 8000;
 
     public KillerServer(KillerGame kg) {
@@ -32,7 +33,7 @@ public class KillerServer implements Runnable {
             // la ip es la suya misma, port 8000
             this.configurePort();
 
-            System.out.println("KS: puerto actual: " + this.port);
+            System.out.println(" \u001B[35m KS: puerto actual: " + this.port + "\u001B[35m");
             // socket por el cual recibirá al cliente
             // de momento no discrimina si es un killer pad o no //lo hace el ch
             while (true) {
@@ -69,6 +70,7 @@ public class KillerServer implements Runnable {
 
             try {
                 this.serverSocket = new ServerSocket(this.port);
+                this.ip = serverSocket.getInetAddress().getHostAddress();
 
             } catch (IOException ex) {
                 this.port++;
@@ -94,6 +96,10 @@ public class KillerServer implements Runnable {
 
     public int getServerPort() {
         return this.port;
+    }
+    
+     public String getIp(){
+        return this.ip;
     }
 
 }

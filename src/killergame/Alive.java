@@ -13,14 +13,24 @@ public abstract class Alive extends VisibleObject implements Runnable {
     protected double velX;
     protected double velY;
 
-    public Alive(KillerGame kGame, int posX, int posY, int width, int height) {
+    public Alive(
+            KillerGame kGame, 
+            double posX, double posY, 
+            int width, int height,
+            double velX, double velY) {
+    
         super(kGame, posX, posY, width, height);
+        
+        this.velX = velX;
+        this.velY = velY;
+        
+        
         new Thread(this).start();
 
     }
 
     protected void updateHitBox() {
-        this.hitBox.setLocation(this.posX, this.posY);
+        this.hitBox.setLocation((int) this.posX, (int) this.posY);
     }
 
     protected void testColision() {
@@ -35,8 +45,6 @@ public abstract class Alive extends VisibleObject implements Runnable {
         //  position' = position + (vel * time); -> M.R.U.
         this.posX += this.velX * intTime;
         this.posY += this.velY * intTime;
-        this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
-        this.testColision();
 
     }
 
@@ -53,13 +61,13 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.velY *= -1;
     }
 
-    public void moveX(double vel) {
+    public void setVelX(double vel) {
         this.velX = vel;
         this.posX += this.velX;
 //        this.setPosX(this.getPosX() + this.velX);
     }
 
-    public void moveY(double vel) {
+    public void setVelY(double vel) {
         this.velY = vel;
         this.posY += this.velY;
 
@@ -104,11 +112,13 @@ public abstract class Alive extends VisibleObject implements Runnable {
     @Override
     public void run() {
 
-        while (true) {
+        while (alive) {
 
             //actualiza la posicion del obj
             // -- calcular la diferencia de tiempo --
             this.updatePosition(10000000);
+            this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
+            this.testColision();
 
 //                System.out.println("timediff: " + timeDiffNano);
             try {
@@ -123,6 +133,10 @@ public abstract class Alive extends VisibleObject implements Runnable {
         return velX;
     }
 
+    public double getVelY() {
+        return velY;
+    }
+
     public void setVelX(int velX) {
         this.velX = velX;
     }
@@ -131,8 +145,8 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.velY = velY;
     }
 
-    public double getVelY() {
-        return velY;
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
 }

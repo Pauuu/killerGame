@@ -13,8 +13,8 @@ public abstract class Controlled extends Alive {
      * <!-- begin-user-doc -->
      * <!--  end-user-doc  --> @generated
      */
-    public Controlled(KillerGame kGame, int posX, int posY, int width, int height) {
-        super(kGame, posX, posY, width, height);
+    public Controlled(KillerGame kGame, int posX, int posY, int width, int height, double velX, double velY) {
+        super(kGame, posX, posY, width, height, velX, velY);
     }
     
    

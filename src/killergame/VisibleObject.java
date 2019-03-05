@@ -31,20 +31,25 @@ public abstract class VisibleObject implements Renderizable {
 
     protected Rectangle hitBox;
 
+    protected boolean alive;
+
     protected int height;
-    protected int posX;
-    protected int posY;
+    protected double posX;
+    protected double posY;
     protected int witdh;
 
     //otro construcoe para indicar la posicion?
-    public VisibleObject(KillerGame kGame, int posX, int posY, int width, int height) {
+    public VisibleObject(KillerGame kGame, double posX, double posY, int width, int height) {
         this.killerGame = kGame;
         this.posX = posX;
         this.posY = posY;
         this.witdh = width;
         this.height = height;
+
+        this.alive = true;
+
         this.addHitBox();
-        
+
         // añadir objeto en la lista de visible objects del killergame
         this.killerGame.addVisibleObject(this);
 
@@ -52,8 +57,8 @@ public abstract class VisibleObject implements Renderizable {
 
     protected void addHitBox() {
         this.hitBox = new Rectangle(
-                this.posX,
-                this.posY,
+                (int) this.posX,
+                (int) this.posY,
                 this.witdh,
                 this.height
         );
@@ -68,8 +73,9 @@ public abstract class VisibleObject implements Renderizable {
         listVisibleObjs = this.killerGame.getVisibleObjects();
 
         for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
-            if (listVisibleObjs.get(pos) == this) {
-                listVisibleObjs.remove(pos);
+            if (this.killerGame.getVisibleObjects().get(pos) == this) {
+                this.alive = false;
+                this.killerGame.getVisibleObjects().remove(pos);
             }
         }
     }
@@ -110,7 +116,7 @@ public abstract class VisibleObject implements Renderizable {
         this.height = height;
     }
 
-    public int getPosX() {
+    public double getPosX() {
         return posX;
     }
 
@@ -118,7 +124,7 @@ public abstract class VisibleObject implements Renderizable {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public double getPosY() {
         return posY;
     }
 
@@ -136,6 +142,22 @@ public abstract class VisibleObject implements Renderizable {
 
     public Rectangle getHitBox() {
         return this.hitBox;
+    }
+
+    public int getWitdh() {
+        return witdh;
+    }
+
+    public void setWitdh(int witdh) {
+        this.witdh = witdh;
+    }
+
+    public boolean isAlive() {
+        return alive;
+    }
+
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 
     @Override

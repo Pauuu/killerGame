@@ -16,30 +16,31 @@ import java.util.logging.Logger;
  */
 public class Ball extends Autonomous {
 
-   
     private boolean dead = false;
 
-    public Ball(KillerGame kGame, int posX, int posY, int width, int height) {
-        super(kGame, posX, posY, width, height);
-        this.velX = 4d;  //quitar?
-        this.velY = 5d;  //quitar?
-      
+    public Ball(KillerGame kGame, 
+            double posX, double posY, 
+            int width, int height,
+            double velX, double velY
+    ) {
+        
+        
+        super(kGame, posX, posY, width, height, velX, velY);
+        
+        
 
         //this.setImagen("imgs/blackBall.png");
     }
-    
-    public void disparo(){
+
+    public void disparo() {
         new Thread(new Bullet(this.killerGame, this)).start();
     }
-
-    
 
     @Override
     public void render(Graphics2D g2d) {
         g2d.setColor(Color.ORANGE);
 //        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
-        g2d.fillArc(this.posX, this.posY, this.witdh, this.height, 30, 300);
-
+        g2d.fillArc((int) this.posX, (int) this.posY, this.witdh, this.height, 30, 300);
 
     }
 }

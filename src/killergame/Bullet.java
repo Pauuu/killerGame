@@ -20,21 +20,19 @@ public class Bullet extends Autonomous {
     private int distancia = 0;
 
     public Bullet(KillerGame kGame, Autonomous aObj) {
-        super(kGame, aObj.posX, aObj.posX, 10, 10);
-       // --cambiar--
-                
+        super(kGame, aObj.posX, aObj.posX, 10, 10, 20, 20);
+        // --cambiar--
+
         this.origenBala = aObj;
         this.posX = aObj.posX + 1;
-        this.posY = aObj.posY -1;
+        this.posY = aObj.posY - 1;
 
-        this.velX = 1;
-        this.velY = 0;
     }
 
     @Override
     public void render(Graphics2D g2d) {
         g2d.setColor(Color.red);
-        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
+        g2d.fillOval((int) this.posX, (int) this.posY, this.witdh, this.height);
     }
 
     @Override
@@ -46,7 +44,7 @@ public class Bullet extends Autonomous {
         double previousTimeNano;
 
         //posicion anterior antes de moverse;
-        int prePosX;
+        double prePosX;
 
         previousTimeNano = System.nanoTime();
 
@@ -60,10 +58,9 @@ public class Bullet extends Autonomous {
                 System.out.println("test " + this.distancia);
 
                 //actualiza la posicion del obj
-                
                 prePosX = this.posX;
                 this.updatePosition(timeDiffNano);
-                
+
                 this.distancia += this.posX - prePosX;
 
                 //actualiza el tiempo anterior cada vez q entra
@@ -78,7 +75,7 @@ public class Bullet extends Autonomous {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         this.kill();
     }
 

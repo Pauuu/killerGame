@@ -69,10 +69,11 @@ public class ConectionHandler implements Runnable {
             uglyMessage = in.readLine();
             
             // separa la info por lso caracteres "/"
-            peticion = uglyMessage.split("/");
+            peticion = uglyMessage.split("&");
             
 
             System.out.println("CH: peticion[0] " + peticion[0]);
+            
 
             if (peticion[0].equalsIgnoreCase("vm")) {
 
@@ -84,11 +85,11 @@ public class ConectionHandler implements Runnable {
                 // gestionar conexion de Killer Pad 
                 // -- protocolo distinto al del killer pad --
 
-            } else if (peticion[0].equalsIgnoreCase("from:p")) {
+            } else if (peticion[0].substring(0, 5).equalsIgnoreCase("fromP")) {
                 // crear nuevo player desde el killerPad
 
                 // --test--
-                shipName = uglyMessage.substring(uglyMessage.lastIndexOf("from:") + 1);
+                shipName = uglyMessage.substring(uglyMessage.lastIndexOf("fromp") + 1);
                 
                 new KillerPad(
                         this.killerGame, 
