@@ -52,7 +52,7 @@ class KillerGame extends JFrame {
         }
 
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 0, 0, 60, 60, 2, 3);
+        //Ball a = new Ball(this, 0, 0, 60, 60, 2, 3);
 //        Player p  = new Player(this, 9, 9, 30, 30);
 
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
@@ -393,8 +393,8 @@ class KillerGame extends JFrame {
         JTextField jtfKillerRightIp = new JTextField("localhost", 16);
         JTextField jtfKillerLeftIp = new JTextField("localhost", 16);
 
-        JTextField jtfKillerRightPort = new JTextField("port", 5);
-        JTextField jtfKillerLeftPort = new JTextField("port", 5);
+        JTextField jtfKillerRightPort = new JTextField("8001", 5);
+        JTextField jtfKillerLeftPort = new JTextField("8001", 5);
 
         JButton jbAceptar = new JButton("Aceptar");
 //        jbAceptar.addActionListener(this);

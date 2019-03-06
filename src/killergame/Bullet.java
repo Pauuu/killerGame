@@ -16,16 +16,16 @@ import java.util.logging.Logger;
  */
 public class Bullet extends Autonomous {
 
-    private Autonomous origenBala;
+    private Alive origenBala;
     private int distancia = 0;
 
-    public Bullet(KillerGame kGame, Autonomous aObj) {
-        super(kGame, aObj.posX, aObj.posX, 10, 10, 20, 20);
+    public Bullet(KillerGame kGame, Alive aObj) {
+        super(kGame, aObj.getPosX(), aObj.getPosY(), 10, 10, 6, 0);
         // --cambiar--
 
         this.origenBala = aObj;
-        this.posX = aObj.posX + 1;
-        this.posY = aObj.posY - 1;
+        this.posX = aObj.posX + 3;
+//        this.posY = aObj.posY;
 
     }
 
@@ -55,7 +55,6 @@ public class Bullet extends Autonomous {
 
             //tiempo puesto a boleo pero que va bien
             if (timeDiffNano >= 10000000) {
-                System.out.println("test " + this.distancia);
 
                 //actualiza la posicion del obj
                 prePosX = this.posX;

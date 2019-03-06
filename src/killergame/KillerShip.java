@@ -33,7 +33,7 @@ public class KillerShip extends Controlled {
             String killerPadIp,
             int port,
             String name) {
-        
+
         super(kGame, posX, posY, width, height, 0, 0);
 
         this.posX = posX;
@@ -43,6 +43,55 @@ public class KillerShip extends Controlled {
         this.ip = killerPadIp;
         this.port = port;
         this.name = name;
+    }
+
+    public void doAction(String action) {
+        System.out.println("KP: " + action);
+
+        switch (action) {
+
+            case ("right"):
+
+                this.setVelX(4);
+                this.setVelY(0);
+                break;
+
+            case ("down"):
+
+                this.setVelX(0);
+                this.setVelY(4);
+                break;
+
+            case ("up"):
+
+                this.setVelX(0);
+                this.setVelY(-4);
+                break;
+
+            case ("left"):
+
+                this.setVelX(-4);
+                this.setVelY(0);
+                break;
+
+            case ("idle"):
+                
+                this.setVelX(0);
+                this.setVelY(0);
+                break;
+
+            case ("shoot"):
+                this.fire();
+                break;
+
+            case ("bbbye"):
+
+                break;
+        }
+    }
+    
+    private void fire(){
+        new Thread(new Bullet(this.killerGame, this)).start();
     }
 
     public String getIp() {

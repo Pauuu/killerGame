@@ -53,81 +53,13 @@ public class KillerPad implements Runnable {
             if (kg.getVisibleObjects().get(pos) instanceof KillerShip) {
 
                 // buscar el que tenga misma id
-                if (((KillerShip) kg.getVisibleObjects().get(pos)).getIp() == ip) {
+                if (((KillerShip) kg.getVisibleObjects().get(pos)).getIp().equalsIgnoreCase(ip)) {
                     return (KillerShip) kg.getVisibleObjects().get(pos);
                 }
             }
         }
 
         return null;
-
-    }
-
-    public static void doAction(KillerShip ks, String action) {
-
-        switch (action) {
-            case ("right"):
-                
-                System.out.println("KP: " + action);
-                ks.setVelX(4);
-                ks.setVelY(0);
-                break;
-
-            case ("down"):
-                
-                System.out.println("KP: " + action);
-                ks.setVelX(0);
-                ks.setVelY(4);
-                break;
-
-            case ("up"):
-                
-                System.out.println("KP: " + action);
-                ks.setVelX(0);
-                ks.setVelY(-4);
-                break;
-
-            case ("left"):
-                
-                System.out.println("KP: " + action);
-                ks.setVelX(-4);
-                ks.setVelY(0);
-                break;
-                
-            case ("idle"):
-                System.out.println("KP: " + action);
-                ks.setVelX(0);
-                ks.setVelY(0);
-                break;
-
-            case ("bbbye"):
-
-                break;
-        }
-
-    }
-//    public static KillerShip processMessage(KillerGame kg, String ip, int port) {
-//
-//        // mira si existe la nave
-//        for (int pos = 0; pos < kg.getVisibleObjects().size(); pos++) {
-//
-//            // cerar en game metodo para obtener array de objs en especiico????
-//            // discriminar los killerShips
-//            if (kg.getVisibleObjects().get(pos) instanceof KillerShip) {
-//
-//                // buscar el que tenga misma id
-//                if (((KillerShip) kg.getVisibleObjects().get(pos)).getIp() == ip) {
-//
-//                    return (KillerShip) kg.getVisibleObjects().get(pos);
-////                    KillerPad.descifrarMensaje(message);
-//                }
-//            }
-//        }
-//        
-//        return null;
-//    }
-
-    private static void descifrarMensaje(String message) {
 
     }
 
@@ -148,61 +80,31 @@ public class KillerPad implements Runnable {
                 // comprobar si existe la killerShip en el game
                 KillerShip ks = KillerPad.ckeckKillerShip(this.killerGame, this.ip, this.port);
 
-                if (ks != null) {
+                if (ks != null) {   // si la nave existe
 
                     System.out.println("KP: messaje: " + action);
+                    ks.doAction(action);
 
-                    KillerPad.doAction(ks, action);
-
-//               
-//                    switch (action) {
-//                        case ("right"):
-//                            System.out.println("KP: " + action);
-//                            this.killerGame.moveShip(ip, 4, 0);
-//                            break;
-//
-//                        case ("down"):
-//                            System.out.println("KP: " + action);
-//
-//                            this.killerGame.moveShip(ip, 0, 4);
-//
-//                            break;
-//
-//                        case ("up"):
-//                            System.out.println("KP: " + action);
-//
-//                            this.killerGame.moveShip(ip, 0, -4);
-//
-//                            break;
-//
-//                        case ("left"):
-//                            System.out.println("KP: " + action);
-//
-//                            this.killerGame.moveShip(ip, -4, 0);
-//
-//                            break;
-//                        case ("idle"):
-//                            System.out.println("KP: " + action);
-//
-//                            this.killerGame.moveShip(ip, 0, 0);
-//
-//                        case ("bbbye"):
-//
-//                            break;
-//                    }
-
-                    // si la nave no existe
-                } else {
+                } else {            // si la nave no existe
 
                     // enviar msj a modulo derecho
                     // decir que cosas ha de hacer la bola en otro modulo visual
+                    System.out.println("");
+                    System.out.println("position: " + this.killerGame.getKillerRight().getPosition());
+                    System.out.println("cks: " + "cks");
+                    System.out.println("ip: "+ this.ip);
+                    System.out.println("action: " + action);
+                    System.out.println("server ip: " + this.killerGame.getKillerRight().getIp());
+                    System.out.println("serverPort: " + this.killerGame.getKillerServer().getServerPort() + "\n");
+                    
                     this.killerGame.getKillerRight().sendMessage(
+                            
                             this.killerGame.getKillerRight().getPosition()
                             + "&" + "cks"
                             + "&" + this.ip
                             + "&" + action // comando
-                            + this.killerGame.getKillerServer().getIp()
-                            + this.killerGame.getKillerServer().getServerPort()
+                            + "&" + this.killerGame.getKillerServer().getIp()
+                            + "&" + this.killerGame.getKillerServer().getServerPort()
                     );
 //                    
 
@@ -216,15 +118,6 @@ public class KillerPad implements Runnable {
 
     }
 
-//    public static void createKillerShip(KillerGame kg, String ip, int port, String name) {
-//
-//        // crear nueva killerShip
-//        new KillerShip(kg, 0, 0, 60, 60, 0, 0, ip, port, name
-//    
-//
-//    );
-//
-//    }
     @Override
     public void run() {
         BufferedReader in;

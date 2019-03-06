@@ -18,7 +18,7 @@ import sun.awt.X11.XConstants;
  * @author pau
  */
 public class VisualHandler implements Runnable {
-    
+
     private BufferedReader in;
     private String position;
     private KillerGame killerGame;
@@ -28,7 +28,7 @@ public class VisualHandler implements Runnable {
     private String clientAddr;
     private String ip;
     private int serverPort;
-    
+
     public VisualHandler(KillerGame kg, String position) {
         this.killerGame = kg;
         this.position = position;
@@ -41,7 +41,7 @@ public class VisualHandler implements Runnable {
 
         //  this.tryConnection();
     }
-    
+
     public void startClient() {
         new Thread(this.killerClient).start();
     }
@@ -54,18 +54,18 @@ public class VisualHandler implements Runnable {
     public void sendMessage(String msj) {
         this.out.println(msj);
     }
-    
+
     private void processMessage(BufferedReader in, PrintWriter out) {
         String line;
         Boolean done = false;
-        
+
         try {
             while (!done) {
-                
-                System.out.println("VH: Waiting for reading lines...");
-               
+
+//                System.out.println("VH: Waiting for reading lines...");
+
                 line = in.readLine();
-                
+
                 System.out.println("VH: mensaje recibido: " + line);
 
                 // si line null es que el cliente ha cerrado/perdido la conexion
@@ -74,33 +74,35 @@ public class VisualHandler implements Runnable {
                             + "un valor nulo \n");
                     done = true;
                     this.socket = null;
-                    
+
                 } else {
                     String[] message = line.trim().split("&");
                     
+//                    System.out.println("mensaje recibido >>>>> " + line);
+
                     int x;
                     if (message[0].equalsIgnoreCase("r")) {
-                        x = 1;
-                        
+                        x = 40;
+
                     } else {
 //                                x = this.killerGame.getWidth()- 2;
-                        x = this.killerGame.getFrameWidth() - (int) Double.parseDouble(message[4]) - 2;
-                        
+//                        x = this.killerGame.getFrameWidth() - (int) Double.parseDouble(message[4]) - 2;
+                          x = 40;
                     }
-                    
+
                     switch (message[1]) {
-                        
+
                         case "bye":
                             done = true;
                             break;
-                        
+
                         case "ball":
                             //o recibe el obj bola o cada parametro x separado
                             //cambiar coordenadas hardcodeadas
 //                            this.killerGame.createAlive(new Ball(this.killerGame, 5, 5, 50, 50));
 
                             System.out.println("VH: recivdo ball");
-                            
+
                             new Ball(
                                     this.killerGame,
                                     x,
@@ -110,11 +112,12 @@ public class VisualHandler implements Runnable {
                                     (int) Double.parseDouble(message[6]),
                                     (int) Double.parseDouble(message[7])
                             );
-                            
+
                             break;
-                        
+
                         case "ks":
-                            new KillerShip(killerGame,
+                            new KillerShip(
+                                    this.killerGame,
                                     x,
                                     (int) Double.parseDouble(message[3]),
                                     (int) Double.parseDouble(message[4]),
@@ -125,15 +128,28 @@ public class VisualHandler implements Runnable {
                                     Integer.parseInt(message[9]), // puerto
                                     message[10] // nombre de la nave
                             );
-                        
-                        case "cks":
                             
+                            //r&ks&442.0&2.0&60&60&4.0&0.0&192.168.0.162&8000&fromPnew:jsjsjsj&ffffff
+                            break;
+
+                        case "cks":
+
                             String ipOrigen = message[4];
                             int puertoOrigen = Integer.parseInt(message[5]);
+
+                            // si:
+                            // ip distinta (AND puerto igual OR distinto)
+                            // OR
+                            // ip propia AND port distinto
                             
-                            if ((ipOrigen != this.killerGame.getKillerServer().getIp())
-                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort())) {
-                                
+                            if ((! ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
+                                    
+                                    ||
+                                    
+                                    (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+                                    &&
+                                    (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+
                                 KillerShip ks = KillerPad.ckeckKillerShip(
                                         this.killerGame,
                                         message[2], // ip nave
@@ -142,23 +158,32 @@ public class VisualHandler implements Runnable {
 
                                 // comprobar si existe la nave
                                 if (ks != null) {
-                                    KillerPad.doAction(ks, message[3]);
-                                    System.out.println("\u001B[35m nave no null");
-                                    
+
+                                    ks.doAction(message[3]);
+                                    System.out.println("nave NO null");
+
                                 } else {
-                                     System.out.println("\u001B[35m nave null");
+                                    System.out.println("VH: nave null \n");
                                     this.killerGame.getKillerRight().sendMessage(
-                                            this.killerGame.getKillerRight().getPosition()
-                                            + "&" + "cks"
-                                            + "&" + this.ip
-                                            + "&" + message[3] // comando
-                                            + this.killerGame.getKillerServer().getIp()
-                                            + this.killerGame.getKillerServer().getServerPort()
+                                            line
+                                            
+//                                            this.killerGame.getKillerRight().getPosition()
+//                                            + "&" + "cks"
+//                                            + "&" + this.ip
+//                                            + "&" + message[3] // comando
+//                                            + "&" + ipOrigen
+//                                            + "&" + puertoOrigen
                                     );
+                                    
+                                    System.out.println(line +"\n");
+                                    
+                                    
                                 }
                             }
+                            Thread.sleep(90);
+                            break;
                         default:
-                            System.out.println("Client msg (default): " + line);
+                            System.out.println("VH: msg (default): \n" + line);
                             break;
                     }
                 }
@@ -173,13 +198,13 @@ public class VisualHandler implements Runnable {
             // lanzar hilo cliente????? -> no haria falta que el cliente furea runnable
         }
     }
-    
+
     @Override
     public void run() {
         while (true) {
-            
+
             try {
-                
+
                 if (this.socket != null) {
 
                     // setear PrintWriter (poder enviar msjs)
@@ -187,32 +212,32 @@ public class VisualHandler implements Runnable {
 
                     // setear BufferedReader (poder recibir msjs)
                     this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-                    
+
                     this.processMessage(this.in, this.out);
-                    
+
                 }
-                
+
                 this.socket = null;
-                
+
                 Thread.sleep(200);
             } catch (Exception ex) {
                 Logger.getLogger(VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
-    
+
     public String getPosition() {
         return this.position;
     }
-    
+
     public KillerGame getKillerGame() {
         return this.killerGame;
     }
-    
+
     public synchronized Socket getSocket() {
         return this.socket;
     }
-    
+
     public synchronized void setConnection(Socket cliSock, int serverPort) {
         if (this.getSocket() == null) {
 
@@ -221,37 +246,37 @@ public class VisualHandler implements Runnable {
 
             // setear la ip
             this.ip = this.socket.getInetAddress().getHostAddress();
-            
+
             System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
 
             // setear port del servidor
             this.serverPort = serverPort;
-            
+
             System.out.println("VH: toda conexion ok?");
-            
+
         } else {
             System.err.println("VH: no se ha seteado el socket");
         }
     }
-    
+
     public String getIp() {
         return this.ip;
     }
-    
+
     public void setIP(String ip) {
         this.ip = ip;
     }
-    
+
     public void setServerPort(int serverPort) {
         this.serverPort = serverPort;
     }
-    
+
     public int getServerPort() {
         return this.serverPort;
     }
-    
+
     void setSocket() {
         System.err.println("no  hay nada codeado aun");
     }
-    
+
 }
