@@ -79,8 +79,8 @@ public class Viewer extends Canvas implements Runnable {
     }
 
     private void drawInfo() {
-        this.g2d.setColor(Color.red);
-
+        this.g2d.setColor(Color.RED);
+        
         // ip puerto del servidor
         this.g2d.drawString(
                 "Server Ip: " + this.killerGame.getKillerServer().getIp(),

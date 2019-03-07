@@ -48,7 +48,7 @@ public class KillerShip extends Controlled {
         this.setVelY(velY);
     }
 
-   /* public void doAction(String action) {
+    public void doAction(String action) {
         System.out.println("KP: " + action);
 
         switch (action) {
@@ -115,9 +115,9 @@ public class KillerShip extends Controlled {
 
                 break;
         }
-    }*/
+    }
 
-    public void fire() {
+    private void fire() {
         new Thread(new Bullet(this.killerGame, this)).start();
     }
 

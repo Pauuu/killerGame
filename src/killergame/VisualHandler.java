@@ -132,44 +132,44 @@ public class VisualHandler implements Runnable {
 
                         case "cks":
 
-                            KillerPad.manageAction(line, this.killerGame);
-                            break;
-
-//                            String ipOrigen = message[4];
-//                            int puertoOrigen = Integer.parseInt(message[5]);
-//
-//                            // si:
-//                            // ip distinta (AND puerto igual OR distinto)
-//                            // OR
-//                            // ip propia AND port distinto
-//                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
-//                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
-//                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
-//
-//                                KillerShip ks = KillerPad.ckeckKillerShip(
-//                                        this.killerGame,
-//                                        message[2], // ip nave
-//                                        puertoOrigen // puerto
-//                                );
-//
-//                                // comprobar si existe la nave
-//                                if (ks != null) {
-//
-//                                    ks.doAction(message[3]);
-//                                    System.out.println("nave NO null");
-//
-//                                } else {
-//                                    System.out.println("VH: nave null \n");
-//                                    this.killerGame.getKillerRight().sendMessage(
-//                                            line
-//                                    );
-//
-//                                    System.out.println(line + "\n");
-//
-//                                }
-//                            }
-//                            Thread.sleep(90);
+//                            KillerPad.manageMessage(line, this.killerGame);
 //                            break;
+
+                            String ipOrigen = message[4];
+                            int puertoOrigen = Integer.parseInt(message[5]);
+
+                            // si:
+                            // ip distinta (AND puerto igual OR distinto)
+                            // OR
+                            // ip propia AND port distinto
+                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
+                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+
+                                KillerShip ks = KillerPad.ckeckKillerShip(
+                                        this.killerGame,
+                                        message[2], // ip nave
+                                        puertoOrigen // puerto
+                                );
+
+                                // comprobar si existe la nave
+                                if (ks != null) {
+
+                                    ks.doAction(message[3]);
+                                    System.out.println("nave NO null");
+
+                                } else {
+                                    System.out.println("VH: nave null \n");
+                                    this.killerGame.getKillerRight().sendMessage(
+                                            line
+                                    );
+
+                                    System.out.println(line + "\n");
+
+                                }
+                            }
+                            Thread.sleep(90);
+                            break;
                             
                         default:
                             System.out.println("VH: msg (default): \n" + line);

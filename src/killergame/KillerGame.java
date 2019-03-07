@@ -167,6 +167,9 @@ class KillerGame extends JFrame {
                 }
 
 //                return;
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
+
                 // bola
             } else {
 
@@ -196,7 +199,8 @@ class KillerGame extends JFrame {
         }
 
         // marco izquierdo ---------------------------------------------------
-        if (objTest.posX <= 0) {
+        if (objTest.posX
+                <= 0) {
 
             // nave
             if (objTest instanceof KillerShip) {
@@ -226,6 +230,8 @@ class KillerGame extends JFrame {
                 }
 
 //                return;
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
                 // bola
             } else {
 
@@ -256,12 +262,16 @@ class KillerGame extends JFrame {
         }
 
         // marco superior e inferior ---------------
-        if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
+        if ((objTest.posY
+                >= objTest.killerGame.getFrameHeight()
+                - objTest.height)
                 || (objTest.posY <= 0)) {
 
             if (objTest instanceof KillerShip) {
                 objTest.setVelY(0);
-                
+
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
             } else {
                 objTest.invertirVelY();
 
