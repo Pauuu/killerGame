@@ -4,7 +4,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,19 +48,12 @@ class KillerGame extends JFrame {
 
         //crear y añadir elementos graficos
         Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
-//        Player p  = new Player(this, 9, 9, 30, 30);
+
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
         this.setVisible(true);
         this.startGame();
 
-//        try {
-//            Thread.sleep(20000);
-//        } catch (InterruptedException ex) {
-//            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        System.out.println("envio bola");
-//        this.killerRight.sendMessage("ball");
     }
 
     private void createViewer(int width, int height) {
@@ -78,6 +73,46 @@ class KillerGame extends JFrame {
         //pintar todo
         new Thread(this.viewer).start();
 
+    }
+
+    public void sendDedNotification(String ip, int port) {
+        try {
+            // busca killer pad
+            KillerPad kPad = this.searchKillerPad(ip, port);
+
+            // si esta: enviar msj de muerte
+            if (kPad != null) {
+                kPad.sendMessageToMobile("ded");
+                return; //=======================================================>>>
+            }
+
+            // si no está: enviar msj por el VH de la derecha
+            this.killerRight.sendMessage(
+                    "r"
+                    + "&" + "ckk"
+                    + "&" + ip + "/" + port
+                    + "&" + "ded"
+                    + "&" + InetAddress.getLocalHost().getHostAddress()
+                    + "&" + this.killerRight.getPort()
+            );
+
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public KillerPad searchKillerPad(String ip, int port) {
+        for (int pos = 0; pos < this.killerPads.size(); pos++) {
+
+            //  si ip y puerto coinciden
+            if (this.killerPads.get(0).getIp().equalsIgnoreCase(ip)
+                    && this.killerPads.get(0).getPort() == port) {
+
+                return this.killerPads.get(pos);
+            }
+
+        }
+        return null;
     }
 
     public void moveShip(String shipId, int velX, int velY) {
@@ -151,7 +186,7 @@ class KillerGame extends JFrame {
                             this.killerRight.getPosition()
                             + "&" + "ks"
                             + "&" + objTest.getPosX()
-                            + "&" + objTest.getPosY()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
                             + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
@@ -182,7 +217,7 @@ class KillerGame extends JFrame {
                             this.killerRight.getPosition()
                             + "&" + "ball"
                             + "&" + objTest.getPosX()
-                            + "&" + objTest.getPosY()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
                             + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
@@ -191,7 +226,7 @@ class KillerGame extends JFrame {
 
                 } else {
                     // rebotar
-                    objTest.invertirVelX();
+                    objTest.setVelX(-Math.abs(objTest.velX));
                 }
 
 //                return;
@@ -225,7 +260,7 @@ class KillerGame extends JFrame {
                     );
 
                 } else {
-                    // rebotar
+                    // parar
                     objTest.setVelX(0);
                 }
 
@@ -253,7 +288,7 @@ class KillerGame extends JFrame {
 
                 } else {
                     // rebotar
-                    objTest.invertirVelX();
+                    objTest.setVelX(Math.abs(objTest.velX));
                 }
 
 //                return;
@@ -262,9 +297,7 @@ class KillerGame extends JFrame {
         }
 
         // marco superior e inferior ---------------
-        if ((objTest.posY
-                >= objTest.killerGame.getFrameHeight()
-                - objTest.height)
+        if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
                 || (objTest.posY <= 0)) {
 
             if (objTest instanceof KillerShip) {
@@ -273,7 +306,13 @@ class KillerGame extends JFrame {
             } else if (objTest instanceof Bullet) {
                 objTest.kill();
             } else {
-                objTest.invertirVelY();
+                if (objTest.posY <= 0) {
+                    objTest.setVelY(Math.abs(objTest.velY));
+
+                } else {
+                    objTest.setVelY(-Math.abs(objTest.velY));
+
+                }
 
             }
 
@@ -463,7 +502,7 @@ class KillerGame extends JFrame {
                 }
 
                 // killerLeft set port 
-                if (killerLeft.getClientPort() == 0) {
+                if (killerLeft.getPort() == 0) {
                     killerLeft.setClientPort(Integer.parseInt(jtfKillerLeftPort.getText()));
                 }
 
@@ -473,7 +512,7 @@ class KillerGame extends JFrame {
                 }
 
                 // killer right set port
-                if (killerRight.getClientPort() == 0) {
+                if (killerRight.getPort() == 0) {
                     killerRight.setClientPort(Integer.parseInt(jtfKillerRightPort.getText()));
                 }
 

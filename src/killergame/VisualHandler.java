@@ -26,7 +26,7 @@ public class VisualHandler implements Runnable {
     private Socket socket = null;
     private String clientAddr;
     private String ip;
-    private int clientPort;
+    private int port;
 
     private Wall w;
 
@@ -91,6 +91,9 @@ public class VisualHandler implements Runnable {
 
                     switch (message[1]) {
 
+                        case "toc-toc":
+                            this.out.println(line);
+
                         case "bye":
                             done = true;
                             break;
@@ -104,12 +107,12 @@ public class VisualHandler implements Runnable {
 
                             new Ball(
                                     this.killerGame,
-                                    x,
-                                    (int) Double.parseDouble(message[3]),
-                                    (int) Double.parseDouble(message[4]),
-                                    (int) Double.parseDouble(message[5]),
-                                    (int) Double.parseDouble(message[6]),
-                                    (int) Double.parseDouble(message[7])
+                                    x, //posX
+                                    (Double.parseDouble(message[3]) * this.killerGame.getFrameHeight()),//posY
+                                    (int) Double.parseDouble(message[4]),//with
+                                    (int) Double.parseDouble(message[5]),//height
+                                    Double.parseDouble(message[6]),//velX
+                                    Double.parseDouble(message[7]) //velY
                             );
 
                             break;
@@ -118,11 +121,11 @@ public class VisualHandler implements Runnable {
                             new KillerShip(
                                     this.killerGame,
                                     x, //posX
-                                    (int) Double.parseDouble(message[3]), //posY
+                                    (Double.parseDouble(message[3]) * this.killerGame.getFrameHeight()),//posY
                                     (int) Double.parseDouble(message[4]), //with
                                     (int) Double.parseDouble(message[5]), //height
-                                    (int) Double.parseDouble(message[6]), //velX
-                                    (int) Double.parseDouble(message[7]), //velY
+                                    Double.parseDouble(message[6]), //velX
+                                    Double.parseDouble(message[7]), //velY
                                     message[8], // ip
                                     Integer.parseInt(message[9]), // puerto
                                     message[10] // nombre de la nave
@@ -144,6 +147,7 @@ public class VisualHandler implements Runnable {
                             // port distinto
                             if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
                                     || (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+
 
                                 KillerShip ks = KillerPad.ckeckKillerShip(
                                         this.killerGame,
@@ -170,6 +174,22 @@ public class VisualHandler implements Runnable {
 
                             break;
 
+                        case ("ckk"):
+//                            
+                            String ip = message[4];
+                            int puerto = Integer.parseInt(message[5]);
+
+                            // si:
+                            // ip distinta (AND puerto igual OR distinto)
+                            // OR
+                            // port distinto
+                            if ((!ip.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+                                    || (puerto != this.killerGame.getKillerServer().getServerPort()))) {
+
+                                KillerPad.manageMessage(line, this.killerGame);
+                            }
+                            break;
+
                         default:
                             System.out.println("VH: msg (default): \n" + line);
                             break;
@@ -179,7 +199,7 @@ public class VisualHandler implements Runnable {
         } catch (Exception ex) {
 
             Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("VH: " + clientPort + ex);
+            System.err.println("VH: " + port + ex);
 
 //                this.socket.close();
             this.socket = null;
@@ -193,7 +213,7 @@ public class VisualHandler implements Runnable {
         while (true) {
 
             try {
-
+                //si no hay socket, seguir con el bucle
                 if (this.socket != null) {
 
                     // setear PrintWriter (poder enviar msjs)
@@ -238,7 +258,7 @@ public class VisualHandler implements Runnable {
             System.out.println("VH: IP:" + this.socket.getInetAddress().getHostAddress());
 
             // setear port del servidor
-            this.clientPort = clientPort;
+            this.port = clientPort;
 
             System.out.println("VH: toda conexion ok?");
 
@@ -256,11 +276,11 @@ public class VisualHandler implements Runnable {
     }
 
     public void setClientPort(int serverPort) {
-        this.clientPort = serverPort;
+        this.port = serverPort;
     }
 
-    public int getClientPort() {
-        return this.clientPort;
+    public int getPort() {
+        return this.port;
     }
 
     void setSocket() {

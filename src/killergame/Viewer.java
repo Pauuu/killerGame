@@ -94,7 +94,7 @@ public class Viewer extends Canvas implements Runnable {
                 "VHR Client Ip: " + this.killerGame.getKillerRight().getClientIp(),
                 340, 20);
 
-        this.g2d.drawString("VHR Client Port: " + this.killerGame.getKillerRight().getClientPort(),
+        this.g2d.drawString("VHR Client Port: " + this.killerGame.getKillerRight().getPort(),
                 340, 40);
 
         // ip puerto del killerLeft
@@ -102,7 +102,7 @@ public class Viewer extends Canvas implements Runnable {
                 "VHL Client Ip: " + this.killerGame.getKillerLeft().getClientIp(),
                  10, 20);
 
-        this.g2d.drawString("VHL Client Port: " + this.killerGame.getKillerLeft().getClientPort(),
+        this.g2d.drawString("VHL Client Port: " + this.killerGame.getKillerLeft().getPort(),
                 10, 40);
 
     }

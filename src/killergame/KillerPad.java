@@ -27,6 +27,9 @@ public class KillerPad implements Runnable {
     private KillerShip player;
     private int port;
 
+    private BufferedReader in;
+    private PrintWriter out;
+
     public KillerPad(KillerGame kg, Socket cliSock, String ip, int port, String name) {
         this.killerGame = kg;
         this.clientSocket = cliSock;
@@ -42,6 +45,29 @@ public class KillerPad implements Runnable {
 
         // iniciar hilo propio
         new Thread(this).start();
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            // Get I/O streams from the socket
+            in = new BufferedReader(new InputStreamReader(
+                    this.clientSocket.getInputStream()));
+
+            out = new PrintWriter(this.clientSocket.getOutputStream(), true);
+
+            // interact with a client
+            this.processClient(in, out);
+
+            // Close client connection
+            this.clientSocket.close();
+
+        } catch (IOException e) {
+            Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, e);
+        }
+
+        System.out.println("NK: Client connection closed\n");
     }
 
     public static KillerShip ckeckKillerShip(KillerGame kg, String ip, int port) {
@@ -65,36 +91,25 @@ public class KillerPad implements Runnable {
 
     public static void manageMessage(String line, KillerGame kg) {
         String[] message = line.trim().split("&");
+        String action = message[3];
 
-        String ipOrigen = message[4];
-        int puertoOrigen = Integer.parseInt(message[5]);
+        String[] ipPort = message[2].trim().split("/");
+        String ip = ipPort[0];
+        int port = Integer.parseInt(ipPort[1]);
 
-        // si:
-        // ip distinta (AND puerto igual OR distinto)
-        // OR
-        // ip propia AND port distinto
-        if ((!ipOrigen.equalsIgnoreCase(kg.getKillerServer().getIp()))
-                || (ipOrigen.equalsIgnoreCase(kg.getKillerServer().getIp())
-                && (puertoOrigen != kg.getKillerServer().getServerPort()))) {
+        // mira si tiene el killerPad
+        KillerPad kPad = kg.searchKillerPad(ip, port);
 
-            KillerShip kShip = kg.checkKillerShip(
-                    message[2], // ip nave
-                    puertoOrigen // puerto
-            );
+        // si KillerPad no existe
+        if (kPad == null) {
+            // si no tiene el killerPad
+            kg.getKillerRight().sendMessage(line);
+            return; //==================== killer Pad no existe =========>>>>
+        }
 
-            // comprobar si existe la nave
-            if (kShip != null) {
-
-                kShip.doAction(message[3]);
-                System.out.println("nave NO null");
-                return;
-            }
-            
-            System.out.println("VH: nave null \n");
-            kg.getKillerRight().sendMessage(
-                    line
-            );
-
+        // si el mensaje es ded
+        if (action.equalsIgnoreCase("ded")) {
+            kPad.sendMessageToMobile(action);
         }
 
     }
@@ -145,29 +160,56 @@ public class KillerPad implements Runnable {
 
     }
 
-    @Override
-    public void run() {
-        BufferedReader in;
-        PrintWriter out;
+    public KillerGame getKillerGame() {
+        return killerGame;
+    }
 
-        try {
-            // Get I/O streams from the socket
-            in = new BufferedReader(new InputStreamReader(
-                    this.clientSocket.getInputStream()));
+    public void setKillerGame(KillerGame killerGame) {
+        this.killerGame = killerGame;
+    }
 
-            out = new PrintWriter(this.clientSocket.getOutputStream(), true);
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
 
-            // interact with a client
-            this.processClient(in, out);
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
 
-            // Close client connection
-            this.clientSocket.close();
+    public String getIp() {
+        return ip;
+    }
 
-        } catch (IOException e) {
-            Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, e);
-        }
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-        System.out.println("NK: Client connection closed\n");
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public KillerShip getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(KillerShip player) {
+        this.player = player;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    void sendMessageToMobile(String message) {
+        this.out.println(message);
     }
 
 }

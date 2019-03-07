@@ -25,8 +25,8 @@ public class KillerShip extends Controlled {
     private int port;
 
     public KillerShip(KillerGame kGame,
-            int posX,
-            int posY,
+            double posX,
+            double posY,
             int width,
             int height,
             double velX,
@@ -130,10 +130,13 @@ public class KillerShip extends Controlled {
 
         for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
             if (this.killerGame.getVisibleObjects().get(pos) == this) {
+                
                 this.alive = false;
                 this.killerGame.getVisibleObjects().remove(pos);
             }
         }
+        
+        this.killerGame.sendDedNotification(this.ip, this.port);
     }
 
     public String getIp() {

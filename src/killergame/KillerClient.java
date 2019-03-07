@@ -36,7 +36,7 @@ public class KillerClient implements Runnable {
 
                 try {
                     // crear nuevo socket
-                    cliSock = new Socket(this.vh.getClientIp(), this.vh.getClientPort());
+                    cliSock = new Socket(this.vh.getClientIp(), this.vh.getPort());
 
                     // recuperar port del server
                     serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
@@ -45,7 +45,9 @@ public class KillerClient implements Runnable {
                     out = new PrintWriter(cliSock.getOutputStream(), true);
                     out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
 
-                    this.vh.setConnection(cliSock, this.vh.getClientPort());
+                    this.vh.setConnection(cliSock, this.vh.getPort());
+                    
+                    out.println("&" + "toc-toc");
 
                 } catch (IOException ex) {
                     Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
