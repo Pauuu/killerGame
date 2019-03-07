@@ -52,7 +52,7 @@ public class Viewer extends Canvas implements Runnable {
 
         }
 
-        this.modifyAplphaChannel(this.backgroundImg, 100);
+        this.modifyAplphaChannel(this.backgroundImg, 90);
 
         this.setBackground(Color.blue);
         this.setSize(this.width, this.heigth); //cambiar en un futuro

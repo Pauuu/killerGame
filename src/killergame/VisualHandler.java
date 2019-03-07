@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.awt.X11.XConstants;
 
 /**
  *
@@ -28,6 +27,8 @@ public class VisualHandler implements Runnable {
     private String clientAddr;
     private String ip;
     private int clientPort;
+
+    private Wall w;
 
     public VisualHandler(KillerGame kg, String position) {
         this.killerGame = kg;
@@ -134,17 +135,15 @@ public class VisualHandler implements Runnable {
 
 //                            KillerPad.manageMessage(line, this.killerGame);
 //                            break;
-
                             String ipOrigen = message[4];
                             int puertoOrigen = Integer.parseInt(message[5]);
 
                             // si:
                             // ip distinta (AND puerto igual OR distinto)
                             // OR
-                            // ip propia AND port distinto
-                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
-                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
-                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+                            // port distinto
+                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+                                    || (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
 
                                 KillerShip ks = KillerPad.ckeckKillerShip(
                                         this.killerGame,
@@ -168,9 +167,9 @@ public class VisualHandler implements Runnable {
 
                                 }
                             }
-                            Thread.sleep(90);
+
                             break;
-                            
+
                         default:
                             System.out.println("VH: msg (default): \n" + line);
                             break;
@@ -180,7 +179,7 @@ public class VisualHandler implements Runnable {
         } catch (Exception ex) {
 
             Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
-            System.err.println("VH: " + ex);
+            System.err.println("VH: " + clientPort + ex);
 
 //                this.socket.close();
             this.socket = null;
@@ -207,8 +206,7 @@ public class VisualHandler implements Runnable {
 
                 }
 
-                this.socket = null;
-
+//                this.socket = null;
                 Thread.sleep(200);
             } catch (Exception ex) {
                 Logger.getLogger(VisualHandler.class.getName()).log(Level.SEVERE, null, ex);

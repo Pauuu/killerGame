@@ -45,7 +45,7 @@ class KillerGame extends JFrame {
         this.createJFrameForKillerClients();
 
         //crear y añadir elementos graficos
-//        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
+        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
 //        Player p  = new Player(this, 9, 9, 30, 30);
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();

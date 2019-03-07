@@ -7,6 +7,7 @@ package killergame;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 
 /**
  *
@@ -33,7 +34,6 @@ public class KillerShip extends Controlled {
             String killerPadIp,
             int port,
             String name) {
-
         super(kGame, posX, posY, width, height, 0, 0);
 
         this.posX = posX;
@@ -82,21 +82,21 @@ public class KillerShip extends Controlled {
                 this.setVelX(4);
                 this.setVelY(-4);
                 break;
-                
+
             case ("upleft"):
-                
+
                 this.setVelX(-4);
                 this.setVelY(-4);
                 break;
-                
+
             case ("downright"):
-                
+
                 this.setVelX(4);
                 this.setVelY(4);
                 break;
 
             case ("downleft"):
-                
+
                 this.setVelX(-4);
                 this.setVelY(4);
                 break;
@@ -119,6 +119,21 @@ public class KillerShip extends Controlled {
 
     private void fire() {
         new Thread(new Bullet(this.killerGame, this)).start();
+    }
+
+    protected void kill() {
+
+        ArrayList<VisibleObject> listVisibleObjs;
+
+        // puntero a la lista de visual objects del killerGame
+        listVisibleObjs = this.killerGame.getVisibleObjects();
+
+        for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
+            if (this.killerGame.getVisibleObjects().get(pos) == this) {
+                this.alive = false;
+                this.killerGame.getVisibleObjects().remove(pos);
+            }
+        }
     }
 
     public String getIp() {
