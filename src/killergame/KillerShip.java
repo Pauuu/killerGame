@@ -38,11 +38,14 @@ public class KillerShip extends Controlled {
 
         this.posX = posX;
         this.posY = posY;
-        this.witdh = width;
+        this.width = width;
         this.height = height;
         this.ip = killerPadIp;
         this.port = port;
         this.name = name;
+        
+        this.setVelX(velX);
+        this.setVelY(velY);
     }
 
     public void doAction(String action) {
@@ -122,7 +125,7 @@ public class KillerShip extends Controlled {
     public void render(Graphics2D g2d) {
 
         g2d.setColor(Color.green);
-        g2d.fillOval((int) this.posX, (int) this.posY, this.witdh, this.height);
+        g2d.fillOval((int) this.posX, (int) this.posY, this.width, this.height);
     }
 
 }

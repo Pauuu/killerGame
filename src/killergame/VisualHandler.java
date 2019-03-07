@@ -27,7 +27,7 @@ public class VisualHandler implements Runnable {
     private Socket socket = null;
     private String clientAddr;
     private String ip;
-    private int serverPort;
+    private int clientPort;
 
     public VisualHandler(KillerGame kg, String position) {
         this.killerGame = kg;
@@ -63,7 +63,6 @@ public class VisualHandler implements Runnable {
             while (!done) {
 
 //                System.out.println("VH: Waiting for reading lines...");
-
                 line = in.readLine();
 
                 System.out.println("VH: mensaje recibido: " + line);
@@ -77,17 +76,16 @@ public class VisualHandler implements Runnable {
 
                 } else {
                     String[] message = line.trim().split("&");
-                    
-//                    System.out.println("mensaje recibido >>>>> " + line);
 
+//                    System.out.println("mensaje recibido >>>>> " + line);
                     int x;
                     if (message[0].equalsIgnoreCase("r")) {
-                        x = 40;
+                        x = 1;
 
                     } else {
-//                                x = this.killerGame.getWidth()- 2;
-//                        x = this.killerGame.getFrameWidth() - (int) Double.parseDouble(message[4]) - 2;
-                          x = 40;
+//                                x = this.killerGame.getWidth()- 1;
+                        x = this.killerGame.getFrameWidth() - (int) Double.parseDouble(message[4]) - 1;
+                       
                     }
 
                     switch (message[1]) {
@@ -118,17 +116,17 @@ public class VisualHandler implements Runnable {
                         case "ks":
                             new KillerShip(
                                     this.killerGame,
-                                    x,
-                                    (int) Double.parseDouble(message[3]),
-                                    (int) Double.parseDouble(message[4]),
-                                    (int) Double.parseDouble(message[5]),
-                                    (int) Double.parseDouble(message[6]),
-                                    (int) Double.parseDouble(message[7]),
+                                    x,                                    //posX
+                                    (int) Double.parseDouble(message[3]), //posY
+                                    (int) Double.parseDouble(message[4]), //with
+                                    (int) Double.parseDouble(message[5]), //height
+                                    (int) Double.parseDouble(message[6]), //velX
+                                    (int) Double.parseDouble(message[7]), //velY
                                     message[8], // ip
                                     Integer.parseInt(message[9]), // puerto
                                     message[10] // nombre de la nave
                             );
-                            
+
                             //r&ks&442.0&2.0&60&60&4.0&0.0&192.168.0.162&8000&fromPnew:jsjsjsj&ffffff
                             break;
 
@@ -141,14 +139,10 @@ public class VisualHandler implements Runnable {
                             // ip distinta (AND puerto igual OR distinto)
                             // OR
                             // ip propia AND port distinto
-                            
-                            if ((! ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
-                                    
-                                    ||
-                                    
-                                    (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
-                                    &&
-                                    (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
+
+                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
 
                                 KillerShip ks = KillerPad.ckeckKillerShip(
                                         this.killerGame,
@@ -166,18 +160,16 @@ public class VisualHandler implements Runnable {
                                     System.out.println("VH: nave null \n");
                                     this.killerGame.getKillerRight().sendMessage(
                                             line
-                                            
-//                                            this.killerGame.getKillerRight().getPosition()
-//                                            + "&" + "cks"
-//                                            + "&" + this.ip
-//                                            + "&" + message[3] // comando
-//                                            + "&" + ipOrigen
-//                                            + "&" + puertoOrigen
+                                    //                                            this.killerGame.getKillerRight().getPosition()
+                                    //                                            + "&" + "cks"
+                                    //                                            + "&" + this.ip
+                                    //                                            + "&" + message[3] // comando
+                                    //                                            + "&" + ipOrigen
+                                    //                                            + "&" + puertoOrigen
                                     );
-                                    
-                                    System.out.println(line +"\n");
-                                    
-                                    
+
+                                    System.out.println(line + "\n");
+
                                 }
                             }
                             Thread.sleep(90);
@@ -238,7 +230,7 @@ public class VisualHandler implements Runnable {
         return this.socket;
     }
 
-    public synchronized void setConnection(Socket cliSock, int serverPort) {
+    public synchronized void setConnection(Socket cliSock, int clientPort) {
         if (this.getSocket() == null) {
 
             // setear socket
@@ -247,32 +239,34 @@ public class VisualHandler implements Runnable {
             // setear la ip
             this.ip = this.socket.getInetAddress().getHostAddress();
 
-            System.out.println("IP" + this.socket.getInetAddress().getHostAddress());
+            System.out.println("VH: IP:" + this.socket.getInetAddress().getHostAddress());
 
             // setear port del servidor
-            this.serverPort = serverPort;
+            this.clientPort = clientPort;
 
             System.out.println("VH: toda conexion ok?");
 
         } else {
-            System.err.println("VH: no se ha seteado el socket");
+            System.err.println("VH: no se ha seteado el socket. Socket ya existe");
         }
     }
 
-    public String getIp() {
+    public String getClientIp() {
         return this.ip;
     }
 
-    public void setIP(String ip) {
+    public void setClientIP(String ip) {
         this.ip = ip;
     }
 
-    public void setServerPort(int serverPort) {
-        this.serverPort = serverPort;
+    
+
+    public void setClientPort(int serverPort) {
+        this.clientPort = serverPort;
     }
 
-    public int getServerPort() {
-        return this.serverPort;
+    public int getClientPort() {
+        return this.clientPort;
     }
 
     void setSocket() {

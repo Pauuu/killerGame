@@ -44,17 +44,10 @@ class KillerGame extends JFrame {
         this.createStartServer();
         this.createJFrameForKillerClients();
 
-        //ojo poner un contador para "encender" los clientes despues
-        try {
-            Thread.sleep(90);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         //crear y añadir elementos graficos
-        //Ball a = new Ball(this, 0, 0, 60, 60, 2, 3);
+        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
 //        Player p  = new Player(this, 9, 9, 30, 30);
-
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
         this.setVisible(true);
@@ -144,7 +137,7 @@ class KillerGame extends JFrame {
     private void testTocadoMargenPantalla(Alive objTest) {
 
         // marco derecho
-        if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.witdh) {
+        if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.width) {
 
             // nave
             if (objTest instanceof KillerShip) {
@@ -159,7 +152,7 @@ class KillerGame extends JFrame {
                             + "&" + "ks"
                             + "&" + objTest.getPosX()
                             + "&" + objTest.getPosY()
-                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
                             + "&" + objTest.getVelY()
@@ -188,7 +181,7 @@ class KillerGame extends JFrame {
                             + "&" + "ball"
                             + "&" + objTest.getPosX()
                             + "&" + objTest.getPosY()
-                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
                             + "&" + objTest.getVelY()
@@ -220,7 +213,7 @@ class KillerGame extends JFrame {
                             + "&" + "ks"
                             + "&" + objTest.getPosX()
                             + "&" + objTest.getPosY()
-                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
                             + "&" + objTest.getVelY()
@@ -249,7 +242,7 @@ class KillerGame extends JFrame {
                             + "&" + "ball"
                             + "&" + objTest.getPosX()
                             + "&" + objTest.getPosY()
-                            + "&" + objTest.getWitdh()
+                            + "&" + objTest.getWidth()
                             + "&" + objTest.getHeight()
                             + "&" + objTest.getVelX()
                             + "&" + objTest.getVelY()
@@ -265,7 +258,6 @@ class KillerGame extends JFrame {
             }
 
         }
-    
 
         // marco superior e inferior ------------------------------------
         if (objTest.posX <= 0) {
@@ -281,7 +273,7 @@ class KillerGame extends JFrame {
                         + "&" + "ball"
                         + "&" + objTest.getPosX()
                         + "&" + objTest.getPosY()
-                        + "&" + objTest.getWitdh()
+                        + "&" + objTest.getWidth()
                         + "&" + objTest.getHeight()
                         + "&" + objTest.getVelX()
                         + "&" + objTest.getVelY()
@@ -310,7 +302,7 @@ class KillerGame extends JFrame {
         msg = "ball"
                 + "&" + b.getPosX()
                 + "&" + b.getPosY()
-                + "&" + b.getWitdh()
+                + "&" + b.getWidth()
                 + "&" + b.getHeight()
                 + "&" + b.getVelX()
                 + "&" + b.getVelY();
@@ -436,23 +428,25 @@ class KillerGame extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 // killerLeft set ip
-                killerLeft.setIP(jtfKillerLeftIp.getText());
+                if (killerLeft.getClientIp() == null) {
+                    killerLeft.setClientIP(jtfKillerLeftIp.getText());
+                }
 
                 // killerLeft set port 
-                killerLeft.setServerPort(Integer.parseInt(jtfKillerLeftPort.getText()));
+                if (killerLeft.getClientPort() == 0) {
+                    killerLeft.setClientPort(Integer.parseInt(jtfKillerLeftPort.getText()));
+                }
 
                 // killer right set ip
-                killerRight.setIP(jtfKillerRightIp.getText());
+                if (killerRight.getClientIp() == null) {
+                    killerRight.setClientIP(jtfKillerRightIp.getText());
+                }
 
                 // killer right set port
-                killerRight.setServerPort(Integer.parseInt(jtfKillerRightPort.getText()));
+                if (killerRight.getClientPort() == 0) {
+                    killerRight.setClientPort(Integer.parseInt(jtfKillerRightPort.getText()));
+                }
 
-                // arrancar hilos de los clientes
-                // -- de esta manera solo se iniciaran si se pulsa el btn aceptar 
-                // (no se va a pulsar en todos los lados --
-//                killerRight.startClient();
-//                killerLeft.startClient();
-                // cerrar ventana (?)
                 System.out.println("KG: cerrando ventana de configuracion");
                 ventanaConfiguracion.dispose();
             }
@@ -477,8 +471,6 @@ class KillerGame extends JFrame {
     public int getFrameWidth() {
         return this.FRAME_WIDTH;
     }
-    
-   
 
     public VisualHandler getKillerLeft() {
         return this.killerLeft;

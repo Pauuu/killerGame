@@ -37,10 +37,10 @@ public class ConectionHandler implements Runnable {
     private void discriminarModuloVisual(String[] peticion) {
 
         String posicion;
-        int serverPort;
+        int clientPort;
 
         posicion = peticion[1];
-        serverPort = Integer.parseInt(peticion[2]);
+        clientPort = Integer.parseInt(peticion[2]);
 
         if (!posicion.equalsIgnoreCase("l") && !posicion.equalsIgnoreCase("r")) {
             System.out.println("CH: ignorando msjs -> " + posicion);
@@ -48,9 +48,12 @@ public class ConectionHandler implements Runnable {
         }
 
         // inicia la conexion del visual handler
-        
         // setea el socket al visual handler
-        this.killerGame.getVisualHandler(posicion).setConnection(this.clientSocket, serverPort);
+        // cambia la posicion
+        posicion = (posicion.equalsIgnoreCase("r") ? "l" : "r");
+        
+        
+        this.killerGame.getVisualHandler(posicion).setConnection(this.clientSocket, clientPort);
 //        this.killerGame.getVisualHandler(posicion).startConnection(this.clientSocket, serverPort);
         System.out.println("CH: conexion recibida -> " + posicion);
     }
@@ -64,16 +67,14 @@ public class ConectionHandler implements Runnable {
         try {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(this.clientSocket.getInputStream()));
-            
+
             // almacena el msj en crudo
             uglyMessage = in.readLine();
-            
+
             // separa la info por lso caracteres "/"
             peticion = uglyMessage.split("&");
-            
 
-            System.out.println("CH: peticion[0] " + peticion[0]);
-            
+            System.out.println("CH: ugly message " + uglyMessage);
 
             if (peticion[0].equalsIgnoreCase("vm")) {
 
@@ -89,17 +90,15 @@ public class ConectionHandler implements Runnable {
                 // crear nuevo player desde el killerPad
 
                 // --test--
-                shipName = uglyMessage.substring(uglyMessage.lastIndexOf("fromp") + 1);
-                
+                shipName = uglyMessage.substring(uglyMessage.lastIndexOf("fromP") + 1);
+
                 new KillerPad(
-                        this.killerGame, 
-                        this.clientSocket, 
+                        this.killerGame,
+                        this.clientSocket,
                         this.clientAddress,
-                        this.killerServer.getServerPort(), 
+                        this.killerServer.getServerPort(),
                         shipName
                 );
-
-                
 
             } else {
                 // ignorar la peticion

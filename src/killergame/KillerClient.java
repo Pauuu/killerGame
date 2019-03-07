@@ -32,30 +32,24 @@ public class KillerClient implements Runnable {
         while (true) {
 
             // mirar si hay conexion (socket) o no en su visual handler
-            if (this.vh.getSocket() == null) {
-                
-                if (vh.getIp() != null) {
-                    System.out.println("ip no nula");
+            if ((this.vh.getSocket() == null) && (vh.getClientIp() != null)) {
 
-                    System.out.println("DEBUG >> KC: intento conectar");
+                try {
+                    // crear nuevo socket
+                    cliSock = new Socket(this.vh.getClientIp(), this.vh.getClientPort());
 
-                    try {
-                        // crear nuevo socket
-                        cliSock = new Socket(this.vh.getIp(), this.vh.getServerPort());
+                    // recuperar port del server
+                    serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
 
-                        // guardar port del server
-                        serverPort = this.vh.getKillerGame().getKillerServer().getServerPort();
+                    // enviar msj con datos
+                    out = new PrintWriter(cliSock.getOutputStream(), true);
+                    out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
 
-                        // enviar msj con datos
-                        out = new PrintWriter(cliSock.getOutputStream(), true);
-                        out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
+                    this.vh.setConnection(cliSock, this.vh.getClientPort());
 
-                        this.vh.setConnection(cliSock, serverPort);
-
-                    } catch (IOException ex) {
-                        Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
-                        System.out.println("KC: no se ha podido establecer conexion \n");
-                    }
+                } catch (IOException ex) {
+                    Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
+                    System.out.println("KC: no se ha podido establecer conexion \n");
                 }
 
                 // dormir el hilo 0.2 seg

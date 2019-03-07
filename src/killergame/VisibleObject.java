@@ -36,14 +36,14 @@ public abstract class VisibleObject implements Renderizable {
     protected int height;
     protected double posX;
     protected double posY;
-    protected int witdh;
+    protected int width;
 
     //otro construcoe para indicar la posicion?
     public VisibleObject(KillerGame kGame, double posX, double posY, int width, int height) {
         this.killerGame = kGame;
         this.posX = posX;
         this.posY = posY;
-        this.witdh = width;
+        this.width = width;
         this.height = height;
 
         this.alive = true;
@@ -59,7 +59,7 @@ public abstract class VisibleObject implements Renderizable {
         this.hitBox = new Rectangle(
                 (int) this.posX,
                 (int) this.posY,
-                this.witdh,
+                this.width,
                 this.height
         );
 
@@ -132,24 +132,16 @@ public abstract class VisibleObject implements Renderizable {
         this.posY = posY;
     }
 
-    public int getWith() {
-        return witdh;
+    public int getWidth() {
+        return width;
     }
 
-    public void setWith(int witdh) {
-        this.witdh = witdh;
+    public void setWidth(int width) {
+        this.width = width;
     }
 
     public Rectangle getHitBox() {
         return this.hitBox;
-    }
-
-    public int getWitdh() {
-        return witdh;
-    }
-
-    public void setWitdh(int witdh) {
-        this.witdh = witdh;
     }
 
     public boolean isAlive() {

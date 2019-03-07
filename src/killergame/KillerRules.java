@@ -21,9 +21,13 @@ public class KillerRules {
             return 1;
         }
         
-        if ((vObj1 instanceof Ball) &&
+        if ((vObj1 instanceof Alive) &&
                 (vObj2 instanceof Bullet)) {
             
+            return 2;
+        }
+        
+        if ((vObj1 instanceof KillerShip) && (vObj2 instanceof Ball)){
             return 2;
         }
        

@@ -12,19 +12,19 @@ public abstract class Alive extends VisibleObject implements Runnable {
     //quitar las velocidades x defecto
     protected double velX;
     protected double velY;
+    protected long time;
 
     public Alive(
-            KillerGame kGame, 
-            double posX, double posY, 
+            KillerGame kGame,
+            double posX, double posY,
             int width, int height,
             double velX, double velY) {
-    
+
         super(kGame, posX, posY, width, height);
-        
+
         this.velX = velX;
         this.velY = velY;
-        
-        
+
         new Thread(this).start();
 
     }
@@ -38,13 +38,19 @@ public abstract class Alive extends VisibleObject implements Runnable {
 
     }
 
-    protected void updatePosition(double time) {
+    protected void updatePosition() {
 
-        double intTime = time / 10000000;    //lo pasamos a decisegundos
+        double timeDiff = (System.nanoTime() - this.time) / 1000000d;
 
+//        double intTime = time / 10000000d;    //lo pasamos a decisegundos
         //  position' = position + (vel * time); -> M.R.U.
-        this.posX += this.velX * intTime;
-        this.posY += this.velY * intTime;
+        this.posX += this.velX * 1d;
+        this.posY += this.velY * 1d;
+//
+//        System.out.println("Ball pos: " + posX);
+//        System.out.println("Ball pos: " + posY);
+//
+//        this.time = System.nanoTime();
 
     }
 
@@ -113,16 +119,17 @@ public abstract class Alive extends VisibleObject implements Runnable {
     public void run() {
 
         while (alive) {
+            this.time = System.nanoTime();
 
             //actualiza la posicion del obj
             // -- calcular la diferencia de tiempo --
-            this.updatePosition(10000000);
+            this.updatePosition();
             this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
             this.testColision();
 
 //                System.out.println("timediff: " + timeDiffNano);
             try {
-                Thread.sleep(17);
+                Thread.sleep(15);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -137,14 +144,13 @@ public abstract class Alive extends VisibleObject implements Runnable {
         return velY;
     }
 
-    public void setVelX(int velX) {
-        this.velX = velX;
-    }
-
-    public void setVelY(int velY) {
-        this.velY = velY;
-    }
-
+//    public void setVelX(int velX) {
+//        this.velX = velX;
+//    }
+//
+//    public void setVelY(int velY) {
+//        this.velY = velY;
+//    }
     public void setAlive(boolean alive) {
         this.alive = alive;
     }

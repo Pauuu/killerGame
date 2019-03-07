@@ -89,14 +89,7 @@ public class KillerPad implements Runnable {
 
                     // enviar msj a modulo derecho
                     // decir que cosas ha de hacer la bola en otro modulo visual
-                    System.out.println("");
-                    System.out.println("position: " + this.killerGame.getKillerRight().getPosition());
-                    System.out.println("cks: " + "cks");
-                    System.out.println("ip: "+ this.ip);
-                    System.out.println("action: " + action);
-                    System.out.println("server ip: " + this.killerGame.getKillerRight().getIp());
-                    System.out.println("serverPort: " + this.killerGame.getKillerServer().getServerPort() + "\n");
-                    
+                  
                     this.killerGame.getKillerRight().sendMessage(
                             
                             this.killerGame.getKillerRight().getPosition()
@@ -136,8 +129,8 @@ public class KillerPad implements Runnable {
             // Close client connection
             this.clientSocket.close();
 
-        } catch (Exception ex) {
-            System.err.println("NK: kk");
+        } catch(IOException e){
+            Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, e);
         }
 
         System.out.println("NK: Client connection closed\n");

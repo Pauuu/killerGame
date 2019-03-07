@@ -68,7 +68,9 @@ public class Viewer extends Canvas implements Runnable {
                 this.visibleObjects.get(index).render(this.g2d);
             }
 
-            //this.g2d.drawImage(this.backgroundImg, 0, 0, null);
+            this.g2d.drawImage(this.backgroundImg, 0, 0, null);
+
+            this.drawInfo();
             this.g2d.setColor(Color.blue);
 
         } catch (Exception e) {
@@ -76,22 +78,50 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-    
-    private void updateFrame2(){
-    BufferStrategy bs;
-        
+    private void drawInfo() {
+        this.g2d.setColor(Color.red);
+
+        // ip puerto del servidor
+        this.g2d.drawString(
+                "Server Ip: " + this.killerGame.getKillerServer().getIp(),
+                200, 20);
+
+        this.g2d.drawString("Server Port: " + this.killerGame.getKillerServer().getServerPort(),
+                200, 40);
+
+        // ip puerto del killerRight
+        this.g2d.drawString(
+                "VHR Client Ip: " + this.killerGame.getKillerRight().getClientIp(),
+                340, 20);
+
+        this.g2d.drawString("VHR Client Port: " + this.killerGame.getKillerRight().getClientPort(),
+                340, 40);
+
+        // ip puerto del killerLeft
+        this.g2d.drawString(
+                "VHL Client Ip: " + this.killerGame.getKillerLeft().getClientIp(),
+                 10, 20);
+
+        this.g2d.drawString("VHL Client Port: " + this.killerGame.getKillerLeft().getClientPort(),
+                10, 40);
+
+    }
+
+    private void updateFrame2() {
+        BufferStrategy bs;
+
         bs = this.getBufferStrategy();
         if (bs == null) {
             System.out.println("kgd");
             return; // =======================================================>>
-        }       
-        
+        }
+
         Graphics gg = bs.getDrawGraphics();
 
         gg.drawImage(biFrame, 0, 0, null);
         this.paintComponents();
 
-     //   Toolkit.getDefaultToolkit().sync();
+        //   Toolkit.getDefaultToolkit().sync();
         bs.show();
 
         gg.dispose();
@@ -121,16 +151,15 @@ public class Viewer extends Canvas implements Runnable {
     public void run() {
 
         //this.createBufferStrategy(2);
-
         while (true) {
-            
+
             //actualiza lista de objetos visibles
             this.visibleObjects = this.killerGame.getVisibleObjects();
 
             //pinta todos los elementos
             this.paintComponents();
             this.getGraphics().drawImage(biFrame, 0, 0, null);
-            
+
             try {
                 Thread.sleep(16);
             } catch (InterruptedException ex) {
@@ -140,7 +169,5 @@ public class Viewer extends Canvas implements Runnable {
         }
 
     }
-    
-    
 
 }

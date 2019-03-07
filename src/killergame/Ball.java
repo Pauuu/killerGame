@@ -40,7 +40,7 @@ public class Ball extends Autonomous {
     public void render(Graphics2D g2d) {
         g2d.setColor(Color.ORANGE);
 //        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
-        g2d.fillArc((int) this.posX, (int) this.posY, this.witdh, this.height, 30, 300);
+        g2d.fillArc((int) this.posX, (int) this.posY, this.width, this.height, 30, 300);
 
     }
 }
