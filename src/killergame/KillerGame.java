@@ -44,9 +44,8 @@ class KillerGame extends JFrame {
         this.createStartServer();
         this.createJFrameForKillerClients();
 
-
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
+//        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
 //        Player p  = new Player(this, 9, 9, 30, 30);
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
@@ -136,13 +135,14 @@ class KillerGame extends JFrame {
      */
     private void testTocadoMargenPantalla(Alive objTest) {
 
-        // marco derecho
+        // marco derecho -----------------------------------
         if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.width) {
 
             // nave
             if (objTest instanceof KillerShip) {
 
                 if (this.killerRight.getSocket() != null) {
+
                     //eliminar objeto
                     objTest.kill();
 
@@ -163,11 +163,10 @@ class KillerGame extends JFrame {
 
                 } else {
                     // rebotar
-                    objTest.invertirVelX();
+                    objTest.setVelX(0);
                 }
 
-                return;
-
+//                return;
                 // bola
             } else {
 
@@ -192,12 +191,11 @@ class KillerGame extends JFrame {
                     objTest.invertirVelX();
                 }
 
-                return;
-
+//                return;
             }
         }
 
-        // marco izquierdo
+        // marco izquierdo ---------------------------------------------------
         if (objTest.posX <= 0) {
 
             // nave
@@ -224,11 +222,10 @@ class KillerGame extends JFrame {
 
                 } else {
                     // rebotar
-                    objTest.invertirVelX();
+                    objTest.setVelX(0);
                 }
 
-                return;
-
+//                return;
                 // bola
             } else {
 
@@ -253,47 +250,53 @@ class KillerGame extends JFrame {
                     objTest.invertirVelX();
                 }
 
-                return;
-
+//                return;
             }
 
         }
 
-        // marco superior e inferior ------------------------------------
-        if (objTest.posX <= 0) {
-
-            if (this.killerLeft.getSocket() != null) {
-
-                // eliminar objeto
-                objTest.kill();
-
-                // enviar objeto
-                this.killerLeft.sendMessage(
-                        this.killerLeft.getPosition()
-                        + "&" + "ball"
-                        + "&" + objTest.getPosX()
-                        + "&" + objTest.getPosY()
-                        + "&" + objTest.getWidth()
-                        + "&" + objTest.getHeight()
-                        + "&" + objTest.getVelX()
-                        + "&" + objTest.getVelY()
-                );
-
-            } else {
-                // rebotar
-                objTest.invertirVelX();
-            }
-
-            return;
-
-        }
-
-        //mira si colision en eje Y (marco pantalla)
+        // marco superior e inferior ---------------
         if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
                 || (objTest.posY <= 0)) {
 
-            objTest.invertirVelY();
+            if (objTest instanceof KillerShip) {
+                objTest.setVelY(0);
+                
+            } else {
+                objTest.invertirVelY();
+
+            }
+
         }
+
+//        // marco izquierdo ------------------------------------
+//        if (objTest.posX <= 0) {
+//
+//            if (this.killerLeft.getSocket() != null) {
+//
+//                // eliminar objeto
+//                objTest.kill();
+//
+//                // enviar objeto
+//                this.killerLeft.sendMessage(
+//                        this.killerLeft.getPosition()
+//                        + "&" + "ball"
+//                        + "&" + objTest.getPosX()
+//                        + "&" + objTest.getPosY()
+//                        + "&" + objTest.getWidth()
+//                        + "&" + objTest.getHeight()
+//                        + "&" + objTest.getVelX()
+//                        + "&" + objTest.getVelY()
+//                );
+//
+//            } else {
+//                // rebotar
+//                objTest.invertirVelX();
+//            }
+//
+//            return;
+//
+//        }
     }
 
     private String createMessageBall(Ball b) {
@@ -326,6 +329,23 @@ class KillerGame extends JFrame {
                 }
             }
         }
+    }
+
+    public KillerShip checkKillerShip(String ip, int port) {
+        for (int pos = 0; pos < this.getVisibleObjects().size(); pos++) {
+
+            // cerar en game metodo para obtener array de objs en especiico????
+            // discriminar los killerShips
+            if (this.getVisibleObjects().get(pos) instanceof KillerShip) {
+
+                // buscar el que tenga misma id
+                if (((KillerShip) this.getVisibleObjects().get(pos)).getIp().equalsIgnoreCase(ip)) {
+                    return (KillerShip) this.getVisibleObjects().get(pos);
+                }
+            }
+        }
+
+        return null;
     }
 
     // conexinoes

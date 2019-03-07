@@ -85,7 +85,7 @@ public class VisualHandler implements Runnable {
                     } else {
 //                                x = this.killerGame.getWidth()- 1;
                         x = this.killerGame.getFrameWidth() - (int) Double.parseDouble(message[4]) - 1;
-                       
+
                     }
 
                     switch (message[1]) {
@@ -116,7 +116,7 @@ public class VisualHandler implements Runnable {
                         case "ks":
                             new KillerShip(
                                     this.killerGame,
-                                    x,                                    //posX
+                                    x, //posX
                                     (int) Double.parseDouble(message[3]), //posY
                                     (int) Double.parseDouble(message[4]), //with
                                     (int) Double.parseDouble(message[5]), //height
@@ -132,48 +132,45 @@ public class VisualHandler implements Runnable {
 
                         case "cks":
 
-                            String ipOrigen = message[4];
-                            int puertoOrigen = Integer.parseInt(message[5]);
-
-                            // si:
-                            // ip distinta (AND puerto igual OR distinto)
-                            // OR
-                            // ip propia AND port distinto
-                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
-
-                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
-                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
-
-                                KillerShip ks = KillerPad.ckeckKillerShip(
-                                        this.killerGame,
-                                        message[2], // ip nave
-                                        puertoOrigen // puerto
-                                );
-
-                                // comprobar si existe la nave
-                                if (ks != null) {
-
-                                    ks.doAction(message[3]);
-                                    System.out.println("nave NO null");
-
-                                } else {
-                                    System.out.println("VH: nave null \n");
-                                    this.killerGame.getKillerRight().sendMessage(
-                                            line
-                                    //                                            this.killerGame.getKillerRight().getPosition()
-                                    //                                            + "&" + "cks"
-                                    //                                            + "&" + this.ip
-                                    //                                            + "&" + message[3] // comando
-                                    //                                            + "&" + ipOrigen
-                                    //                                            + "&" + puertoOrigen
-                                    );
-
-                                    System.out.println(line + "\n");
-
-                                }
-                            }
-                            Thread.sleep(90);
+                            KillerPad.manageAction(line, this.killerGame);
                             break;
+
+//                            String ipOrigen = message[4];
+//                            int puertoOrigen = Integer.parseInt(message[5]);
+//
+//                            // si:
+//                            // ip distinta (AND puerto igual OR distinto)
+//                            // OR
+//                            // ip propia AND port distinto
+//                            if ((!ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp()))
+//                                    || (ipOrigen.equalsIgnoreCase(this.killerGame.getKillerServer().getIp())
+//                                    && (puertoOrigen != this.killerGame.getKillerServer().getServerPort()))) {
+//
+//                                KillerShip ks = KillerPad.ckeckKillerShip(
+//                                        this.killerGame,
+//                                        message[2], // ip nave
+//                                        puertoOrigen // puerto
+//                                );
+//
+//                                // comprobar si existe la nave
+//                                if (ks != null) {
+//
+//                                    ks.doAction(message[3]);
+//                                    System.out.println("nave NO null");
+//
+//                                } else {
+//                                    System.out.println("VH: nave null \n");
+//                                    this.killerGame.getKillerRight().sendMessage(
+//                                            line
+//                                    );
+//
+//                                    System.out.println(line + "\n");
+//
+//                                }
+//                            }
+//                            Thread.sleep(90);
+//                            break;
+                            
                         default:
                             System.out.println("VH: msg (default): \n" + line);
                             break;
@@ -181,13 +178,14 @@ public class VisualHandler implements Runnable {
                 }
             }
         } catch (Exception ex) {
+
             Logger.getLogger("VH: " + VisualHandler.class.getName()).log(Level.SEVERE, null, ex);
             System.err.println("VH: " + ex);
+
 //                this.socket.close();
             this.socket = null;
             done = true;
 
-            // lanzar hilo cliente????? -> no haria falta que el cliente furea runnable
         }
     }
 
@@ -258,8 +256,6 @@ public class VisualHandler implements Runnable {
     public void setClientIP(String ip) {
         this.ip = ip;
     }
-
-    
 
     public void setClientPort(int serverPort) {
         this.clientPort = serverPort;

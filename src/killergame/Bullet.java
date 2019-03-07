@@ -36,47 +36,33 @@ public class Bullet extends Autonomous {
         g2d.fillOval((int) this.posX, (int) this.posY, this.width, this.height);
     }
 
-//    @Override
-//    public void run() {
-//        //direfencia de tiempo actual menos anterior
-//        double timeDiffNano;
-//
-//        //timepo anterior
-//        double previousTimeNano;
-//
-//        //posicion anterior antes de moverse;
-//        double prePosX;
-//
-//        previousTimeNano = System.nanoTime();
-//
-//        while (this.distancia < 300) {
-//
-//            //calcula la diferencia
-//            timeDiffNano = System.nanoTime() - previousTimeNano;
-//
-//            //tiempo puesto a boleo pero que va bien
-//            if (timeDiffNano >= 10000000) {
-//
-//                //actualiza la posicion del obj
-//                prePosX = this.posX;
-//                this.updatePosition(timeDiffNano);
-//
-//                this.distancia += Math.abs(this.posX - prePosX);
-//
-//                //actualiza el tiempo anterior cada vez q entra
-//                previousTimeNano = System.nanoTime();
-//
-//            }
-//
-//            //para que el procesador no pete?
-//            try {
-//                Thread.sleep(9);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//
-//        this.kill();
-//    }
+    @Override
+    public void run() {
+        double posXorigin = this.posX;
+        double distance = 0;
+        
+
+        while (distance < 400) {
+
+            distance += Math.abs(this.posX - posXorigin);
+
+            this.time = System.nanoTime();
+
+            //actualiza la posicion del obj
+            // -- calcular la diferencia de tiempo --
+            this.updatePosition();
+            this.updateHitBox(); //quitar? ---> ha de llamar actualizar cada vez?
+            this.testColision();
+
+//                System.out.println("timediff: " + timeDiffNano);
+            try {
+                Thread.sleep(15);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Autonomous.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        this.kill();
+    }
 
 }

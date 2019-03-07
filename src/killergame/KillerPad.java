@@ -38,7 +38,7 @@ public class KillerPad implements Runnable {
         this.killerGame.addKillerPad(this);
 
         // crear nueva killerShip
-        new KillerShip(kg, 2, 2, 60, 60, 0, 0, this.ip, this.port, this.name);
+        new KillerShip(kg, 100, 100, 60, 60, 0, 0, this.ip, this.port, this.name);
 
         // iniciar hilo propio
         new Thread(this).start();
@@ -63,10 +63,210 @@ public class KillerPad implements Runnable {
 
     }
 
-    private void processClient(BufferedReader in, PrintWriter out) {
+    private static boolean isMyMessage(String ipOrigen, int puertoOrigen, KillerGame kg) {
+        // si:
+        // ip distinta (AND puerto igual OR distinto)
+        // OR
+        // ip propia AND port distinto
+        if ((!ipOrigen.equalsIgnoreCase(kg.getKillerServer().getIp()))
+                || (ipOrigen.equalsIgnoreCase(kg.getKillerServer().getIp())
+                && (puertoOrigen != kg.getKillerServer().getServerPort()))) {
+            return false;
+        }
+
+        return true;
+
+    }
+
+    public static void doAction(String action, KillerShip kShip) {
+        System.out.println("KP: " + action);
+
+        // ordenar a la nave que se mueva
+        switch (action) {
+
+            case ("right"):
+
+                kShip.setVelX(4);
+                kShip.setVelY(0);
+                break;
+
+            case ("down"):
+
+                kShip.setVelX(0);
+                kShip.setVelY(4);
+                break;
+
+            case ("up"):
+
+                kShip.setVelX(0);
+                kShip.setVelY(-4);
+                break;
+
+            case ("left"):
+
+                kShip.setVelX(-4);
+                kShip.setVelY(0);
+                break;
+
+            case ("upright"):
+
+                kShip.setVelX(4);
+                kShip.setVelY(-4);
+                break;
+
+            case ("upleft"):
+
+                kShip.setVelX(-4);
+                kShip.setVelY(-4);
+                break;
+
+            case ("downright"):
+
+                kShip.setVelX(4);
+                kShip.setVelY(4);
+                break;
+
+            case ("downleft"):
+
+                kShip.setVelX(-4);
+                kShip.setVelY(4);
+                break;
+
+            case ("idle"):
+
+                kShip.setVelX(0);
+                kShip.setVelY(0);
+                break;
+
+            case ("shoot"):
+
+                kShip.fire();
+                break;
+
+            case ("bbbye"):
+
+                break;
+        }
+
+        System.out.println("nave NO null");
+
+    }
+
+    public static void sendRelayMessage(String line, KillerGame kg) {
+        System.out.println("VH: nave null \n");
+        kg.getKillerRight().sendMessage(
+                line
+        );
+    }
+
+    public static void manageAction(String line, KillerGame kg) {
+        String[] message = line.trim().split("&");
+
+        String action = message[3];
+        String ipOrigen = message[4];
+        int puertoOrigen = Integer.parseInt(message[5]);
+
+        // comprobar si el msj ha dado toda la vuelta
+        if (KillerPad.isMyMessage(ipOrigen, puertoOrigen, kg)) {
+
+            KillerShip kShip = kg.checkKillerShip(
+                    message[2], // ip nave
+                    puertoOrigen // puerto
+            );
+
+            // comprobar si existe la nave
+            if (kShip != null) {
+
+                KillerPad.doAction(action, kShip);
+
+//                System.out.println("KP: " + action);
+//
+//                // ordenar a la nave que se mueva
+//                switch (action) {
+//
+//                    case ("right"):
+//
+//                        kShip.setVelX(4);
+//                        kShip.setVelY(0);
+//                        break;
+//
+//                    case ("down"):
+//
+//                        kShip.setVelX(0);
+//                        kShip.setVelY(4);
+//                        break;
+//
+//                    case ("up"):
+//
+//                        kShip.setVelX(0);
+//                        kShip.setVelY(-4);
+//                        break;
+//
+//                    case ("left"):
+//
+//                        kShip.setVelX(-4);
+//                        kShip.setVelY(0);
+//                        break;
+//
+//                    case ("upright"):
+//
+//                        kShip.setVelX(4);
+//                        kShip.setVelY(-4);
+//                        break;
+//
+//                    case ("upleft"):
+//
+//                        kShip.setVelX(-4);
+//                        kShip.setVelY(-4);
+//                        break;
+//
+//                    case ("downright"):
+//
+//                        kShip.setVelX(4);
+//                        kShip.setVelY(4);
+//                        break;
+//
+//                    case ("downleft"):
+//
+//                        kShip.setVelX(-4);
+//                        kShip.setVelY(4);
+//                        break;
+//
+//                    case ("idle"):
+//
+//                        kShip.setVelX(0);
+//                        kShip.setVelY(0);
+//                        break;
+//
+//                    case ("shoot"):
+//
+//                        kShip.fire();
+//                        break;
+//
+//                    case ("bbbye"):
+//
+//                        break;
+//                }
+//
+//                System.out.println("nave NO null");
+            } else {
+
+            }
+            
+            KillerPad.sendRelayMessage(line, kg);
+
+//            System.out.println("VH: nave null \n");
+//            kg.getKillerRight().sendMessage(
+//                    line
+//            );
+        }
+
+    }
+
+    private void processClient(BufferedReader in, PrintWriter out) throws IOException {
 
         boolean closed = false;
-        String action;
+        String line;
         String[] message;
 
         //mientras no haya msj de adios o conexion perdida
@@ -75,35 +275,34 @@ public class KillerPad implements Runnable {
             // si no existe, enviar msj a VH derecha
             // si existe, ejecutar comnando
             try {
-                action = in.readLine(); //leer mensaje
+                line = in.readLine(); //leer mensaje
+
+                KillerPad.manageAction(line, this.killerGame);
 
                 // comprobar si existe la killerShip en el game
-                KillerShip ks = KillerPad.ckeckKillerShip(this.killerGame, this.ip, this.port);
-
-                if (ks != null) {   // si la nave existe
-
-                    System.out.println("KP: messaje: " + action);
-                    ks.doAction(action);
-
-                } else {            // si la nave no existe
-
-                    // enviar msj a modulo derecho
-                    // decir que cosas ha de hacer la bola en otro modulo visual
-                  
-                    this.killerGame.getKillerRight().sendMessage(
-                            
-                            this.killerGame.getKillerRight().getPosition()
-                            + "&" + "cks"
-                            + "&" + this.ip
-                            + "&" + action // comando
-                            + "&" + this.killerGame.getKillerServer().getIp()
-                            + "&" + this.killerGame.getKillerServer().getServerPort()
-                    );
-//                    
-
-                    System.out.println("la nave no existe");
-                }
-
+//                KillerShip ks = this.killerGame.checkKillerShip(this.ip, this.port);
+//
+//                if (ks != null) {   // si la nave existe
+//
+//                    System.out.println("KP: messaje: " + action);
+////                    ks.doAction(action);
+//
+//                } else {            // si la nave no existe   
+//
+//                    // enviar msj a modulo derecho
+//                    // decir que cosas ha de hacer la bola en otro modulo visual
+//                    this.killerGame.getKillerRight().sendMessage(
+//                            this.killerGame.getKillerRight().getPosition()
+//                            + "&" + "cks"
+//                            + "&" + this.ip
+//                            + "&" + action // comando
+//                            + "&" + this.killerGame.getKillerServer().getIp()
+//                            + "&" + this.killerGame.getKillerServer().getServerPort()
+//                    );
+////                    
+//
+//                    System.out.println("la nave no existe");
+//                }
             } catch (IOException ex) {
                 Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -129,7 +328,7 @@ public class KillerPad implements Runnable {
             // Close client connection
             this.clientSocket.close();
 
-        } catch(IOException e){
+        } catch (IOException e) {
             Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, e);
         }
 

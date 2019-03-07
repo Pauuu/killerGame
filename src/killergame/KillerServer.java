@@ -27,24 +27,20 @@ public class KillerServer implements Runnable {
 
     }
 
-    public void abrirConexion() {
+    public void escuchar() {
         Socket cliSock;
         String cliAddr;
 
         try {
-            // la ip es la suya misma, port 8000
+           
             this.configurePort();
-
-            System.out.println("KS: puerto actual: " + this.port);
-            // socket por el cual recibirá al cliente
-            // de momento no discrimina si es un killer pad o no //lo hace el ch
+           
             while (true) {
 
                 System.out.println("KS: Waiting for a client...");
 
                 // crea un nuevo socket para el cliente que ha "entrado" 
                 // del "server socket" gracias al metodo accept();
-                // --repasar que hace este metodo--
                 cliSock = this.serverSocket.accept();
 
                 //  imprime la ip del cliente
@@ -93,7 +89,7 @@ public class KillerServer implements Runnable {
     @Override
     public void run() {
 
-        this.abrirConexion();
+        this.escuchar();
     }
 
     public int getServerPort() {

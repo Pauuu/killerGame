@@ -47,8 +47,8 @@ public abstract class Alive extends VisibleObject implements Runnable {
         this.posX += this.velX * 1d;
         this.posY += this.velY * 1d;
 //
-//        System.out.println("Ball pos: " + posX);
-//        System.out.println("Ball pos: " + posY);
+//        System.out.println("Ball pos X: " + this.velX);
+//        System.out.println("Ball pos Y: " + this.velY);
 //
 //        this.time = System.nanoTime();
 
