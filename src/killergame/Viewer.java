@@ -4,6 +4,7 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -63,6 +64,7 @@ public class Viewer extends Canvas implements Runnable {
 
         try {
             this.g2d.fillRect(0, 0, 1920, 1080);
+            this.g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
             for (int index = 0; index < this.visibleObjects.size(); index++) {
                 this.visibleObjects.get(index).render(this.g2d);
