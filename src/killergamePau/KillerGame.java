@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -18,8 +18,8 @@ import javax.swing.JTextField;
 class KillerGame extends JFrame {
 
     // constantes
-    private final int FRAME_WIDTH = 500;
-    private final int FRAME_HEIGHT = 500;
+    private final int FRAME_WIDTH = 700;
+    private final int FRAME_HEIGHT = 700;
 
     // objetos visibles del juego
     private ArrayList<VisibleObject> visibleObjects;
@@ -47,8 +47,7 @@ class KillerGame extends JFrame {
         this.createJFrameForKillerClients();
 
         //crear y añadir elementos graficos
-        Ball a = new Ball(this, 0, 0, 60, 60, 2, 5);
-
+        Ball a = new Ball(this, 300, 300, 60, 60, 4, 3);
         this.createViewer(this.FRAME_WIDTH, this.FRAME_HEIGHT);
         this.pack();
         this.setVisible(true);
@@ -56,328 +55,19 @@ class KillerGame extends JFrame {
 
     }
 
-    private void createViewer(int width, int height) {
-        this.viewer = new Viewer(this, width, height);
-        this.getContentPane().add(this.viewer);
-    }
-
-    private void startGame() {
-
-//        //inicial los todos los elemetnos
-//        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
-//            if (this.visibleObjects.get(pos) instanceof Alive) {
-//                new Thread((Alive) this.visibleObjects.get(pos)).start();
-//            }
-//        }
-        //--crear un hilo por cada nuevo elemento--?
-        //pintar todo
-        new Thread(this.viewer).start();
-
-    }
-
-    public void sendDedNotification(String ip, int port) {
-        try {
-            // busca killer pad
-            KillerPad kPad = this.searchKillerPad(ip, port);
-
-            // si esta: enviar msj de muerte
-            if (kPad != null) {
-                kPad.sendMessageToMobile("ded");
-                return; //=======================================================>>>
-            }
-
-            // si no está: enviar msj por el VH de la derecha
-            this.killerRight.sendMessage(
-                    "r"
-                    + "&" + "ckk"
-                    + "&" + ip + "/" + port
-                    + "&" + "ded"
-                    + "&" + InetAddress.getLocalHost().getHostAddress()
-                    + "&" + this.killerRight.getPort()
-            );
-
-        } catch (UnknownHostException ex) {
-            Logger.getLogger(KillerGame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
     public KillerPad searchKillerPad(String ip, int port) {
         for (int pos = 0; pos < this.killerPads.size(); pos++) {
 
             //  si ip y puerto coinciden
-            if (this.killerPads.get(0).getIp().equalsIgnoreCase(ip)
-                    && this.killerPads.get(0).getPort() == port) {
-
+            if (this.killerPads.get(pos).getIp().equalsIgnoreCase(ip)
+                    && this.killerPads.get(pos).getPort() == port) {
+                System.out.println("KCenbctrado");
                 return this.killerPads.get(pos);
             }
 
         }
+        System.out.println("KCno encontrado");
         return null;
-    }
-
-    public void moveShip(String shipId, int velX, int velY) {
-        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
-
-            if (this.visibleObjects.get(pos) instanceof KillerShip) {
-                KillerShip ks = (KillerShip) this.visibleObjects.get(pos);
-
-                if (ks.getIp() == shipId) {
-                    ks.setVelX(velX);
-                    ks.setVelY(velY);
-                    return;
-                }
-            }
-        }
-    }
-
-    private void createStartVisualHandlers() {
-
-        this.killerLeft = new VisualHandler(this, "l");
-        this.killerRight = new VisualHandler(this, "r");
-
-        new Thread(this.killerLeft).start();
-        new Thread(this.killerRight).start();
-
-    }
-
-    private void createStartServer() {
-        this.killerServer = new KillerServer(this);
-        new Thread(this.killerServer).start();
-    }
-
-    private void aplicarRegla(int regla, Alive vObj) {
-        // --discriminar reglas--
-
-        switch (regla) {
-            case 1:
-                vObj.invertirVelocidades();
-                break;
-
-            case 2:
-                vObj.kill();
-                break;
-
-            default:
-                break;
-        }
-
-    }
-
-    /**
-     * corregir y mejorar metodo
-     *
-     * @param objTest
-     */
-    private void testTocadoMargenPantalla(Alive objTest) {
-
-        // marco derecho -----------------------------------
-        if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.width) {
-
-            // nave
-            if (objTest instanceof KillerShip) {
-
-                if (this.killerRight.getSocket() != null) {
-
-                    //eliminar objeto
-                    objTest.kill();
-
-                    // enviar objeto
-                    this.killerRight.sendMessage(
-                            this.killerRight.getPosition()
-                            + "&" + "ks"
-                            + "&" + objTest.getPosX()
-                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
-                            + "&" + objTest.getWidth()
-                            + "&" + objTest.getHeight()
-                            + "&" + objTest.getVelX()
-                            + "&" + objTest.getVelY()
-                            + "&" + ((KillerShip) objTest).getIp()
-                            + "&" + ((KillerShip) objTest).getPort()
-                            + "&" + ((KillerShip) objTest).getName()
-                    );
-
-                } else {
-                    // rebotar
-                    objTest.setVelX(0);
-                }
-
-//                return;
-            } else if (objTest instanceof Bullet) {
-                objTest.kill();
-
-                // bola
-            } else {
-
-                if (this.killerRight.getSocket() != null) {
-                    //eliminar objeto
-                    objTest.kill();
-
-                    // enviar objeto
-                    this.killerRight.sendMessage(
-                            this.killerRight.getPosition()
-                            + "&" + "ball"
-                            + "&" + objTest.getPosX()
-                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
-                            + "&" + objTest.getWidth()
-                            + "&" + objTest.getHeight()
-                            + "&" + objTest.getVelX()
-                            + "&" + objTest.getVelY()
-                    );
-
-                } else {
-                    // rebotar
-                    objTest.setVelX(-Math.abs(objTest.velX));
-                }
-
-//                return;
-            }
-        }
-
-        // marco izquierdo ---------------------------------------------------
-        if (objTest.posX
-                <= 0) {
-
-            // nave
-            if (objTest instanceof KillerShip) {
-
-                if (this.killerLeft.getSocket() != null) {
-                    //eliminar objeto
-                    objTest.kill();
-
-                    // enviar objeto
-                    this.killerLeft.sendMessage(
-                            this.killerLeft.getPosition()
-                            + "&" + "ks"
-                            + "&" + objTest.getPosX()
-                            + "&" + objTest.getPosY()
-                            + "&" + objTest.getWidth()
-                            + "&" + objTest.getHeight()
-                            + "&" + objTest.getVelX()
-                            + "&" + objTest.getVelY()
-                            + "&" + ((KillerShip) objTest).getIp()
-                            + "&" + ((KillerShip) objTest).getPort()
-                            + "&" + ((KillerShip) objTest).getName()
-                    );
-
-                } else {
-                    // parar
-                    objTest.setVelX(0);
-                }
-
-//                return;
-            } else if (objTest instanceof Bullet) {
-                objTest.kill();
-                // bola
-            } else {
-
-                if (this.killerLeft.getSocket() != null) {
-                    //eliminar objeto
-                    objTest.kill();
-
-                    // enviar objeto
-                    this.killerLeft.sendMessage(
-                            this.killerLeft.getPosition()
-                            + "&" + "ball"
-                            + "&" + objTest.getPosX()
-                            + "&" + objTest.getPosY()
-                            + "&" + objTest.getWidth()
-                            + "&" + objTest.getHeight()
-                            + "&" + objTest.getVelX()
-                            + "&" + objTest.getVelY()
-                    );
-
-                } else {
-                    // rebotar
-                    objTest.setVelX(Math.abs(objTest.velX));
-                }
-
-//                return;
-            }
-
-        }
-
-        // marco superior e inferior ---------------
-        if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
-                || (objTest.posY <= 0)) {
-
-            if (objTest instanceof KillerShip) {
-                objTest.setVelY(0);
-
-            } else if (objTest instanceof Bullet) {
-                objTest.kill();
-            } else {
-                if (objTest.posY <= 0) {
-                    objTest.setVelY(Math.abs(objTest.velY));
-
-                } else {
-                    objTest.setVelY(-Math.abs(objTest.velY));
-
-                }
-
-            }
-
-        }
-
-//        // marco izquierdo ------------------------------------
-//        if (objTest.posX <= 0) {
-//
-//            if (this.killerLeft.getSocket() != null) {
-//
-//                // eliminar objeto
-//                objTest.kill();
-//
-//                // enviar objeto
-//                this.killerLeft.sendMessage(
-//                        this.killerLeft.getPosition()
-//                        + "&" + "ball"
-//                        + "&" + objTest.getPosX()
-//                        + "&" + objTest.getPosY()
-//                        + "&" + objTest.getWidth()
-//                        + "&" + objTest.getHeight()
-//                        + "&" + objTest.getVelX()
-//                        + "&" + objTest.getVelY()
-//                );
-//
-//            } else {
-//                // rebotar
-//                objTest.invertirVelX();
-//            }
-//
-//            return;
-//
-//        }
-    }
-
-    private String createMessageBall(Ball b) {
-        String msg;
-
-        msg = "ball"
-                + "&" + b.getPosX()
-                + "&" + b.getPosY()
-                + "&" + b.getWidth()
-                + "&" + b.getHeight()
-                + "&" + b.getVelX()
-                + "&" + b.getVelY();
-        return msg;
-    }
-
-    private void testColisionVisibleObjects(Alive objTest) {
-        VisibleObject vObj;
-
-        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
-            vObj = this.visibleObjects.get(pos);
-
-            if (objTest != vObj) {
-
-                //comprobar si colision
-                if (objTest.getHitBox().intersects(vObj.getHitBox())) {
-                    //lamar a las reglas para conocer que han de hacer
-
-                    int regla = KillerRules.testColision(objTest, vObj);
-                    this.aplicarRegla(regla, objTest);
-                }
-            }
-        }
     }
 
     public KillerShip checkKillerShip(String ip, int port) {
@@ -397,7 +87,6 @@ class KillerGame extends JFrame {
         return null;
     }
 
-    // conexinoes
     public VisualHandler getVisualHandler(String posicion) {
 
         if (posicion.equalsIgnoreCase("r")) {
@@ -412,25 +101,27 @@ class KillerGame extends JFrame {
         }
     }
 
-//    public synchronized void connectKillerPad(Socket cliSock, String cliAddr) {
-//
-//        // crear nuevo killerPad
-//        KillerPad kp = new KillerPad(this, cliSock, cliAddr,);
-//
-//        // añadir killerPad a la lista
-//        this.killerPads.add(kp);
-//
-//        // iniciar nuevo hilo
-//        new Thread(kp).start();
-//
-//        System.out.println("KG: conexoin killerPad exitosa");
-//    }
+    public void addKillerPad(KillerPad kp) {
+        this.killerPads.add(kp);
+    }
+
     public void addVisibleObject(VisibleObject vObj) {
         this.visibleObjects.add(vObj);
     }
 
-    public void addKillerPad(KillerPad kp) {
-        this.killerPads.add(kp);
+    public void moveShip(String shipId, int velX, int velY) {
+        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+
+            if (this.visibleObjects.get(pos) instanceof KillerShip) {
+                KillerShip ks = (KillerShip) this.visibleObjects.get(pos);
+
+                if (ks.getIp() == shipId) {
+                    ks.setVelX(velX);
+                    ks.setVelY(velY);
+                    return;
+                }
+            }
+        }
     }
 
     public void testColision(Alive objTest) {
@@ -440,6 +131,74 @@ class KillerGame extends JFrame {
 
         //mira si ha colisionado con algun objeto visible
         this.testColisionVisibleObjects(objTest);
+
+    }
+
+    public void sendDedNotification(String serverIp, int serverPort, String ip, int port) {
+
+        // busca killer pad
+        KillerPad kPad = this.searchKillerPad(ip, port);
+
+        // si esta: enviar msj de muerte
+        if (kPad != null) {
+            kPad.sendMessageToMobile("ded");
+            return; //===================================================>>>
+        }
+
+        // si no está: enviar msj por el VH de la derecha
+        this.killerRight.sendMessage(
+                "m"
+                + "&" + "ckk"
+                + "&" + ip + "/" + port
+                + "&" + "ded"
+                + "&" + serverIp
+                + "&" + serverPort
+        );
+
+        System.err.println("mensaje enviado: "
+                + "m"
+                + "&" + "ckk"
+                + "&" + ip + "/" + port
+                + "&" + "ded"
+                + "&" + serverIp
+                + "&" + serverPort
+        );
+
+    }
+
+    private String createMessageBall(Ball b) {
+        String msg;
+
+        msg = "ball"
+                + "&" + b.getPosX()
+                + "&" + b.getPosY()
+                + "&" + b.getWidth()
+                + "&" + b.getHeight()
+                + "&" + b.getVelX()
+                + "&" + b.getVelY();
+        return msg;
+    }
+
+    private void aplicarRegla(int regla, Alive vObj) {
+        // --discriminar reglas--
+
+        switch (regla) {
+            case 1:
+                vObj.invertirVelocidades();
+                break;
+
+            case 2:
+                vObj.kill();
+                break;
+
+            case 3:
+                vObj.kill();
+                ((KillerShip) vObj).sendDedNotification();
+                break;
+
+            default:
+                break;
+        }
 
     }
 
@@ -524,6 +283,243 @@ class KillerGame extends JFrame {
         // añadir listener al boton acepatar
     }
 
+    private void createStartServer() {
+        this.killerServer = new KillerServer(this);
+        new Thread(this.killerServer).start();
+    }
+
+    private void createViewer(int width, int height) {
+        this.viewer = new Viewer(this, width, height);
+        this.getContentPane().add(this.viewer);
+    }
+
+    private void createStartVisualHandlers() {
+
+        this.killerLeft = new VisualHandler(this, "l");
+        this.killerRight = new VisualHandler(this, "r");
+
+        new Thread(this.killerLeft).start();
+        new Thread(this.killerRight).start();
+
+    }
+
+    private void startGame() {
+
+//        //inicial los todos los elemetnos
+//        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+//            if (this.visibleObjects.get(pos) instanceof Alive) {
+//                new Thread((Alive) this.visibleObjects.get(pos)).start();
+//            }
+//        }
+        //--crear un hilo por cada nuevo elemento--?
+        //pintar todo
+        new Thread(this.viewer).start();
+
+    }
+
+    /**
+     * corregir y mejorar metodo
+     *
+     * @param objTest
+     */
+    private void testTocadoMargenPantalla(Alive objTest) {
+
+        // marco derecho -----------------------------------
+        if (objTest.posX >= objTest.killerGame.getFrameWidth() - objTest.width) {
+
+            // nave
+            if (objTest instanceof KillerShip) {
+
+                if (this.killerRight.getSocket() != null) {
+
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerRight.sendMessage(
+                            this.killerRight.getPosition()
+                            + "&" + "ks"
+                            + "&" + objTest.getPosX()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
+                            + "&" + objTest.getWidth()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                            + "&" + ((KillerShip) objTest).getIp()
+                            + "&" + ((KillerShip) objTest).getPort()
+                            + "&" + ((KillerShip) objTest).getName()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.setVelX(0);
+                }
+
+//                return;
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
+
+                // bola
+            } else {
+
+                if (this.killerRight.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerRight.sendMessage(
+                            this.killerRight.getPosition()
+                            + "&" + "ball"
+                            + "&" + objTest.getPosX()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
+                            + "&" + objTest.getWidth()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.setVelX(-Math.abs(objTest.velX));
+                }
+
+//                return;
+            }
+        }
+
+        // marco izquierdo ---------------------------------------------------
+        if (objTest.posX <= 0) {
+
+            // nave
+            if (objTest instanceof KillerShip) {
+
+                if (this.killerLeft.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerLeft.sendMessage(
+                            this.killerLeft.getPosition()
+                            + "&" + "ks"
+                            + "&" + objTest.getPosX()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
+                            + "&" + objTest.getWidth()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                            + "&" + ((KillerShip) objTest).getIp()
+                            + "&" + ((KillerShip) objTest).getPort()
+                            + "&" + ((KillerShip) objTest).getName()
+                    );
+
+                } else {
+                    // parar
+                    objTest.setVelX(0);
+                }
+
+//                return;
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
+                // bola
+            } else {
+
+                if (this.killerLeft.getSocket() != null) {
+                    //eliminar objeto
+                    objTest.kill();
+
+                    // enviar objeto
+                    this.killerLeft.sendMessage(
+                            this.killerLeft.getPosition()
+                            + "&" + "ball"
+                            + "&" + objTest.getPosX()
+                            + "&" + (objTest.getPosY() / (double) this.FRAME_HEIGHT)
+                            + "&" + objTest.getWidth()
+                            + "&" + objTest.getHeight()
+                            + "&" + objTest.getVelX()
+                            + "&" + objTest.getVelY()
+                    );
+
+                } else {
+                    // rebotar
+                    objTest.setVelX(Math.abs(objTest.velX));
+                }
+
+//                return;
+            }
+
+        }
+
+        // marco superior e inferior ---------------
+        if ((objTest.posY >= objTest.killerGame.getFrameHeight() - objTest.height)
+                || (objTest.posY <= 0)) {
+
+            if (objTest instanceof KillerShip) {
+                objTest.setVelY(0);
+
+            } else if (objTest instanceof Bullet) {
+                objTest.kill();
+            } else {
+                if (objTest.posY <= 0) {
+                    objTest.setVelY(Math.abs(objTest.velY));
+
+                } else {
+                    objTest.setVelY(-Math.abs(objTest.velY));
+
+                }
+
+            }
+
+        }
+
+//        // marco izquierdo ------------------------------------
+//        if (objTest.posX <= 0) {
+//
+//            if (this.killerLeft.getSocket() != null) {
+//
+//                // eliminar objeto
+//                objTest.kill();
+//
+//                // enviar objeto
+//                this.killerLeft.sendMessage(
+//                        this.killerLeft.getPosition()
+//                        + "&" + "ball"
+//                        + "&" + objTest.getPosX()
+//                        + "&" + objTest.getPosY()
+//                        + "&" + objTest.getWidth()
+//                        + "&" + objTest.getHeight()
+//                        + "&" + objTest.getVelX()
+//                        + "&" + objTest.getVelY()
+//                );
+//
+//            } else {
+//                // rebotar
+//                objTest.invertirVelX();
+//            }
+//
+//            return;
+//
+//        }
+    }
+
+    private void testColisionVisibleObjects(Alive objTest) {
+        VisibleObject vObj;
+
+        for (int pos = 0; pos < this.visibleObjects.size(); pos++) {
+            vObj = this.visibleObjects.get(pos);
+
+            if (objTest != vObj) {
+
+                //comprobar si colision
+                if (objTest.getHitBox().intersects(vObj.getHitBox())) {
+                    //lamar a las reglas para conocer que han de hacer
+
+                    int regla = KillerRules.testColision(objTest, vObj);
+                    this.aplicarRegla(regla, objTest);
+                }
+            }
+        }
+    }
+
     // Getters & setters
     public ArrayList getVisibleObjects() {
         return this.visibleObjects;
@@ -547,6 +543,10 @@ class KillerGame extends JFrame {
 
     public VisualHandler getKillerRight() {
         return this.killerRight;
+    }
+
+    public ArrayList<KillerPad> getKillerPads() {
+        return this.killerPads;
     }
 
 }

@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

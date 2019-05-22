@@ -3,11 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,14 +31,12 @@ public class KillerShip extends Controlled {
     public KillerShip(KillerGame kGame,
             double posX,
             double posY,
-            int width,
-            int height,
             double velX,
             double velY,
             String killerPadIp,
             int port,
             String name) {
-        super(kGame, posX, posY, width, height, 0, 0);
+        super(kGame, posX, posY, 40, 40, 0, 0);
 
         this.posX = posX;
         this.posY = posY;
@@ -46,6 +48,23 @@ public class KillerShip extends Controlled {
 
         this.setVelX(velX);
         this.setVelY(velY);
+    }
+
+    protected void kill() {
+
+        ArrayList<VisibleObject> listVisibleObjs;
+
+        // puntero a la lista de visual objects del killerGame
+        listVisibleObjs = this.killerGame.getVisibleObjects();
+
+        for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
+            if (this.killerGame.getVisibleObjects().get(pos) == this) {
+
+                this.alive = false;
+                this.killerGame.getVisibleObjects().remove(pos);
+            }
+        }
+
     }
 
     public void doAction(String action) {
@@ -117,28 +136,26 @@ public class KillerShip extends Controlled {
         }
     }
 
+    public void sendDedNotification() {
+
+        try {
+            // server ip, server port, nave ip, nave port
+            this.killerGame.sendDedNotification(
+                    InetAddress.getLocalHost().getHostAddress(),
+                    this.killerGame.getKillerServer().getServerPort(),
+                    this.ip,
+                    this.port
+            );
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(KillerShip.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     private void fire() {
         new Thread(new Bullet(this.killerGame, this)).start();
     }
 
-    protected void kill() {
-
-        ArrayList<VisibleObject> listVisibleObjs;
-
-        // puntero a la lista de visual objects del killerGame
-        listVisibleObjs = this.killerGame.getVisibleObjects();
-
-        for (int pos = 0; pos < listVisibleObjs.size(); pos++) {
-            if (this.killerGame.getVisibleObjects().get(pos) == this) {
-                
-                this.alive = false;
-                this.killerGame.getVisibleObjects().remove(pos);
-            }
-        }
-        
-        this.killerGame.sendDedNotification(this.ip, this.port);
-    }
-
+    // getters y setters
     public String getIp() {
         return ip;
     }

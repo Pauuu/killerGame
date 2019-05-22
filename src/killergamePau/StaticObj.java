@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 /**
  * <!-- begin-user-doc -->

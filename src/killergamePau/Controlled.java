@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

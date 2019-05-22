@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 
 public abstract class Autonomous extends Alive implements Colisionable {

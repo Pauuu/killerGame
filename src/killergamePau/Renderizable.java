@@ -3,19 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 /**
  *
  * @author pau
  */
-public class KillerGameMain {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        KillerGame kg = new KillerGame();
-    }
+interface Renderizable {
+    
+//public class Renderizable{
+    void render(Graphics2D g2d);
     
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -42,7 +42,7 @@ public class Bullet extends Autonomous {
         double distance = 0;
         
 
-        while (distance < 400) {
+        while (distance < 500) {
 
             distance += Math.abs(this.posX - posXorigin);
 

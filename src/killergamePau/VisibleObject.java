@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -25,7 +25,7 @@ import javax.imageio.ImageIO;
 public abstract class VisibleObject implements Renderizable {
 
     //permite ser accedido a solo las clases que hereden de esta (en teoria)
-    protected BufferedImage imagen;
+    protected BufferedImage imagen = new BufferedImage(50, 50, BufferedImage.TYPE_INT_RGB);
 
     protected KillerGame killerGame;
 
@@ -47,6 +47,9 @@ public abstract class VisibleObject implements Renderizable {
         this.height = height;
 
         this.alive = true;
+
+        // añadir imagen a la bola
+//        this.setImagen("imgs/1.png");
 
         this.addHitBox();
 
@@ -85,6 +88,11 @@ public abstract class VisibleObject implements Renderizable {
         return imagen;
     }
 
+    public KillerGame getKillerGame() {
+        return killerGame;
+    }
+
+    // getters y setters
     public void setImagen(BufferedImage imagen) {
         this.imagen = imagen;
     }
@@ -98,10 +106,6 @@ public abstract class VisibleObject implements Renderizable {
             System.err.println("-- Imagen no cargada --");
             Logger.getLogger(VisibleObject.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-
-    public KillerGame getKillerGame() {
-        return killerGame;
     }
 
     public void setKillerGame(KillerGame killerGame) {

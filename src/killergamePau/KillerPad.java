@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class KillerPad implements Runnable {
         this.killerGame.addKillerPad(this);
 
         // crear nueva killerShip
-        new KillerShip(kg, 100, 100, 60, 60, 0, 0, this.ip, this.port, this.name);
+        new KillerShip(kg, 100, 100, 0, 0, this.ip, this.port, this.name);
 
         // iniciar hilo propio
         new Thread(this).start();
@@ -68,6 +68,16 @@ public class KillerPad implements Runnable {
         }
 
         System.out.println("NK: Client connection closed\n");
+    }
+
+    public void kill() {
+        for (int pos = 0; pos
+                < this.killerGame.getKillerPads().size(); pos++) {
+            if (this.killerGame.getKillerPads().get(pos) == this) {
+                this.killerGame.getKillerPads().remove(pos);
+                return; //=============== killerPad elmininado ===========>>>>>>
+            }
+        }
     }
 
     public static KillerShip ckeckKillerShip(KillerGame kg, String ip, int port) {
@@ -114,6 +124,11 @@ public class KillerPad implements Runnable {
 
     }
 
+    public void sendMessageToMobile(String message) {
+        System.out.println("KCmensaje");
+        this.out.println(message);
+    }
+
     private void processClient(BufferedReader in, PrintWriter out) {
 
         boolean closed = false;
@@ -153,6 +168,14 @@ public class KillerPad implements Runnable {
                     System.out.println("la nave no existe");
                 }
 
+                if (action.equalsIgnoreCase("replay")) {
+                    new KillerShip(killerGame, 40, 40, 0, 0, this.ip, this.port, this.name);
+
+                } else if (action.equalsIgnoreCase("bye")) {
+                    this.kill();
+                    closed = true;
+
+                }
             } catch (IOException ex) {
                 Logger.getLogger(KillerPad.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -160,6 +183,7 @@ public class KillerPad implements Runnable {
 
     }
 
+    // getters y setters
     public KillerGame getKillerGame() {
         return killerGame;
     }
@@ -206,10 +230,6 @@ public class KillerPad implements Runnable {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    void sendMessageToMobile(String message) {
-        this.out.println(message);
     }
 
 }

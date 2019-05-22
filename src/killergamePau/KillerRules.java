@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
 /**
  *
@@ -31,7 +31,7 @@ public class KillerRules {
         }
         
         if ((vObj1 instanceof KillerShip) && (vObj2 instanceof Ball)){
-            return 2;
+            return 3;
         }
        
 

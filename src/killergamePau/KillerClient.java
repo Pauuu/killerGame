@@ -1,4 +1,4 @@
-package killergame;
+package killergamePau;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -46,8 +46,8 @@ public class KillerClient implements Runnable {
                     out.println("vm&" + this.vh.getPosition() + "&" + serverPort);
 
                     this.vh.setConnection(cliSock, this.vh.getPort());
-                    
-                    out.println("&" + "toc-toc");
+
+//                    this.vh.toctoc();
 
                 } catch (IOException ex) {
                     Logger.getLogger("KC: " + KillerClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -55,12 +55,24 @@ public class KillerClient implements Runnable {
                 }
 
                 // dormir el hilo 0.2 seg
-                try {
-                    Thread.sleep(200);
-
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
+//                try {
+//                    Thread.sleep(200);
+//
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+            } else if (this.vh.getSocket() != null) {
+                System.out.println("CONTROL TIME: " + (System.currentTimeMillis() - this.vh.getControlTime()));
+                if (System.currentTimeMillis() - this.vh.getControlTime() > 3500) {
+                    this.vh.killAll();
                 }
+            }
+
+            try {
+                Thread.sleep(200);
+
+            } catch (InterruptedException ex) {
+                Logger.getLogger(KillerClient.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }

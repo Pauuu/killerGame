@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
+//import killerproject.Animacion;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.logging.Level;
@@ -27,9 +28,9 @@ public class Ball extends Autonomous {
         
         super(kGame, posX, posY, width, height, velX, velY);
         
-        
-
-        //this.setImagen("imgs/blackBall.png");
+       
+//        this.setImagen("imgs/a.png");
+//        Animacion.addFire(this.imagen);
     }
 
     public void disparo() {
@@ -39,8 +40,9 @@ public class Ball extends Autonomous {
     @Override
     public void render(Graphics2D g2d) {
         g2d.setColor(Color.ORANGE);
+        g2d.drawImage(this.imagen, (int)this.posX, (int)this.posY, null);
 //        g2d.fillOval(this.posX, this.posY, this.witdh, this.height);
-        g2d.fillArc((int) this.posX, (int) this.posY, this.width, this.height, 30, 300);
+//        g2d.fillArc((int) this.posX, (int) this.posY, this.width, this.height, 30, 300);
 
     }
 }

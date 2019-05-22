@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package killergame;
+package killergamePau;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,14 +27,18 @@ public class KillerServer implements Runnable {
 
     }
 
+    public KillerGame getKillerGame() {
+        return this.killerGame;
+    }
+
     public void escuchar() {
         Socket cliSock;
         String cliAddr;
 
         try {
-           
+
             this.configurePort();
-           
+
             while (true) {
 
                 System.out.println("KS: Waiting for a client...");
@@ -77,10 +81,6 @@ public class KillerServer implements Runnable {
         }
     }
 
-    public KillerGame getKillerGame() {
-        return this.killerGame;
-    }
-
     private void createConnectionHandler(Socket cliSock, String cliAddr) {
         ConectionHandler ch = new ConectionHandler(this, cliSock, cliAddr);
         new Thread(ch).start();
@@ -95,8 +95,8 @@ public class KillerServer implements Runnable {
     public int getServerPort() {
         return this.port;
     }
-    
-     public String getIp(){
+
+    public String getIp() {
         return this.ip;
     }
 

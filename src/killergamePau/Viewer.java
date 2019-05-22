@@ -1,7 +1,8 @@
-package killergame;
+package killergamePau;
 
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferStrategy;
@@ -52,10 +53,75 @@ public class Viewer extends Canvas implements Runnable {
 
         }
 
-        this.modifyAplphaChannel(this.backgroundImg, 90);
+        this.modifyAplphaChannel(this.backgroundImg, 100);
 
         this.setBackground(Color.blue);
         this.setSize(this.width, this.heigth); //cambiar en un futuro
+
+    }
+
+    private void drawInfo() {
+
+        // ip puerto del servidor
+        this.g2d.setFont(new Font("Arial", Font.BOLD, 11));
+
+        // ip puerto del killerLeft
+        if (this.killerGame.getKillerLeft().getSocket() != null) {
+
+            if (this.killerGame.getKillerLeft().getSocket().isConnected()) {
+                this.g2d.setColor(Color.GREEN);
+            }
+
+        } else {
+            this.g2d.setColor(Color.RED);
+        }
+
+        this.g2d.drawString(
+                "VHL Client Ip: " + this.killerGame.getKillerLeft().getClientIp(),
+                5, 20);
+
+        //////////////////////////////////////
+        if (this.killerGame.getKillerLeft().getSocket() != null) {
+            this.g2d.setColor(Color.GREEN);
+
+        } else {
+            this.g2d.setColor(Color.RED);
+        }
+
+        this.g2d.drawString("VHL Client Port: " + this.killerGame.getKillerLeft().getPort(),
+                5, 40);
+
+        ////////////////////////
+        // ip puerto de el mismo
+        this.g2d.setColor(Color.WHITE);
+        this.g2d.drawString(
+                "Server Ip: " + this.killerGame.getKillerServer().getIp(),
+                250, 20);
+
+        this.g2d.drawString("Server Port: " + this.killerGame.getKillerServer().getServerPort(),
+                250, 40);
+        /////////////////////////
+
+        // ip puerto del killerRight
+        if (this.killerGame.getKillerRight().getSocket() != null) {
+            this.g2d.setColor(Color.GREEN);
+
+        } else {
+            this.g2d.setColor(Color.RED);
+        }
+        this.g2d.drawString(
+                "VHR Client Ip: " + this.killerGame.getKillerRight().getClientIp(),
+                500, 20);
+
+        ///////////////////////////
+        if (this.killerGame.getKillerRight().getSocket() != null) {
+            this.g2d.setColor(Color.GREEN);
+
+        } else {
+            this.g2d.setColor(Color.RED);
+        }
+        this.g2d.drawString("VHR Client Port: " + this.killerGame.getKillerRight().getPort(),
+                500, 40);
 
     }
 
@@ -68,7 +134,7 @@ public class Viewer extends Canvas implements Runnable {
                 this.visibleObjects.get(index).render(this.g2d);
             }
 
-            this.g2d.drawImage(this.backgroundImg, 0, 0, null);
+//            this.g2d.drawImage(this.backgroundImg, 0, 0, null);
 
             this.drawInfo();
             this.g2d.setColor(Color.blue);
@@ -78,54 +144,6 @@ public class Viewer extends Canvas implements Runnable {
         }
     }
 
-    private void drawInfo() {
-        this.g2d.setColor(Color.RED);
-        
-        // ip puerto del servidor
-        this.g2d.drawString(
-                "Server Ip: " + this.killerGame.getKillerServer().getIp(),
-                200, 20);
-
-        this.g2d.drawString("Server Port: " + this.killerGame.getKillerServer().getServerPort(),
-                200, 40);
-
-        // ip puerto del killerRight
-        this.g2d.drawString(
-                "VHR Client Ip: " + this.killerGame.getKillerRight().getClientIp(),
-                340, 20);
-
-        this.g2d.drawString("VHR Client Port: " + this.killerGame.getKillerRight().getPort(),
-                340, 40);
-
-        // ip puerto del killerLeft
-        this.g2d.drawString(
-                "VHL Client Ip: " + this.killerGame.getKillerLeft().getClientIp(),
-                 10, 20);
-
-        this.g2d.drawString("VHL Client Port: " + this.killerGame.getKillerLeft().getPort(),
-                10, 40);
-
-    }
-
-    private void updateFrame2() {
-        BufferStrategy bs;
-
-        bs = this.getBufferStrategy();
-        if (bs == null) {
-            System.out.println("kgd");
-            return; // =======================================================>>
-        }
-
-        Graphics gg = bs.getDrawGraphics();
-
-        gg.drawImage(biFrame, 0, 0, null);
-        this.paintComponents();
-
-        //   Toolkit.getDefaultToolkit().sync();
-        bs.show();
-
-        gg.dispose();
-    }
 
     private void modifyAplphaChannel(BufferedImage bImg, int lvl) {
         byte[] b = ((DataBufferByte) bImg.getRaster().getDataBuffer()).getData();
@@ -137,8 +155,8 @@ public class Viewer extends Canvas implements Runnable {
         }
 
         //modificar el alfa de la imagen
-        for (int pos = 0; pos < bInt.length; pos += 4) {
-            bInt[pos] = lvl;
+        for (int pos = 2; pos < bInt.length; pos += 4) {
+            bInt[pos] = 200;
         }
 
         //actualizar array (puntero) con los nuevos valores y casteado
